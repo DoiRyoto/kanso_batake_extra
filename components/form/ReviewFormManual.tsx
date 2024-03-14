@@ -39,6 +39,7 @@ import { SiDoi } from "react-icons/si";
 import { IoIosPaper } from "react-icons/io";
 import { Separator } from "../ui/separator";
 import { Modal } from "../review/Modal";
+import { fetchUser } from "@/actions/user.action";
 
 // フォームのバリデーションスキーマを定義
 const FormSchema = z.object({
@@ -128,6 +129,8 @@ export function ReviewFormManual({
 
     const url = files[0] ? await uploadImage(files[0], id) : review.imageUrl;
 
+    const reviewerFields:string[] = (await (fetchUser(userId))).field;
+
     // 提出用のレビューデータを準備
     const reviewData: reviewType = {
       id: id,
@@ -142,6 +145,7 @@ export function ReviewFormManual({
       doi: data.doi,
       link: data.link,
       reviewerName: userName,
+      reviewerFields: reviewerFields,
       createdBy: userId,
       imageUrl: url,
       tags: delEmpty_tag(data.Tags),
