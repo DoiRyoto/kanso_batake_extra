@@ -69,7 +69,6 @@ export const emptyReview: reviewType = {
   authors: "",
   doi: "",
   link: "",
-  imageUrl: "",
   tags: []
 }
 
