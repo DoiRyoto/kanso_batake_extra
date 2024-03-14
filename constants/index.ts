@@ -18,6 +18,7 @@ export type reviewType = {
   contents: string;
   paperTitle: string;
   reviewerName: string;
+  reviewerFields:string[];
   createdBy: string;
   venue: string;
   year: string;

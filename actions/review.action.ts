@@ -19,7 +19,6 @@ import { redirect } from "next/navigation";
 import { storage } from "@/lib/firebase/storage";
 import { ref } from "firebase/storage";
 import { deleteImage } from "./image.action";
-import { checkInStringArray } from "@/lib/utils";
 
 export async function getAllReviews() {
   const col = query(collection(db, "reviews"), orderBy("id", "desc"));
@@ -177,33 +176,4 @@ export async function fetchReviewsByUserIds(userIds: string[], tag?: string) {
     console.log(error);
     throw new Error("Failed to fetch reviews.");
   }
-}
-
-export async function fetchReviewsByFields(fields?: string[]) {
-    /*
-    * fieldsがある場合、fieldでフィルタした結果を取得
-    * fieldsがない場合、すべてのreviewをid順に取得
-    */
-    const col = fields?
-    query(
-        collection(db, `reviews`),
-        where("reviewerFields", "array-contains-any", fields),
-    ):
-    query(
-        collection(db, `reviews`),
-        orderBy("id", "desc")
-    )
-
-    let result: reviewType[] = [];
-    let tmp: reviewType;
-    try {
-        const allReviewsSnapshot = await getDocs(col);
-        allReviewsSnapshot.forEach(async (doc) => {
-            result.push(doc.data() as reviewType);
-        });
-        return result;
-    } catch (error) {
-        console.log(error);
-        throw new Error("Failed to fetch reviews.");
-    }
 }

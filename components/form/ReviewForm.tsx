@@ -63,6 +63,7 @@ import Image from "next/image";
 import { useToast } from "../ui/use-toast";
 import { Toaster } from "../ui/toaster";
 import { usePathname } from "next/navigation";
+import { fetchUser } from "@/actions/user.action";
 
 // フォームのバリデーションスキーマを定義
 const FormSchema = z.object({
@@ -168,6 +169,8 @@ export function ReviewForm({
     const id = review.id ? review.id : Date.now().toString(); // レビューIDを現在のタイムスタンプで生成
 
     const url = files[0] ? await uploadImage(files[0], id) : review.imageUrl;
+    
+    const reviewerFields:string[]=(await fetchUser(userId)).field;
 
     // 提出用のレビューデータを準備
     const reviewData: reviewType = {
@@ -183,6 +186,7 @@ export function ReviewForm({
       doi: paper.externalIds.DOI,
       link: paper.url,
       reviewerName: userName,
+      reviewerFields: reviewerFields,
       createdBy: userId,
       tags: delEmpty_tag(data.Tags),
       imageUrl: url,
