@@ -6,12 +6,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export default authMiddleware({
-  publicRoutes: [
-    "/",
-    "/sign-in(.*)",
-    "/sign-up(.*)",
-    "/api(.*)",
-  ],
+  publicRoutes: ["/", "/sign-in(.*)", "/sign-up(.*)", "/api(.*)"],
   async afterAuth(auth, req) {
     if (auth.isPublicRoute) {
       //  For public routes, we don't need to do anything

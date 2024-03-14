@@ -17,7 +17,9 @@ const Comment = async ({ commentData }: { commentData: commentType }) => {
         <CardDescription>{user.name}</CardDescription>
         <Separator />
       </CardHeader>
-      <CardContent className="break-words whitespace-pre-line">{commentData.contents}</CardContent>
+      <CardContent className="break-words whitespace-pre-line">
+        {commentData.contents}
+      </CardContent>
     </Card>
   );
 };

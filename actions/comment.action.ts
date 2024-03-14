@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { commentType } from "@/constants";
 import db from "@/lib/firebase/store";
@@ -21,10 +21,13 @@ export async function fetchComment(id: string) {
 
 export async function setComment(commentData: commentType, path: string) {
   await Promise.all([
-    setDoc(doc(db, `reviews/${commentData.parentId}/comments/${commentData.id}`), commentData),
+    setDoc(
+      doc(db, `reviews/${commentData.parentId}/comments/${commentData.id}`),
+      commentData
+    ),
     setDoc(doc(db, `comments/${commentData.id}`), commentData),
   ]);
-  
+
   revalidatePath(path);
 }
 

@@ -34,7 +34,7 @@ export function HeaderContents({ user }: { user?: userType }) {
     return (
       <Sheet>
         <SheetTrigger asChild className="hover:cursor-pointer">
-          <RxHamburgerMenu size={"2rem"} class="transform hover:scale-110"/>
+          <RxHamburgerMenu size={"2rem"} class="transform hover:scale-110" />
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
@@ -60,8 +60,12 @@ export function HeaderContents({ user }: { user?: userType }) {
                 </a>
               </div>
             </div>
-            <Link href="/sign-in" className="flex text-lg px-2 py-1 flex-row gap-4 items-center justify-center hover:underline">
-              <RiLoginBoxLine />サインイン
+            <Link
+              href="/sign-in"
+              className="flex text-lg px-2 py-1 flex-row gap-4 items-center justify-center hover:underline"
+            >
+              <RiLoginBoxLine />
+              サインイン
             </Link>
           </div>
         </SheetContent>
@@ -72,7 +76,7 @@ export function HeaderContents({ user }: { user?: userType }) {
   return (
     <Sheet>
       <SheetTrigger asChild className="hover:cursor-pointer">
-        <RxHamburgerMenu size={"2rem"} class="transform hover:scale-110"/>
+        <RxHamburgerMenu size={"2rem"} class="transform hover:scale-110" />
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
@@ -144,7 +148,10 @@ export function HeaderContents({ user }: { user?: userType }) {
               </a>
             </div>
           </div>
-          <button onClick={() => signOut()} className="flex text-lg px-2 py-1 flex-row gap-4 items-center justify-center hover:underline">
+          <button
+            onClick={() => signOut()}
+            className="flex text-lg px-2 py-1 flex-row gap-4 items-center justify-center hover:underline"
+          >
             <RiLogoutBoxRLine /> サインアウト
           </button>
         </div>

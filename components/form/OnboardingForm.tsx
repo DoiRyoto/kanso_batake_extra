@@ -90,7 +90,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
           name="username"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="flex flex-row gap-1">名前<p className="text-red-600">*</p></FormLabel>
+              <FormLabel className="flex flex-row gap-1">
+                名前<p className="text-red-600">*</p>
+              </FormLabel>
               <FormControl>
                 <Input placeholder="名前を入力してください" {...field} />
               </FormControl>
@@ -104,7 +106,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
           name="affiliation"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="flex flex-row gap-1">所属<p className="text-red-600">*</p></FormLabel>
+              <FormLabel className="flex flex-row gap-1">
+                所属<p className="text-red-600">*</p>
+              </FormLabel>
               <FormDescription className="text-xs">
                 自身の所属がない場合は「その他」を選んでください。
               </FormDescription>
@@ -168,7 +172,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
           name="field"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="flex flex-row gap-1">研究分野<p className="text-red-600">*</p></FormLabel>
+              <FormLabel className="flex flex-row gap-1">
+                研究分野<p className="text-red-600">*</p>
+              </FormLabel>
               <FormDescription className="text-xs">
                 自身の研究分野がない場合は「その他」を選んでください。
               </FormDescription>
@@ -230,7 +236,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex flex-row gap-1">役職<p className="text-red-600">*</p></FormLabel>
+              <FormLabel className="flex flex-row gap-1">
+                役職<p className="text-red-600">*</p>
+              </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>

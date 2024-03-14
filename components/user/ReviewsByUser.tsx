@@ -26,7 +26,14 @@ const ReviewsByUser = async ({
       )}
       <div className="flex flex-col gap-2">
         {reviewsData.map((review) => {
-          return <Review key={review.id} reviewData={review} userId={user?.id} clamp={true}/>;
+          return (
+            <Review
+              key={review.id}
+              reviewData={review}
+              userId={user?.id}
+              clamp={true}
+            />
+          );
         })}
       </div>
     </>

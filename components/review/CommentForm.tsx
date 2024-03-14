@@ -5,12 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { commentType } from "@/constants";
 import React, { useRef } from "react";
@@ -33,7 +28,7 @@ export function CommentForm({
   reviewId: string;
 }) {
   const isLoading = useRef(false); // ローディング状態を追跡するためのuseRef
-  const path = usePathname()
+  const path = usePathname();
 
   // useFormフックを使ってフォームを初期化
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -67,7 +62,10 @@ export function CommentForm({
   // フォームのレンダリングを行う
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row gap-3">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-row gap-3"
+      >
         <FormField
           control={form.control}
           name="comment"
@@ -79,11 +77,13 @@ export function CommentForm({
           )}
         />
         {isLoading.current ? (
-          <Button  className="flex-none" disabled>
+          <Button className="flex-none" disabled>
             Reply
           </Button>
         ) : (
-            <Button className="flex-none" type="submit">Reply</Button>
+          <Button className="flex-none" type="submit">
+            Reply
+          </Button>
         )}
       </form>
     </Form>

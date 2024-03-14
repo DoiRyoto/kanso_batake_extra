@@ -129,7 +129,7 @@ export function ReviewFormManual({
 
     const url = files[0] ? await uploadImage(files[0], id) : review.imageUrl;
 
-    const reviewerFields:string[] = (await (fetchUser(userId))).field;
+    const reviewerFields: string[] = (await fetchUser(userId)).field;
 
     // 提出用のレビューデータを準備
     const reviewData: reviewType = {
@@ -518,10 +518,16 @@ export function ReviewFormManual({
               </CardTitle>
               <CardDescription>{form.getValues("authors")}</CardDescription>
               <CardDescription>
-                {form.getValues("journal_name") ? form.getValues("journal_name") + "." : ""}
+                {form.getValues("journal_name")
+                  ? form.getValues("journal_name") + "."
+                  : ""}
                 {form.getValues("year") ? form.getValues("year") + "." : ""}
-                {form.getValues("journal_vol") ? form.getValues("journal_vol") + "." : ""}
-                {form.getValues("journal_pages") ? form.getValues("journal_pages") + "." : ""}
+                {form.getValues("journal_vol")
+                  ? form.getValues("journal_vol") + "."
+                  : ""}
+                {form.getValues("journal_pages")
+                  ? form.getValues("journal_pages") + "."
+                  : ""}
               </CardDescription>
               {(form.getValues("doi") || form.getValues("link")) && (
                 <div className="flex flex-row gap-2 py-3">
@@ -575,16 +581,16 @@ export function ReviewFormManual({
           </Card>
         )}
         {isLoading.current ? (
-              <Button disabled>
-                <Loader2 className="animate-spin" />
-                Please wait
-              </Button>
-            ) : (
-              <div className="flex flex-row gap-3">
-                <Button type="submit">Save</Button>
-                <CancelCreateReview />
-              </div>
-            )}
+          <Button disabled>
+            <Loader2 className="animate-spin" />
+            Please wait
+          </Button>
+        ) : (
+          <div className="flex flex-row gap-3">
+            <Button type="submit">Save</Button>
+            <CancelCreateReview />
+          </div>
+        )}
       </form>
     </Form>
   );

@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "run-p lint:*",
     "lint:tsc": "tsc --noEmit",
-    "lint:eslint": "eslint ./src --ext .ts,.tsx",
+    "lint:eslint": "eslint ./ --ext .ts,.tsx",
     "fix": "run-s fix:*",
-    "fix:prettier": "prettier ./src --write",
-    "fix:eslint": "eslint ./src --ext .ts,.tsx --fix",
+    "fix:prettier": "prettier ./ --write",
+    "fix:eslint": "eslint ./ --ext .ts,.tsx --fix",
     "prepare": "husky",
     "test": "jest"
   },
