@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  directUrl         = env("DIRECT_URL")
+}
+
+model Affiliations {
+  id Int @id @default(autoincrement()) @db.Integer
+  name String @db.Text
+  users Users[]
+  created_at DateTime @default(now()) @db.Timestamptz()
+}
+
+model Comments {
+  id Int @id @default(autoincrement()) @db.Integer
+  content String @db.Text
+  review Reviews @relation(fields: [review_id], references: [id])
+  review_id Int @db.Integer
+  user Users @relation(fields: [user_id], references: [id])
+  user_id Int @db.Integer
+  created_at DateTime @default(now()) @db.Timestamptz()
+}
+
+model Fields {
+  id Int @id @default(autoincrement()) @db.Integer
+  name String @db.Text
+  users Users[]
+  created_at DateTime @default(now()) @db.Timestamptz()
+}
+
+model Reviews {
+  id Int @id @default(autoincrement()) @db.Integer
+  content String? @db.Text
+  paper_data Json @db.JsonB
+  paper_title String @db.Text
+  thumbnail_user String? @db.Text
+  user Users @relation(fields: [user_id], references: [id])
+  user_id Int @db.Integer
+  comments Comments[]
+  tags Tags[]
+  created_at DateTime @default(now()) @db.Timestamptz()
+}
+
+model Tags {
+  id Int @id @default(autoincrement()) @db.Integer
+  name String @unique
+  reviews Reviews[]
+  created_at DateTime @default(now()) @db.Timestamptz()
+}
+
+model Users {
+  id Int @id @default(autoincrement()) @db.Integer
+  user_id String @unique
+  name String @db.Text
+  role String? @db.Text
+  reviews Reviews[]
+  comments Comments[]
+  works Works[]
+  affiliations Affiliations[]
+  fields Fields[]
+  created_at DateTime @default(now()) @db.Timestamptz()
+}
+
+model Works {
+  id Int @id @default(autoincrement()) @db.Integer
+  url String? @db.Text
+  user Users @relation(fields: [user_id], references: [id])
+  user_id Int @db.Integer
+  created_at DateTime @default(now()) @db.Timestamptz()
+}
