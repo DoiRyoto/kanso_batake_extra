@@ -117,7 +117,10 @@ export async function fetchReviewsByTag(searchTag: string) {
   }
 }
 
-export async function fetchReviewsByTagAndUser(searchTag: string, userId: string) {
+export async function fetchReviewsByTagAndUser(
+  searchTag: string,
+  userId: string
+) {
   const col = query(
     collection(db, `users/${userId}/reviews`),
     where("tags", "array-contains", searchTag)
@@ -136,30 +139,23 @@ export async function fetchReviewsByTagAndUser(searchTag: string, userId: string
   }
 }
 
-export async function fetchReviewsByFilter(searchTag?: string, userId?: string) {
-  try{
-    if(!searchTag && !userId) {
-      return getAllReviews()
-    }
-  
-    else if(!searchTag && userId) {
-      return fetchReviewsByUser(userId)
-    }
-  
-    else if(searchTag && !userId) {
-      return fetchReviewsByTag(searchTag)
-    }
-  
-    else if(searchTag && !userId) {
-      return fetchReviewsByTag(searchTag)
-    }
-  
-    else if(searchTag && userId) {
-      return fetchReviewsByTagAndUser(searchTag, userId)
-    }
-
-    else {
-      return []
+export async function fetchReviewsByFilter(
+  searchTag?: string,
+  userId?: string
+) {
+  try {
+    if (!searchTag && !userId) {
+      return getAllReviews();
+    } else if (!searchTag && userId) {
+      return fetchReviewsByUser(userId);
+    } else if (searchTag && !userId) {
+      return fetchReviewsByTag(searchTag);
+    } else if (searchTag && !userId) {
+      return fetchReviewsByTag(searchTag);
+    } else if (searchTag && userId) {
+      return fetchReviewsByTagAndUser(searchTag, userId);
+    } else {
+      return [];
     }
   } catch (error) {
     console.log(error);

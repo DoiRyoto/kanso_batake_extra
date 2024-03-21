@@ -38,11 +38,11 @@ import clsx from "clsx";
 const Review = ({
   reviewData,
   userId,
-  clamp
+  clamp,
 }: {
   reviewData: reviewType;
   userId?: string;
-  clamp?: boolean
+  clamp?: boolean;
 }) => {
   const deleteButton_clickHandler = async () => {
     await deleteReview(reviewData, userId);
@@ -163,7 +163,7 @@ const Review = ({
           <Modal imageUrl={reviewData.imageUrl} />
         </CardContent>
       )}
-      <CardContent className="markdown" >
+      <CardContent className="markdown">
         <ReactMarkDown
           className={clsx(clamp ? "line-clamp-4" : "")}
           remarkPlugins={[remarkBreaks]}

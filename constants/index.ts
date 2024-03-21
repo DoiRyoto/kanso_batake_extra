@@ -6,19 +6,18 @@ type paperInterface = {
   tldr: string;
 };
 
-export type labType ={
-    value: string;
-    users: string[];
-    label: string;
-}
-
+export type labType = {
+  value: string;
+  users: string[];
+  label: string;
+};
 
 export type reviewType = {
   id: string;
   contents: string;
   paperTitle: string;
   reviewerName: string;
-  reviewerFields:string[];
+  reviewerFields: string[];
   createdBy: string;
   venue: string;
   year: string;
@@ -70,13 +69,12 @@ export const emptyReview: reviewType = {
   authors: "",
   doi: "",
   link: "",
-  tags: []
-}
+  tags: [],
+  reviewerFields: [],
+  imageUrl: "",
+};
 
-export const role = [
-    "学生",
-    "教員",
-]
+export const role = ["学生", "教員"];
 
 export const affiliations = [
   {

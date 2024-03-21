@@ -169,8 +169,8 @@ export function ReviewForm({
     const id = review.id ? review.id : Date.now().toString(); // レビューIDを現在のタイムスタンプで生成
 
     const url = files[0] ? await uploadImage(files[0], id) : review.imageUrl;
-    
-    const reviewerFields:string[]=(await fetchUser(userId)).field;
+
+    const reviewerFields: string[] = (await fetchUser(userId)).field;
 
     // 提出用のレビューデータを準備
     const reviewData: reviewType = {

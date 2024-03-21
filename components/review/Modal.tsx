@@ -22,12 +22,7 @@ export function Modal({ imageUrl }: { imageUrl: string }) {
       </DialogTrigger>
       <DialogContent className="max-w-5xl">
         <ScrollArea className="max-h-[60vh]">
-          <Image
-            alt="etc"
-            src={imageUrl}
-            width={1920}
-            height={1080}
-          />
+          <Image alt="etc" src={imageUrl} width={1920} height={1080} />
         </ScrollArea>
       </DialogContent>
     </Dialog>
