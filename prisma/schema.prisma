@@ -27,7 +27,7 @@ model Comments {
   review Reviews @relation(fields: [review_id], references: [id])
   review_id Int @db.Integer
   user Users @relation(fields: [user_id], references: [id])
-  user_id Int @db.Integer
+  user_id String @db.Text
   created_at DateTime @default(now()) @db.Timestamptz()
 }
 
@@ -43,9 +43,9 @@ model Reviews {
   content String? @db.Text
   paper_data Json @db.JsonB
   paper_title String @db.Text
-  thumbnail_user String? @db.Text
+  thumbnail_url String? @db.Text
   user Users @relation(fields: [user_id], references: [id])
-  user_id Int @db.Integer
+  user_id String @db.Text
   comments Comments[]
   tags Tags[]
   created_at DateTime @default(now()) @db.Timestamptz()
@@ -59,8 +59,7 @@ model Tags {
 }
 
 model Users {
-  id Int @id @default(autoincrement()) @db.Integer
-  user_id String @unique
+  id String @id @db.Text @unique
   name String @db.Text
   role String? @db.Text
   reviews Reviews[]
@@ -75,6 +74,6 @@ model Works {
   id Int @id @default(autoincrement()) @db.Integer
   url String? @db.Text
   user Users @relation(fields: [user_id], references: [id])
-  user_id Int @db.Integer
+  user_id String @db.Text
   created_at DateTime @default(now()) @db.Timestamptz()
 }

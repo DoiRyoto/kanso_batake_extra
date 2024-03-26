@@ -15,16 +15,18 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-import { fetchUser } from "@/actions/user.action";
-import { fetchUserIdsByLabId } from "@/actions/user.action";
-import { fetchUsers } from "@/actions/user.action";
-import { userType } from "@/constants";
+import { fetchUsersByAffiliationId } from "@/actions/user.action";
+import { userInterface } from "@/constants";
+import { fetchAffiliation } from "@/actions/affiliation.action";
 
-const LabHeader = async ({ labId }: { labId: string }) => {
-  const userIds: string[] = await fetchUserIdsByLabId(labId);
-  const users: userType[] = await fetchUsers(userIds);
-  let teachers: userType[] = [];
-  let students: userType[] = [];
+const LabHeader = async ({ affiliationId }: { affiliationId: number }) => {
+  const [users, affiliation] = await Promise.all([
+    fetchUsersByAffiliationId(affiliationId),
+    fetchAffiliation(affiliationId),
+  ]);
+
+  let teachers: userInterface[] = [];
+  let students: userInterface[] = [];
 
   // teacherとstudentに仕分け
   users.map((user) => {
@@ -41,7 +43,9 @@ const LabHeader = async ({ labId }: { labId: string }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="truncate leading-normal">{labId}</CardTitle>
+        <CardTitle className="truncate leading-normal">
+          {affiliation[0].name}
+        </CardTitle>
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
             <AccordionTrigger

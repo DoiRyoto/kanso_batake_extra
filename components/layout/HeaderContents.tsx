@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { userType } from "@/constants";
+import { affiliationInterface, userInterface } from "@/constants";
 import Link from "next/link";
 
 import { useClerk } from "@clerk/nextjs";
@@ -27,7 +27,13 @@ import clsx from "clsx";
 import Image from "next/image";
 const kaisei = Kaisei_Tokumin({ weight: "400", subsets: ["cyrillic"] });
 
-export function HeaderContents({ user }: { user?: userType }) {
+export function HeaderContents({
+  user,
+  affiliation,
+}: {
+  affiliation?: affiliationInterface;
+  user?: userInterface;
+}) {
   const { signOut } = useClerk();
 
   if (!user) {
@@ -118,14 +124,16 @@ export function HeaderContents({ user }: { user?: userType }) {
                   <IoPersonOutline /> マイページ
                 </Link>
               </SheetClose>
-              <SheetClose asChild>
-                <Link
-                  href={`/lab/${user.affiliation}`}
-                  className="flex text-lg px-2 py-1 flex-row items-center gap-4 hover:underline"
-                >
-                  <ImLab /> マイラボ
-                </Link>
-              </SheetClose>
+              {affiliation && (
+                <SheetClose asChild>
+                  <Link
+                    href={`/lab/${affiliation.id}`}
+                    className="flex text-lg px-2 py-1 flex-row items-center gap-4 hover:underline"
+                  >
+                    <ImLab /> マイラボ
+                  </Link>
+                </SheetClose>
+              )}
               <SheetClose asChild>
                 <Link
                   href={`/lab`}

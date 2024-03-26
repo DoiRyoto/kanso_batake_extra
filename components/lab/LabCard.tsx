@@ -1,35 +1,29 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
-import { labType } from "@/constants";
+import { affiliationInterface } from "@/constants";
 
-const LabCard = ({ labData }: { labData: labType }) => {
+const LabCard = async ({
+  affiliationData,
+}: {
+  affiliationData: affiliationInterface;
+}) => {
   return (
     <>
-      {labData.users.length > 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="truncate leading-normal">
-              <Link
-                href={`/lab/${labData.value}`}
-                className="flex text-blue-600 hover:text-blue-400 underline"
-              >
-                {labData.value}
-              </Link>
-            </CardTitle>
-            <CardDescription></CardDescription>
-            <Separator />
-          </CardHeader>
-          <CardContent className="flex gap-2"></CardContent>
-        </Card>
-      ) : null}
+      <Card>
+        <CardHeader>
+          <CardTitle className="truncate leading-normal">
+            <Link
+              href={`/lab/${affiliationData.id}`}
+              className="flex text-blue-600 hover:text-blue-400 underline"
+            >
+              {affiliationData.name}
+            </Link>
+          </CardTitle>
+          <Separator />
+        </CardHeader>
+      </Card>
     </>
   );
 };

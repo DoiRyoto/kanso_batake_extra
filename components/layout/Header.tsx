@@ -6,12 +6,16 @@ import React from "react";
 import { HeaderContents } from "./HeaderContents";
 import { Kaisei_Tokumin } from "next/font/google";
 import clsx from "clsx";
+import { fetchAffiliationsByUserId } from "@/actions/affiliation.action";
 
 const kaisei = Kaisei_Tokumin({ weight: "400", subsets: ["cyrillic"] });
 
 const Header = async () => {
   const _user = await currentUser();
-  const user = _user ? await fetchUser(_user.id) : undefined;
+  const user = _user ? (await fetchUser(_user.id))[0] : undefined;
+  const affiliation = _user
+    ? (await fetchAffiliationsByUserId(_user.id))[0]
+    : undefined;
 
   return (
     <header className="fixed z-50 w-screen justify-center border-b">
@@ -26,7 +30,7 @@ const Header = async () => {
           <Image src="/appicon.png" width={50} height={50} alt="logo" />
           感想畑
         </Link>
-        <HeaderContents user={user} />
+        <HeaderContents user={user} affiliation={affiliation} />
       </div>
     </header>
   );

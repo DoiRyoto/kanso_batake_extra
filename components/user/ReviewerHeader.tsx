@@ -1,35 +1,39 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { fetchUser } from "@/actions/user.action";
+import { fetchAffiliationsByUserId } from "@/actions/affiliation.action";
+import { fetchFieldsByUserId } from "@/actions/field.action";
+import { fetchWorksByUserId } from "@/actions/work.action";
 
 const ReviewHeader = async ({ userId }: { userId: string }) => {
-  const user = await fetchUser(userId);
+  const [user, affiliations, fields, works] = await Promise.all([
+    fetchUser(userId),
+    fetchAffiliationsByUserId(userId),
+    fetchFieldsByUserId(userId),
+    fetchWorksByUserId(userId),
+  ]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="truncate leading-normal">{user.name}</CardTitle>
+        <CardTitle className="truncate leading-normal">
+          {user[0].name}
+        </CardTitle>
         <div className="text-sm text-muted-foreground">
-          {user.affiliation.map((institution) => {
-            return <p key={institution}>所属: {institution}</p>;
+          {affiliations.map((institution) => {
+            return <p key={institution.id}>所属: {institution.name}</p>;
           })}
-          {user.field.map((f) => {
-            return <p key={f}>分野: {f}</p>;
+          {fields.map((f) => {
+            return <p key={f.id}>分野: {f.name}</p>;
           })}
-          <p>役職: {user.role}</p>
-          {user.works.map((work) => {
+          <p>役職: {user[0].role}</p>
+          {works.map((work) => {
             return (
-              <p key={work}>
+              <p key={work.id}>
                 URL:{" "}
-                <a href={work} target="_blank">
-                  {work}
+                <a href={work.url || ""} target="_blank">
+                  {work.url}
                 </a>
               </p>
             );
