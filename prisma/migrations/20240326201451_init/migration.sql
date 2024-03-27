@@ -12,7 +12,7 @@ CREATE TABLE "Comments" (
     "id" SERIAL NOT NULL,
     "content" TEXT NOT NULL,
     "review_id" INTEGER NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Comments_pkey" PRIMARY KEY ("id")
@@ -33,8 +33,8 @@ CREATE TABLE "Reviews" (
     "content" TEXT,
     "paper_data" JSONB NOT NULL,
     "paper_title" TEXT NOT NULL,
-    "thumbnail_user" TEXT,
-    "user_id" INTEGER NOT NULL,
+    "thumbnail_url" TEXT,
+    "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Reviews_pkey" PRIMARY KEY ("id")
@@ -51,8 +51,7 @@ CREATE TABLE "Tags" (
 
 -- CreateTable
 CREATE TABLE "Users" (
-    "id" SERIAL NOT NULL,
-    "user_id" TEXT NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "role" TEXT,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -64,7 +63,7 @@ CREATE TABLE "Users" (
 CREATE TABLE "Works" (
     "id" SERIAL NOT NULL,
     "url" TEXT,
-    "user_id" INTEGER NOT NULL,
+    "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Works_pkey" PRIMARY KEY ("id")
@@ -73,13 +72,13 @@ CREATE TABLE "Works" (
 -- CreateTable
 CREATE TABLE "_AffiliationsToUsers" (
     "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL
+    "B" TEXT NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "_FieldsToUsers" (
     "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL
+    "B" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -92,7 +91,7 @@ CREATE TABLE "_ReviewsToTags" (
 CREATE UNIQUE INDEX "Tags_name_key" ON "Tags"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Users_user_id_key" ON "Users"("user_id");
+CREATE UNIQUE INDEX "Users_id_key" ON "Users"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_AffiliationsToUsers_AB_unique" ON "_AffiliationsToUsers"("A", "B");

@@ -1,80 +1,81 @@
-import { paperDetailsType } from "@/actions/paper.action";
+export interface paperInterface {
+  id?: string;
+  venue?: string;
+  year?: string;
+  journal_name?: string;
+  journal_pages?: string;
+  journal_vol?: string;
+  authors?: string;
+  doi?: string;
+  link?: string;
+}
 
-type paperInterface = {
-  id: string;
-  title: string;
-  tldr: string;
-};
+// Affiliations Table: id, name, created_at
+export interface affiliationInterface {
+  id: number;
+  name: string;
+  created_at?: string | Date;
+}
 
-export type labType = {
-  value: string;
-  users: string[];
-  label: string;
-};
-
-export type reviewType = {
-  id: string;
+// Comments Table: id, content, review_id, user_id, created_at
+export interface commentInterface {
+  id: number;
   contents: string;
-  paperTitle: string;
-  reviewerName: string;
-  reviewerFields: string[];
-  createdBy: string;
-  venue: string;
-  year: string;
-  journal_name: string;
-  journal_pages: string;
-  journal_vol: string;
-  authors: string;
-  doi: string;
-  link: string;
-  tags: string[];
-  imageUrl: string;
-};
+  user_id: string;
+  review_id: number;
+  created_at?: string | Date;
+}
 
-export type commentType = {
-  id: string;
-  contents: string;
-  userId: string;
-  parentId: string;
-};
+// Fields Table: id, name, created_at
+export interface fieldInterface {
+  id: number;
+  name: string;
+  created_at?: string | Date;
+}
 
-// 現在使用してい以内
-// export type postType = {
-//     id: string;
-//     contents: string;
-//     paperTitle: string;
-// }
+// Reviews Table: id, content, paper_data, paper_title, user_id, created_at, thumbnail_url
+export interface reviewInterface {
+  id: number;
+  content: string | null;
+  paper_title: string;
+  paper_data: paperInterface;
+  user_id: string;
+  created_at?: string | Date;
+  thumbnail_url: string | null;
+}
 
-export type userType = {
+// Tags Table: id, name, user_id, created_at
+export interface tagInterface {
+  id: number;
+  name: string;
+  user_id: string;
+  created_at?: string | Date;
+}
+
+// Users Table: id, user_id, name, role, created_at
+export interface userInterface {
   id: string;
   name: string;
-  affiliation: string[];
-  field: string[];
-  role: string;
-  // いったん　Student or Teacher
-  works: string[];
-};
+  role: string | null; // いったん　Student or Teacher
+  created_at?: string | Date;
+}
 
-export const emptyReview: reviewType = {
-  id: "",
-  contents: "",
-  paperTitle: "",
-  reviewerName: "",
-  createdBy: "",
-  venue: "",
-  year: "",
-  journal_name: "",
-  journal_pages: "",
-  journal_vol: "",
-  authors: "",
-  doi: "",
-  link: "",
-  tags: [],
-  reviewerFields: [],
-  imageUrl: "",
-};
+// Works Table: id, url, user_id, created_at
+export interface workInterface {
+  id: number;
+  url: string | null;
+  user_id: number;
+  created_at?: string | Date;
+}
 
-export const role = ["学生", "教員"];
+export const emptyReview: reviewInterface = {
+  id: 0,
+  content: "",
+  paper_title: "",
+  paper_data: {},
+  user_id: "",
+  thumbnail_url: "",
+};
 
 export const affiliations = [
   {
@@ -565,16 +566,3 @@ export const fields = [
 ]
   .sort((a, b) => a.label.localeCompare(b.label, "ja"))
   .concat({ value: "その他", label: "その他" });
-
-export const paperData: paperInterface[] = [
-  {
-    id: "1",
-    title: "Python",
-    tldr: "Programming langauge",
-  },
-  {
-    id: "2",
-    title: "情報工学先生",
-    tldr: "論文検索システム",
-  },
-];

@@ -9,7 +9,7 @@ import React from "react";
 const page = async ({ searchParams }: { searchParams: { mode?: string } }) => {
   const user = await currentUser();
   if (!user) return null;
-  const userInfo = await fetchUser(user.id);
+  const userInfo = (await fetchUser(user.id))[0];
 
   return (
     <div className="mt-7 w-full">
