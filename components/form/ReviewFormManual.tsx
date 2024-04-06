@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { setReview, updateReview } from "@/actions/review.action";
-import { reviewType } from "@/constants";
+import { fieldInterface, reviewInterface } from "@/constants";
 import { ChangeEvent, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import CancelCreateReview from "./CancelCreateReview";
@@ -40,6 +40,7 @@ import { IoIosPaper } from "react-icons/io";
 import { Separator } from "../ui/separator";
 import { Modal } from "../review/Modal";
 import { fetchUser } from "@/actions/user.action";
+import { fetchFieldsByUserId } from "@/actions/field.action";
 
 // フォームのバリデーションスキーマを定義
 const FormSchema = z.object({
@@ -87,7 +88,7 @@ export function ReviewFormManual({
 }: {
   userId: string;
   userName: string;
-  review: reviewType;
+  review: reviewInterface;
 }) {
   const isLoading = useRef(false); // ローディング状態を追跡するためのuseRef
   const [isPreview, setPreview] = useState(false);
@@ -106,18 +107,23 @@ export function ReviewFormManual({
     resolver: zodResolver(FormSchema), // zodResolverを使ってバリデーションを設定
     defaultValues: {
       // フォームフィールドのデフォルト値を設定
-      PaperTitle: review.paperTitle ? review.paperTitle : "",
-      ReviewContents: review.contents ? review.contents : "",
-      venue: review.venue ? review.venue : "",
-      year: review.year ? review.year.toString() : "",
-      journal_name: review.journal_name ? review.journal_name : "",
-      journal_pages: review.journal_pages ? review.journal_pages : "",
-      journal_vol: review.journal_vol ? review.journal_vol : "",
-      authors: review.authors ? review.authors : "",
-      doi: review.doi ? review.doi : "",
-      link: review.link ? review.link : "",
-      Tags: review.tags ? review.tags.toString() : "",
-      photoUrl: review.imageUrl ? review.imageUrl : "",
+      PaperTitle: review.paper_title ? review.paper_title : "",
+      ReviewContents: review.content ? review.content : "",
+      venue: review.paper_data.venue ? review.paper_data.venue : "",
+      year: review.paper_data.year ? review.paper_data.year : "",
+      journal_name: review.paper_data.journal_name
+        ? review.paper_data.journal_name
+        : "",
+      journal_pages: review.paper_data.journal_pages
+        ? review.paper_data.journal_pages
+        : "",
+      journal_vol: review.paper_data.journal_vol
+        ? review.paper_data.journal_vol
+        : "",
+      authors: review.paper_data.authors ? review.paper_data.authors : "",
+      doi: review.paper_data.doi ? review.paper_data.doi : "",
+      link: review.paper_data.link ? review.paper_data.link : "",
+      photoUrl: review.thumbnail_url ? review.thumbnail_url : "",
     },
   });
 
@@ -127,28 +133,18 @@ export function ReviewFormManual({
 
     const id = review.id ? review.id : Date.now().toString(); // レビューIDを現在のタイムスタンプで生成
 
-    const url = files[0] ? await uploadImage(files[0], id) : review.imageUrl;
+    const url = files[0] || ""; //わからなかった。いったん空文字にしてる await uploadImage(files[0], id) : review.imageUrl;
 
-    const reviewerFields: string[] = (await fetchUser(userId)).field;
+    const reviewerFields: fieldInterface[] = await fetchFieldsByUserId(userId);
 
     // 提出用のレビューデータを準備
-    const reviewData: reviewType = {
-      id: id,
-      contents: data.ReviewContents,
-      paperTitle: data.PaperTitle,
-      venue: data.venue,
-      year: data.year,
-      journal_name: data.journal_name,
-      journal_pages: data.journal_pages,
-      journal_vol: data.journal_vol,
-      authors: data.authors,
-      doi: data.doi,
-      link: data.link,
-      reviewerName: userName,
-      reviewerFields: reviewerFields,
-      createdBy: userId,
-      imageUrl: url,
-      tags: delEmpty_tag(data.Tags),
+    const reviewData: reviewInterface = {
+      id: review.id,
+      content: review.content,
+      paper_title: review.paper_title,
+      paper_data: review.paper_data,
+      user_id: userId,
+      thumbnail_url: review.thumbnail_url,
     };
 
     try {
@@ -165,7 +161,7 @@ export function ReviewFormManual({
 
   const handleImage = (
     e: ChangeEvent<HTMLInputElement>,
-    fieldChange: (value: string) => void
+    fieldChange: (value: string) => void,
   ) => {
     e.preventDefault();
 
