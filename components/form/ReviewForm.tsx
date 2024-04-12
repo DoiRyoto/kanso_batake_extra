@@ -89,7 +89,6 @@ export function ReviewForm({
   userId: string;
   userName: string;
   review: reviewInterface;
-  paper_: paperInterface;
 }) {
   const authors: Array<{ name: string }> = [
     { name: review.paper_data.authors || "" },
