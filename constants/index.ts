@@ -64,7 +64,7 @@ export interface userInterface {
 export interface workInterface {
   id: number;
   url: string | null;
-  user_id: number;
+  user_id: string;
   created_at?: string | Date;
 }
 

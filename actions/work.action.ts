@@ -1,3 +1,5 @@
+"use server";
+
 import { workInterface } from "@/constants";
 import { prisma } from "@/lib/prisma/prisma-client";
 
@@ -14,7 +16,7 @@ export async function fetchAllWorks(): Promise<workInterface[]> {
 }
 
 export async function fetchWorksByUserId(
-  userId: string
+  userId: string,
 ): Promise<workInterface[]> {
   try {
     const affiliationsData = await prisma.$queryRaw<workInterface[]>`
