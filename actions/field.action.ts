@@ -32,13 +32,13 @@ export async function fetchFieldsByUserId(
 }
 
 export async function fetchFieldIdByFieldName(
-  fieldData: fieldInterface,
+  fieldName: string,
 ): Promise<number> {
   try {
     const fieldId = await prisma.$queryRaw<number>`
       SELECT "id"
       FROM "Fields"
-      WHERE name = ${fieldData.name};`;
+      WHERE name = ${fieldName};`;
     if (fieldId == 0) {
       return 0;
     }

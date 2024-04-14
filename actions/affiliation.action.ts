@@ -48,13 +48,13 @@ export async function fetchAffiliationsByUserId(
 }
 
 export async function fetchAffiliationIdByAffiliationName(
-  affiliationData: affiliationInterface,
+  AffiliationName: string,
 ): Promise<number> {
   try {
     const affiliationId = await prisma.$queryRaw<number>`
       SELECT "id"
       FROM "Affiliations"
-      WHERE name = ${affiliationData.name};`;
+      WHERE name = ${AffiliationName};`;
     if (affiliationId == 0) {
       return 0;
     }

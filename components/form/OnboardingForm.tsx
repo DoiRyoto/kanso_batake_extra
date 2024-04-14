@@ -107,17 +107,19 @@ export function OnboadingForm({ userId }: { userId: string }) {
       user_id: userId,
     };
 
-    var affiliationId =
-      await fetchAffiliationIdByAffiliationName(affiliationData);
+    var affiliationId = await fetchAffiliationIdByAffiliationName(
+      data.affiliation,
+    );
     if (affiliationId === 0) {
       setAffiliation(affiliationData);
-      affiliationId =
-        await fetchAffiliationIdByAffiliationName(affiliationData);
+      affiliationId = await fetchAffiliationIdByAffiliationName(
+        data.affiliation,
+      );
     }
-    var fieldId = await fetchFieldIdByFieldName(fieldData);
+    var fieldId = await fetchFieldIdByFieldName(data.field);
     if (fieldId === 0) {
       setField(fieldData);
-      fieldId = await fetchFieldIdByFieldName(fieldData);
+      fieldId = await fetchFieldIdByFieldName(data.field);
     }
     await setUser(userData);
     await setAffiliationToUser(affiliationId[0].id, userId);
