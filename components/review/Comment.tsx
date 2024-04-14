@@ -6,11 +6,11 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Separator } from "../ui/separator";
-import { commentType } from "@/constants";
+import { commentInterface } from "@/constants";
 import { fetchUser } from "@/actions/user.action";
 
-const Comment = async ({ commentData }: { commentData: commentType }) => {
-  const user = await fetchUser(commentData.userId);
+const Comment = async ({ commentData }: { commentData: commentInterface }) => {
+  const user = (await fetchUser(commentData.user_id))[0];
   return (
     <Card>
       <CardHeader>
@@ -18,7 +18,7 @@ const Comment = async ({ commentData }: { commentData: commentType }) => {
         <Separator />
       </CardHeader>
       <CardContent className="break-words whitespace-pre-line">
-        {commentData.contents}
+        {commentData.content}
       </CardContent>
     </Card>
   );

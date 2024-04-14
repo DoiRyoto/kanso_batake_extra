@@ -20,7 +20,7 @@ export interface affiliationInterface {
 // Comments Table: id, content, review_id, user_id, created_at
 export interface commentInterface {
   id: number;
-  contents: string;
+  content: string;
   user_id: string;
   review_id: number;
   created_at?: string | Date;
