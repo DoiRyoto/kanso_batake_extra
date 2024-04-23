@@ -1,3 +1,4 @@
+"use server";
 import { fieldInterface } from "@/constants";
 import { prisma } from "@/lib/prisma/prisma-client";
 
@@ -13,7 +14,7 @@ export async function fetchAllFields(): Promise<fieldInterface[]> {
 }
 
 export async function fetchFieldsByUserId(
-  userId: string
+  userId: string,
 ): Promise<fieldInterface[]> {
   try {
     const affiliationsData = await prisma.$queryRaw<fieldInterface[]>`

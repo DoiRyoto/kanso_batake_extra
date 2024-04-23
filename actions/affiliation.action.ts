@@ -1,3 +1,4 @@
+"use server";
 import { affiliationInterface } from "@/constants";
 import { prisma } from "@/lib/prisma/prisma-client";
 
@@ -14,7 +15,7 @@ export async function fetchAllAffiliations(): Promise<affiliationInterface[]> {
 }
 
 export async function fetchAffiliation(
-  affiliationId: number
+  affiliationId: number,
 ): Promise<affiliationInterface[]> {
   try {
     const affiliationsData = await prisma.$queryRaw<affiliationInterface[]>`
@@ -28,7 +29,7 @@ export async function fetchAffiliation(
 }
 
 export async function fetchAffiliationsByUserId(
-  userId: string
+  userId: string,
 ): Promise<affiliationInterface[]> {
   try {
     const affiliationsData = await prisma.$queryRaw<affiliationInterface[]>`

@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { setReview, updateReview } from "@/actions/review.action";
-import { fieldInterface, reviewInterface } from "@/constants";
+import { fieldInterface, reviewInterface, paperInterface } from "@/constants";
 import { ChangeEvent, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import CancelCreateReview from "./CancelCreateReview";
@@ -131,20 +131,31 @@ export function ReviewFormManual({
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     isLoading.current = true;
 
-    const id = review.id ? review.id : Date.now().toString(); // レビューIDを現在のタイムスタンプで生成
+    const id = review.id; //? review.id : Date.now().toString(); // レビューIDを現在のタイムスタンプで生成
 
     const url = files[0] || ""; //わからなかった。いったん空文字にしてる await uploadImage(files[0], id) : review.imageUrl;
 
     const reviewerFields: fieldInterface[] = await fetchFieldsByUserId(userId);
 
+    const paper_data: paperInterface = {
+      venue: data.venue,
+      year: data.year,
+      journal_name: data.journal_name,
+      journal_pages: data.journal_pages,
+      journal_vol: data.journal_vol,
+      authors: data.authors,
+      doi: data.doi,
+      link: data.link,
+    };
     // 提出用のレビューデータを準備
     const reviewData: reviewInterface = {
-      id: review.id,
-      content: review.content,
-      paper_title: review.paper_title,
-      paper_data: review.paper_data,
+      id: id,
+      content: data.ReviewContents,
+      paper_title: data.PaperTitle,
+      paper_data: paper_data,
       user_id: userId,
-      thumbnail_url: review.thumbnail_url,
+      thumbnail_url: data.photoUrl,
+      created_at: new Date(),
     };
 
     try {

@@ -180,12 +180,29 @@ export function ReviewForm({
 
     const reviewerFields: fieldInterface[] = await fetchFieldsByUserId(userId);
 
+    //paper.authorsを一旦string[]に変換する。
+    const authors_: string[] = [];
+    paper.authors.map((tupl) => {
+      authors_.push(tupl.name);
+    });
+
+    const paper_data_: paperInterface = {
+      venue: paper.venue,
+      year: paper.year,
+      journal_name: paper.journal.name,
+      journal_pages: paper.journal.pages,
+      journal_vol: paper.journal.volume,
+      authors: authors_[0],
+      doi: paper.externalIds.DOI,
+      link: paper.url,
+    };
+
     // 提出用のレビューデータを準備
     const reviewData: reviewInterface = {
       id: id,
       content: data.ReviewContents,
-      paper_title: review.paper_title,
-      paper_data: review.paper_data, //わからん。
+      paper_title: data.title,
+      paper_data: paper_data_, //わからん。
       user_id: userId,
       created_at: new Date(), //ここ違ってる気がする
       thumbnail_url: data.photoUrl,
