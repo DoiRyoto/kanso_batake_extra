@@ -107,7 +107,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
       user_id: userId,
     };
 
-    var affiliationId = await fetchAffiliationIdByAffiliationName(
+    let affiliationId = await fetchAffiliationIdByAffiliationName(
       data.affiliation,
     );
     if (affiliationId === 0) {
@@ -116,7 +116,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
         data.affiliation,
       );
     }
-    var fieldId = await fetchFieldIdByFieldName(data.field);
+    let fieldId = await fetchFieldIdByFieldName(data.field);
     if (fieldId === 0) {
       setField(fieldData);
       fieldId = await fetchFieldIdByFieldName(data.field);
