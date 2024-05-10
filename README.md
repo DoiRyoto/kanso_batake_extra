@@ -1,3 +1,5 @@
+There is really excellent pull request template!
+
 # 感想畑
 
 URL: https://kanso-batake.vercel.app/  
