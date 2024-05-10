@@ -144,15 +144,21 @@ export async function deleteReview(
   reviewData: reviewInterface,
   userId: string,
 ) {
-  const prismaQuery = prisma.$executeRaw`
+  try {
+    await prisma.$executeRaw<reviewInterface[]>`
     DELETE FROM "Reviews"
     WHERE id = ${reviewData.id};`;
 
+    //わからん。
+    /*
   try {
     await Promise.all([deleteImage(reviewData.id.toString()), prismaQuery]);
   } catch (error) {
     console.log(error);
     throw new Error("Failed to delete review.");
+  }*/
+  } catch (error) {
+    throw new Error("failed to delete review.");
   }
 
   revalidatePath(`/user/${userId}`);
