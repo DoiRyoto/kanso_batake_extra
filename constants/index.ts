@@ -74,6 +74,25 @@ export const emptyReview: reviewType = {
   imageUrl: "",
 };
 
+export const multiStepFormNavItemList = [
+  {
+    label: "Paper Data",
+    step: 1,
+  },
+  {
+    label: "Review / Tags",
+    step: 2,
+  },
+  {
+    label: "Image",
+    step: 3,
+  },
+  {
+    label: "Preview",
+    step: 4,
+  },
+];
+
 export const role = ["学生", "教員"];
 
 export const affiliations = [
