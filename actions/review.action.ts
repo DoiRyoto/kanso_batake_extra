@@ -80,8 +80,8 @@ export async function setReview(
 ): Promise<reviewInterface[]> {
   try {
     await prisma.$executeRaw<reviewInterface[]>`
-        INSERT INTO "Reviews" (contents, paper_data, paper_title, user_id, image_url)
-        VALUES (${reviewData.content}, ${reviewData.paper_data}, ${reviewData.paper_title}, ${reviewData.user_id}, ${reviewData.thumbnail_url});`;
+        INSERT INTO "Reviews" (content, paper_data, paper_title, user_id, thumbnail_url, created_at)
+        VALUES (${reviewData.content}, ${reviewData.paper_data}, ${reviewData.paper_title}, ${reviewData.user_id}, ${reviewData.thumbnail_url}, ${reviewData.created_at});`;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to set review.");
@@ -144,15 +144,21 @@ export async function deleteReview(
   reviewData: reviewInterface,
   userId: string,
 ) {
-  const prismaQuery = prisma.$executeRaw`
+  try {
+    await prisma.$executeRaw<reviewInterface[]>`
     DELETE FROM "Reviews"
     WHERE id = ${reviewData.id};`;
 
+    //わからん。
+    /*
   try {
     await Promise.all([deleteImage(reviewData.id.toString()), prismaQuery]);
   } catch (error) {
     console.log(error);
     throw new Error("Failed to delete review.");
+  }*/
+  } catch (error) {
+    throw new Error("failed to delete review.");
   }
 
   revalidatePath(`/user/${userId}`);

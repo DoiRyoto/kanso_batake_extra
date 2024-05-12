@@ -17,7 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { setReview, updateReview } from "@/actions/review.action";
-import { paperData, reviewType } from "@/constants";
+import { fetchFieldsByUserId } from "@/actions/field.action";
+import { fieldInterface, paperInterface, reviewInterface } from "@/constants";
 import React, {
   ChangeEvent,
   Suspense,
@@ -87,9 +88,11 @@ export function ReviewForm({
 }: {
   userId: string;
   userName: string;
-  review: reviewType;
+  review: reviewInterface;
 }) {
-  const authors: Array<{ name: string }> = [{ name: review.authors }];
+  const authors: Array<{ name: string }> = [
+    { name: review.paper_data.authors || "" },
+  ];
 
   const isLoading = useRef(false); // ローディング状態を追跡するためのuseRef
   const [isPreview, setPreview] = useState(false);
@@ -106,19 +109,25 @@ export function ReviewForm({
   };
 
   const [paper, setPaper] = useState<paperDetailsType & paperErrorType>({
-    title: review.paperTitle,
-    year: review.year,
+    title: review.paper_title,
+    year: review.paper_data.year ? review.paper_data.year : "",
     externalIds: {
-      DOI: review.doi,
+      DOI: review.paper_data.doi ? review.paper_data.doi : "",
     },
-    url: review.link,
+    url: review.paper_data.link ? review.paper_data.link : "",
     journal: {
-      name: review.journal_name,
-      pages: review.journal_pages,
-      volume: review.journal_vol,
+      name: review.paper_data.journal_name
+        ? review.paper_data.journal_name
+        : "",
+      pages: review.paper_data.journal_pages
+        ? review.paper_data.journal_pages
+        : "",
+      volume: review.paper_data.journal_vol
+        ? review.paper_data.journal_vol
+        : "",
     },
     authors: authors,
-    venue: review.venue,
+    venue: review.paper_data.venue || "",
     error: "",
   });
 
@@ -127,16 +136,15 @@ export function ReviewForm({
     resolver: zodResolver(FormSchema), // zodResolverを使ってバリデーションを設定
     defaultValues: {
       // フォームフィールドのデフォルト値を設定
-      ReviewContents: review.contents ? review.contents : "",
-      title: review.paperTitle ? review.paperTitle : "",
-      Tags: review.tags ? review.tags.toString() : "",
-      photoUrl: review.imageUrl ? review.imageUrl : "",
+      ReviewContents: review.content ? review.content : "",
+      title: review.paper_title ? review.paper_title : "",
+      photoUrl: review.thumbnail_url ? review.thumbnail_url : "",
     },
   });
 
   const handleImage = (
     e: ChangeEvent<HTMLInputElement>,
-    fieldChange: (value: string) => void
+    fieldChange: (value: string) => void,
   ) => {
     e.preventDefault();
 
@@ -166,30 +174,38 @@ export function ReviewForm({
 
     isLoading.current = true;
 
-    const id = review.id ? review.id : Date.now().toString(); // レビューIDを現在のタイムスタンプで生成
+    const id = review.id; // レビューIDを現在のタイムスタンプで生成
 
-    const url = files[0] ? await uploadImage(files[0], id) : review.imageUrl;
+    const url = files[0] || ""; //await uploadImage(files[0], id) : review.thumbnail_url;
 
-    const reviewerFields: string[] = (await fetchUser(userId)).field;
+    const reviewerFields: fieldInterface[] = await fetchFieldsByUserId(userId);
 
-    // 提出用のレビューデータを準備
-    const reviewData: reviewType = {
-      id: id,
-      contents: data.ReviewContents,
-      paperTitle: paper.title,
+    //paper.authorsを一旦string[]に変換する。
+    const authors_: string[] = [];
+    paper.authors.map((tupl) => {
+      authors_.push(tupl.name);
+    });
+
+    const paper_data_: paperInterface = {
       venue: paper.venue,
       year: paper.year,
       journal_name: paper.journal.name,
       journal_pages: paper.journal.pages,
       journal_vol: paper.journal.volume,
-      authors: paper.authors[0].name,
+      authors: authors_[0],
       doi: paper.externalIds.DOI,
       link: paper.url,
-      reviewerName: userName,
-      reviewerFields: reviewerFields,
-      createdBy: userId,
-      tags: delEmpty_tag(data.Tags),
-      imageUrl: url,
+    };
+
+    // 提出用のレビューデータを準備
+    const reviewData: reviewInterface = {
+      id: id,
+      content: data.ReviewContents,
+      paper_title: data.title,
+      paper_data: paper_data_, //わからん。
+      user_id: userId,
+      created_at: new Date(), //ここ違ってる気がする
+      thumbnail_url: data.photoUrl,
     };
 
     try {
@@ -277,7 +293,7 @@ export function ReviewForm({
                             role="combobox"
                             className={cn(
                               "w-full justify-between",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {form.getValues("title")
