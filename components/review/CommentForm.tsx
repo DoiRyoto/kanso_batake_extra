@@ -7,7 +7,7 @@ import * as z from "zod";
 
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { commentType } from "@/constants";
+import { commentInterface } from "@/constants";
 import React, { useRef } from "react";
 import { setComment } from "@/actions/comment.action";
 import { Button } from "../ui/button";
@@ -43,15 +43,15 @@ export function CommentForm({
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     isLoading.current = true;
 
-    const commentData: commentType = {
-      id: Date.now().toString(), // レビューIDを現在のタイムスタンプで生成
-      contents: data.comment,
-      userId: userId,
-      parentId: reviewId,
+    const commentData: commentInterface = {
+      id: 0,
+      content: data.comment,
+      user_id: userId,
+      review_id: Number(reviewId), // Todo: キャストするのは良くない気がする
     };
 
     try {
-      await setComment(commentData, path);
+      await setComment(commentData);
     } catch (error) {
       console.log(error);
     }

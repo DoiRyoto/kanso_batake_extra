@@ -48,7 +48,7 @@ export async function fetchUserIdsByLabId(labId: string) {
 */
 
 export async function fetchUsersByAffiliationId(
-  affiliationId: number
+  affiliationId: number,
 ): Promise<userInterface[]> {
   try {
     const usersData = await prisma.$queryRaw<userInterface[]>`
@@ -93,7 +93,7 @@ export async function setUser(userData: userInterface) {
 export async function setUser(userData: userInterface) {
   try {
     await prisma.$executeRaw`
-      INSERT INTO "Users" (user_id, name, role)
+      INSERT INTO "Users" (id, name, role)
       VALUES (${userData.id}, ${userData.name}, ${userData.role});`;
   } catch (error) {
     console.log(error);

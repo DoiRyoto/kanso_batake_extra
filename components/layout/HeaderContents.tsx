@@ -40,7 +40,10 @@ export function HeaderContents({
     return (
       <Sheet>
         <SheetTrigger asChild className="hover:cursor-pointer">
-          <RxHamburgerMenu size={"2rem"} class="transform hover:scale-110" />
+          <RxHamburgerMenu
+            size={"2rem"}
+            className="transform hover:scale-110"
+          />
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
@@ -82,7 +85,7 @@ export function HeaderContents({
   return (
     <Sheet>
       <SheetTrigger asChild className="hover:cursor-pointer">
-        <RxHamburgerMenu size={"2rem"} class="transform hover:scale-110" />
+        <RxHamburgerMenu size={"2rem"} className="transform hover:scale-110" />
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

@@ -113,7 +113,7 @@ export async function updateReview(
   try {
     await prisma.$executeRaw`
         UPDATE "Reviews" 
-        SET contents = ${reviewData.content}, paper_data = ${reviewData.paper_data}, paper_title = ${reviewData.paper_title}, user_id = {reviewData.user_id}, image_url = ${reviewData.thumbnail_url}
+        SET content = ${reviewData.content}, paper_data = ${reviewData.paper_data}, paper_title = ${reviewData.paper_title}, user_id = ${reviewData.user_id}, thumbnail_url = ${reviewData.thumbnail_url}
         WHERE id = ${reviewData.id};`;
   } catch (error) {
     console.log(error);

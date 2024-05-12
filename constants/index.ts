@@ -20,7 +20,7 @@ export interface affiliationInterface {
 // Comments Table: id, content, review_id, user_id, created_at
 export interface commentInterface {
   id: number;
-  contents: string;
+  content: string;
   user_id: string;
   review_id: number;
   created_at?: string | Date;
@@ -64,7 +64,7 @@ export interface userInterface {
 export interface workInterface {
   id: number;
   url: string | null;
-  user_id: number;
+  user_id: string;
   created_at?: string | Date;
 }
 
