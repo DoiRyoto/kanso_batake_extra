@@ -9,10 +9,8 @@ import { redirect } from "next/navigation";
 
 const page = async ({
   params: { reviewId },
-  searchParams,
 }: {
   params: { reviewId: string };
-  searchParams: { mode?: string };
 }) => {
   const user = await currentUser();
   if (!user) return null;
@@ -22,17 +20,8 @@ const page = async ({
   if (userInfo.id !== review.user_id) redirect("/");
 
   return (
-    <div className="mt-7 w-full">
-      <SwitchDemo defaultChecked={searchParams.mode !== "manual"} />
-      {searchParams.mode == "manual" ? (
-        <ReviewFormManual
-          userId={user.id}
-          userName={userInfo.name}
-          review={review}
-        />
-      ) : (
-        <ReviewForm userId={user.id} userName={userInfo.name} review={review} />
-      )}
+    <div className="w-full">
+      <ReviewForm userId={userInfo.id} review={review} mode="edit" />
     </div>
   );
 };
