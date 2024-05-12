@@ -2,7 +2,7 @@ import React from "react";
 import { fetchCommentsByReviewId } from "@/actions/comment.action";
 import Comment from "./Comment";
 
-const CommentList = async ({ reviewId }: { reviewId: string }) => {
+const CommentList = async ({ reviewId }: { reviewId: number }) => {
   const comments = await fetchCommentsByReviewId(reviewId);
 
   return (

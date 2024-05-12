@@ -1,7 +1,6 @@
 import { fetchReviewsByFilter } from "@/actions/review.action";
 import React from "react";
 import Review from "../Review";
-import { currentUser } from "@clerk/nextjs";
 
 const ReviewsByUser = async ({
   userId,
@@ -10,7 +9,6 @@ const ReviewsByUser = async ({
   userId: string;
   tag?: string;
 }) => {
-  const user = await currentUser();
   const reviewsData = await fetchReviewsByFilter(tag, userId);
 
   if (reviewsData.length == 0) {
@@ -30,7 +28,7 @@ const ReviewsByUser = async ({
             <Review
               key={review.id}
               reviewData={review}
-              userId={user?.id}
+              userId={userId}
               clamp={true}
             />
           );

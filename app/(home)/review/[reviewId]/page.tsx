@@ -13,12 +13,12 @@ const page = async ({
   const _user = await currentUser();
   if (!_user) return null;
 
-  const reviewData = await fetchReview(reviewId);
+  const reviewData = (await fetchReview(Number(reviewId)))[0];
   return (
     <div className="flex flex-col gap-5">
       <Review reviewData={reviewData} clamp={false} userId={_user.id} />
       <CommentForm userId={_user.id} reviewId={reviewId} />
-      <CommentList reviewId={reviewId} />
+      <CommentList reviewId={Number(reviewId)} />
     </div>
   );
 };
