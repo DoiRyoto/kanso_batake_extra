@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { setReview, updateReview } from "@/actions/review.action";
-import { reviewType } from "@/constants";
+import { reviewInterface } from "@/constants";
 import { ChangeEvent, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import CancelCreateReview from "./CancelCreateReview";
@@ -75,7 +75,7 @@ const FormSchema = z.object({
     message: "ReviewContents must be at least 2 characters.", // レビュー内容は最低2文字必要
   }),
   // Tagsフィールドのバリデーションルール（特に制限なし）
-  Tags: z.string(),
+  //   Tags: z.string(),
   photoUrl: z.string(),
 });
 
@@ -87,7 +87,7 @@ export function ReviewFormManual({
 }: {
   userId: string;
   userName: string;
-  review: reviewType;
+  review: reviewInterface;
 }) {
   const isLoading = useRef(false); // ローディング状態を追跡するためのuseRef
   const [isPreview, setPreview] = useState(false);
@@ -106,18 +106,24 @@ export function ReviewFormManual({
     resolver: zodResolver(FormSchema), // zodResolverを使ってバリデーションを設定
     defaultValues: {
       // フォームフィールドのデフォルト値を設定
-      PaperTitle: review.paperTitle ? review.paperTitle : "",
-      ReviewContents: review.contents ? review.contents : "",
-      venue: review.venue ? review.venue : "",
-      year: review.year ? review.year.toString() : "",
-      journal_name: review.journal_name ? review.journal_name : "",
-      journal_pages: review.journal_pages ? review.journal_pages : "",
-      journal_vol: review.journal_vol ? review.journal_vol : "",
-      authors: review.authors ? review.authors : "",
-      doi: review.doi ? review.doi : "",
-      link: review.link ? review.link : "",
-      Tags: review.tags ? review.tags.toString() : "",
-      photoUrl: review.imageUrl ? review.imageUrl : "",
+      PaperTitle: review.paper_title ? review.paper_title : "",
+      ReviewContents: review.content ? review.content : "",
+      venue: review.paper_data.venue ? review.paper_data.venue : "",
+      year: review.paper_data.year ? review.paper_data.year.toString() : "",
+      journal_name: review.paper_data.journal_name
+        ? review.paper_data.journal_name
+        : "",
+      journal_pages: review.paper_data.journal_pages
+        ? review.paper_data.journal_pages
+        : "",
+      journal_vol: review.paper_data.journal_vol
+        ? review.paper_data.journal_vol
+        : "",
+      authors: review.paper_data.authors ? review.paper_data.authors : "",
+      doi: review.paper_data.doi ? review.paper_data.doi : "",
+      link: review.paper_data.link ? review.paper_data.link : "",
+      //   Tags: review.tags ? review.tags.toString() : "",
+      photoUrl: review.thumbnail_url ? review.thumbnail_url : "",
     },
   });
 
@@ -125,30 +131,32 @@ export function ReviewFormManual({
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     isLoading.current = true;
 
-    const id = review.id ? review.id : Date.now().toString(); // レビューIDを現在のタイムスタンプで生成
+    const id = review.id ? review.id : 0;
 
-    const url = files[0] ? await uploadImage(files[0], id) : review.imageUrl;
+    const url = files[0]
+      ? await uploadImage(files[0], id)
+      : review.thumbnail_url;
 
-    const reviewerFields: string[] = (await fetchUser(userId)).field;
+    // const reviewerFields: string[] = (await fetchUser(userId)).field;
 
     // 提出用のレビューデータを準備
-    const reviewData: reviewType = {
+    const reviewData: reviewInterface = {
       id: id,
-      contents: data.ReviewContents,
-      paperTitle: data.PaperTitle,
-      venue: data.venue,
-      year: data.year,
-      journal_name: data.journal_name,
-      journal_pages: data.journal_pages,
-      journal_vol: data.journal_vol,
-      authors: data.authors,
-      doi: data.doi,
-      link: data.link,
-      reviewerName: userName,
-      reviewerFields: reviewerFields,
-      createdBy: userId,
-      imageUrl: url,
-      tags: delEmpty_tag(data.Tags),
+      content: data.ReviewContents,
+      paper_title: data.PaperTitle,
+      paper_data: {
+        venue: data.venue,
+        year: data.year,
+        journal_name: data.journal_name,
+        journal_pages: data.journal_pages,
+        journal_vol: data.journal_vol,
+        authors: data.authors,
+        doi: data.doi,
+        link: data.link,
+      },
+      user_id: userId,
+      thumbnail_url: url,
+      //   tags: delEmpty_tag(data.Tags),
     };
 
     try {
@@ -165,7 +173,7 @@ export function ReviewFormManual({
 
   const handleImage = (
     e: ChangeEvent<HTMLInputElement>,
-    fieldChange: (value: string) => void
+    fieldChange: (value: string) => void,
   ) => {
     e.preventDefault();
 
@@ -458,7 +466,7 @@ export function ReviewFormManual({
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="Tags"
               render={({ field }) => (
@@ -474,7 +482,7 @@ export function ReviewFormManual({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <FormField
               control={form.control}
