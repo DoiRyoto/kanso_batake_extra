@@ -1,6 +1,6 @@
 "use client";
 
-import { reviewInterface } from "@/constants";
+import { Review } from "@/type";
 import React from "react";
 import { FaRegEdit } from "react-icons/fa";
 import {
@@ -19,22 +19,21 @@ import { Button } from "./ui/button";
 import { deleteReview } from "@/actions/review.action";
 import { CardContent } from "./ui/card";
 
-const ReviewAction = ({
-  reviewData,
-  userId,
-}: {
-  reviewData: reviewInterface;
+type Props = {
+  reviewData?: Review;
   userId?: string;
-}) => {
-  if (!userId) return;
+};
 
-  const deleteButton_clickHandler = async () => {
+const ReviewAction = ({ reviewData, userId }: Props) => {
+  if (!userId || !reviewData) return null;
+
+  const deleteButtonClickHandler = async () => {
     await deleteReview(reviewData, userId);
   };
 
   return (
     <CardContent>
-      {userId == reviewData.user_id && (
+      {userId === reviewData.user_id && (
         <div className="flex flex-row gap-2 py-3">
           {userId == reviewData.user_id && (
             <a href={`/edit/${reviewData.id}`} target="">
@@ -42,7 +41,7 @@ const ReviewAction = ({
             </a>
           )}
 
-          {userId == reviewData.user_id && (
+          {userId === reviewData.user_id && (
             <>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -62,7 +61,7 @@ const ReviewAction = ({
                   <AlertDialogFooter>
                     <AlertDialogCancel>キャンセル</AlertDialogCancel>
                     <AlertDialogAction asChild>
-                      <Button onClick={deleteButton_clickHandler}>
+                      <Button onClick={deleteButtonClickHandler}>
                         投稿を削除する
                       </Button>
                     </AlertDialogAction>

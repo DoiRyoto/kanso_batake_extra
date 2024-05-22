@@ -4,7 +4,7 @@ import remarkBreaks from "remark-breaks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
-import { reviewInterface } from "@/constants";
+import { Review } from "@/type";
 import { Modal } from "./review/Modal";
 import clsx from "clsx";
 import PaperData from "./PaperData";
@@ -12,15 +12,15 @@ import ReviewTags from "./ReviewTags";
 import ReviewUserInfo from "./ReviewUserInfo";
 import ReviewAction from "./ReviewAction";
 
-const Review = ({
-  reviewData,
-  userId,
-  clamp,
-}: {
-  reviewData: reviewInterface;
+type Props = {
+  reviewData?: Review;
   userId?: string;
   clamp?: boolean;
-}) => {
+};
+
+const Review = ({ reviewData, userId, clamp }: Props) => {
+  if (!reviewData) return null;
+
   return (
     <Card>
       <CardHeader>
@@ -29,7 +29,7 @@ const Review = ({
             {reviewData.paper_title}
           </CardTitle>
         </Link>
-        <PaperData reviewData={reviewData} />
+        <PaperData paperData={reviewData.paper_data} />
         <Separator />
       </CardHeader>
       <ReviewTags reviewId={reviewData.id} />
