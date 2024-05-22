@@ -1,39 +1,39 @@
-import { reviewInterface } from "@/constants";
+import { Paper, Review } from "@/type";
 import React from "react";
 import { CardDescription } from "./ui/card";
 import { SiDoi } from "react-icons/si";
 import { IoIosPaper } from "react-icons/io";
 
-const PaperData = ({ reviewData }: { reviewData: reviewInterface }) => {
+type Props = {
+  paperData?: Paper;
+};
+
+const PaperData = ({ paperData }: Props) => {
+  if (!paperData) return null;
+
   return (
     <>
-      <CardDescription>{reviewData.paper_data.authors}</CardDescription>
+      <CardDescription>{paperData.authors}</CardDescription>
       <CardDescription>
-        {reviewData.paper_data.journal_name
-          ? reviewData.paper_data.journal_name + "."
-          : ""}
-        {reviewData.paper_data.year ? reviewData.paper_data.year + "." : ""}
-        {reviewData.paper_data.journal_vol
-          ? reviewData.paper_data.journal_vol + "."
-          : ""}
-        {reviewData.paper_data.journal_pages
-          ? reviewData.paper_data.journal_pages + "."
-          : ""}
+        {paperData.journal_name ? paperData.journal_name + "." : ""}
+        {paperData.year ? paperData.year + "." : ""}
+        {paperData.journal_vol ? paperData.journal_vol + "." : ""}
+        {paperData.journal_pages ? paperData.journal_pages + "." : ""}
       </CardDescription>
-      {(reviewData.paper_data.doi || reviewData.paper_data.link) && (
+      {(paperData.doi || paperData.link) && (
         <div className="flex flex-row gap-2 py-3">
-          {reviewData.paper_data.doi && (
+          {paperData.doi && (
             <a
-              href={`https://www.doi.org/${reviewData.paper_data.doi}`}
+              href={`https://www.doi.org/${paperData.doi}`}
               target="_blank"
               className="transform hover:scale-110 motion-reduce:transform-none"
             >
               <SiDoi size="2rem" />
             </a>
           )}
-          {reviewData.paper_data.link && (
+          {paperData.link && (
             <a
-              href={`${reviewData.paper_data.link}`}
+              href={`${paperData.link}`}
               target="_blank"
               className="transform hover:scale-110 motion-reduce:transform-none"
             >

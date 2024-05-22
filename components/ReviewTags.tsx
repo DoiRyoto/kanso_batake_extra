@@ -3,7 +3,13 @@ import React from "react";
 import { CardContent } from "./ui/card";
 import Link from "next/link";
 
-const ReviewTags = async ({ reviewId }: { reviewId: number }) => {
+type Props = {
+  reviewId?: number;
+};
+
+const ReviewTags = async ({ reviewId }: Props) => {
+  if (!reviewId) return null;
+
   const tagsData = await fetchTagsByReviewId(reviewId);
   return (
     <>
