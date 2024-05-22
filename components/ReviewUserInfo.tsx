@@ -5,7 +5,13 @@ import icon from "@/public/icon.png";
 import Link from "next/link";
 import { CardContent } from "./ui/card";
 
-const ReviewUserInfo = async ({ userId }: { userId: string }) => {
+type Props = {
+  userId?: string;
+};
+
+const ReviewUserInfo = async ({ userId }: Props) => {
+  if (!userId) return null;
+
   const userInfo = await fetchUser(userId);
 
   return (
