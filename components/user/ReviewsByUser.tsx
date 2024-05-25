@@ -2,16 +2,15 @@ import { fetchReviewsByFilter } from "@/actions/review.action";
 import React from "react";
 import Review from "../Review";
 
-const ReviewsByUser = async ({
-  userId,
-  tag,
-}: {
-  userId: string;
+type Props = {
+  userId?: string;
   tag?: string;
-}) => {
+};
+
+const ReviewsByUser = async ({ userId, tag }: Props) => {
   const reviewsData = await fetchReviewsByFilter(tag, userId);
 
-  if (reviewsData.length == 0) {
+  if (reviewsData.length === 0) {
     return <div>No Reviews.</div>;
   }
 

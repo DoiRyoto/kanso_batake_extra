@@ -1,10 +1,10 @@
 import React from "react";
-import { affiliationInterface } from "@/constants";
+import { Affiliation } from "@/type";
 import LabCard from "./LabCard";
 import { fetchAllAffiliations } from "@/actions/affiliation.action";
 
 const LabLists = async () => {
-  const affiliations: affiliationInterface[] = await fetchAllAffiliations();
+  const affiliations: Affiliation[] = await fetchAllAffiliations();
 
   return (
     <>
