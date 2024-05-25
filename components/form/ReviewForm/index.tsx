@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import { multiStepFormNavItemList, reviewType, userType } from "@/constants";
+import { multiStepFormNavItemList } from "@/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -11,15 +11,16 @@ import { ReviewAndTagForm } from "./components/ReviewAndTagForm";
 import { ImageForm } from "./components/ImageForm";
 import { Preview } from "./components/Preview";
 import { uploadImage } from "@/actions/image.action";
-import { delEmpty_tag } from "@/lib/utils";
+import { createTags } from "@/lib/utils";
 import { setReview, updateReview } from "@/actions/review.action";
 import { Button } from "@/components/ui/button";
 import MultiStepFormNavBar from "../MultiStepFormNavBar";
+import { Review, User } from "@/type";
 
 type Props = {
-  user: userType;
+  user?: User;
   mode?: "create" | "edit";
-  review?: reviewType;
+  review?: Review;
 };
 
 const MIN_STEP = 1;
@@ -55,47 +56,64 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      doi: review && review.doi ? review.doi : "",
-      paperTitle: review && review.paperTitle ? review.paperTitle : "",
-      authors: review && review.authors ? review.authors : "",
-      year: review && review.year ? review.year.toString() : "",
-      venue: review && review.venue ? review.venue : "",
-      journalName: review && review.journal_name ? review.journal_name : "",
-      journalPages: review && review.journal_pages ? review.journal_pages : "",
-      journalVol: review && review.journal_vol ? review.journal_vol : "",
-      link: review && review.link ? review.link : "",
-      reviewContents: review && review.contents ? review.contents : "",
+      doi: review && review.paper_data.doi ? review.paper_data.doi : "",
+      paperTitle: review && review.paper_title,
+      authors:
+        review && review.paper_data.authors ? review.paper_data.authors : "",
+      year:
+        review && review.paper_data.year
+          ? review.paper_data.year.toString()
+          : "",
+      venue: review && review.paper_data.venue ? review.paper_data.venue : "",
+      journalName:
+        review && review.paper_data.journal_name
+          ? review.paper_data.journal_name
+          : "",
+      journalPages:
+        review && review.paper_data.journal_pages
+          ? review.paper_data.journal_pages
+          : "",
+      journalVol:
+        review && review.paper_data.journal_vol
+          ? review.paper_data.journal_vol
+          : "",
+      link: review && review.paper_data.link ? review.paper_data.link : "",
+      reviewContents: review && review.content ? review.content : "",
       tags: review && review.tags ? review.tags.toString() : "",
-      imageUrl: review && review.imageUrl ? review.imageUrl : "",
+      imageUrl: review && review.thumbnail_url ? review.thumbnail_url : "",
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (!user) return null;
+
     isLoading.current = true;
 
-    const id = review && review.id ? review.id : Date.now().toString(); // レビューIDを現在のタイムスタンプで生成
-    const url = files[0] ? await uploadImage(files[0], id) : review?.imageUrl;
-    const userName = user.name;
-    const reviewerFields: string[] = user.field;
+    const id = review && review.id ? review.id : Date.now(); // レビューIDを現在のタイムスタンプで生成
+    const url = files[0]
+      ? await uploadImage(files[0], id)
+      : review?.thumbnail_url;
 
     // 提出用のレビューデータを準備
-    const reviewData: reviewType = {
+    const reviewData: Review = {
       id: id,
-      contents: data.reviewContents,
-      paperTitle: data.paperTitle,
-      venue: data.venue,
-      year: data.year,
-      journal_name: data.journalName,
-      journal_pages: data.journalPages,
-      journal_vol: data.journalVol,
-      authors: data.authors,
-      doi: data.doi,
-      link: data.link,
-      reviewerName: userName,
-      reviewerFields: reviewerFields,
-      createdBy: user.id,
-      tags: delEmpty_tag(data.tags),
-      imageUrl: url || "",
+      content: data.reviewContents,
+      paper_title: data.paperTitle,
+      paper_data: {
+        venue: data.venue,
+        year: data.year,
+        journal_name: data.journalName,
+        journal_pages: data.journalPages,
+        journal_vol: data.journalVol,
+        authors: data.authors,
+        doi: data.doi,
+        link: data.link,
+      },
+      comments: [],
+      user_id: user.id,
+      created_at: Date(),
+      tags: createTags(data.tags, user.id),
+      thumbnail_url: url || "",
     };
 
     try {
