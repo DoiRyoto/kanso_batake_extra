@@ -19,7 +19,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const topics = await fetchAllTopics();
     return NextResponse.json(
       topics, 
-       { status: 200 }
+      { status: 200 }
     );
   } catch (error) {
     console.error(error);
