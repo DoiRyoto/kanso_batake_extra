@@ -33,6 +33,13 @@ export type Field = {
   created_at: string | Date;
 };
 
+// Topics Table: id, name, created_at
+export type Topic = {
+  id: number;
+  name: string;
+  created_at: string | Date;
+};
+
 // Reviews Table: id, content, paper_data, paper_title, user_id, created_at, thumbnail_url
 export type Review = {
   id: number;
@@ -44,7 +51,7 @@ export type Review = {
   tags: Tag[];
   created_at: string | Date;
   thumbnail_url: string | null;
-}
+};
 
 // Tags Table: id, name, user_id, created_at
 export type Tag = {
@@ -52,7 +59,7 @@ export type Tag = {
   name: string;
   user_id: string;
   created_at: string | Date;
-}
+};
 
 // Users Table: id, user_id, name, role, created_at
 export type User = {
@@ -60,7 +67,7 @@ export type User = {
   name: string;
   role: string | null; // いったん　Student or Teacher
   created_at: string | Date;
-}
+};
 
 // Works Table: id, url, user_id, created_at
 export type Work = {
@@ -68,4 +75,4 @@ export type Work = {
   url: string | null;
   user_id: string;
   created_at: string | Date;
-}
+};
