@@ -2,13 +2,15 @@ import React from "react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
-import { affiliationInterface } from "@/constants";
+import { Affiliation } from "@/type";
 
-const LabCard = async ({
-  affiliationData,
-}: {
-  affiliationData: affiliationInterface;
-}) => {
+type Props = {
+  affiliationData?: Affiliation;
+};
+
+const LabCard = async ({ affiliationData }: Props) => {
+  if (!affiliationData) return null;
+
   return (
     <>
       <Card>

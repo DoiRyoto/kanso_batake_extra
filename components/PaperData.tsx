@@ -1,4 +1,4 @@
-import { Paper, Review } from "@/type";
+import { Paper } from "@/type";
 import React from "react";
 import { CardDescription } from "./ui/card";
 import { SiDoi } from "react-icons/si";

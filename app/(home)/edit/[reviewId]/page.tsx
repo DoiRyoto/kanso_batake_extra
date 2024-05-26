@@ -1,7 +1,5 @@
 import { fetchUser } from "@/actions/user.action";
 import { ReviewForm } from "@/components/form/ReviewForm";
-import { ReviewFormManual } from "@/components/form/ReviewFormManual";
-import { SwitchDemo } from "@/components/form/ReviewFormModeChangeSwitch";
 import { currentUser } from "@clerk/nextjs";
 import { fetchReview } from "@/actions/review.action";
 import React from "react";
@@ -21,7 +19,7 @@ const page = async ({
 
   return (
     <div className="w-full">
-      <ReviewForm userId={userInfo.id} review={review} mode="edit" />
+      <ReviewForm user={userInfo} review={review} mode="edit" />
     </div>
   );
 };

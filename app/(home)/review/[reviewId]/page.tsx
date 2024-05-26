@@ -17,7 +17,7 @@ const page = async ({
   return (
     <div className="flex flex-col gap-5">
       <Review reviewData={reviewData} clamp={false} userId={_user.id} />
-      <CommentForm userId={_user.id} reviewId={reviewId} />
+      <CommentForm userId={_user.id} reviewId={Number(reviewId)} />
       <CommentList reviewId={Number(reviewId)} />
     </div>
   );

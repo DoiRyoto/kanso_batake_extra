@@ -1,9 +1,14 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { AspectRatio } from "../ui/aspect-ratio";
 import Image from "next/image";
 import { ScrollArea } from "../ui/scroll-area";
 
-export function Modal({ imageUrl }: { imageUrl: string }) {
+type Props = {
+  imageUrl?: string;
+};
+
+export function Modal({ imageUrl }: Props) {
+  if (!imageUrl) return null;
+
   return (
     <Dialog>
       <DialogTrigger asChild>

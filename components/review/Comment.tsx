@@ -6,10 +6,16 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Separator } from "../ui/separator";
-import { commentInterface } from "@/constants";
+import { Comment as CommentType } from "@/type";
 import { fetchUser } from "@/actions/user.action";
 
-const Comment = async ({ commentData }: { commentData: commentInterface }) => {
+type Props = {
+  commentData?: CommentType;
+};
+
+const Comment = async ({ commentData }: Props) => {
+  if (!commentData) return null;
+
   const user = (await fetchUser(commentData.user_id))[0];
   return (
     <Card>

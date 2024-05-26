@@ -18,25 +18,24 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { affiliationInterface, userInterface } from "@/constants";
 import Link from "next/link";
 
 import { useClerk } from "@clerk/nextjs";
 import { Kaisei_Tokumin } from "next/font/google";
 import clsx from "clsx";
 import Image from "next/image";
+import { Affiliation, User } from "@/type";
 const kaisei = Kaisei_Tokumin({ weight: "400", subsets: ["cyrillic"] });
 
-export function HeaderContents({
-  user,
-  affiliation,
-}: {
-  affiliation?: affiliationInterface;
-  user?: userInterface;
-}) {
+type Props = {
+  userData?: User;
+  affiliationData?: Affiliation;
+};
+
+export function HeaderContents({ userData, affiliationData }: Props) {
   const { signOut } = useClerk();
 
-  if (!user) {
+  if (!userData) {
     return (
       <Sheet>
         <SheetTrigger asChild className="hover:cursor-pointer">
@@ -121,16 +120,16 @@ export function HeaderContents({
               </SheetClose>
               <SheetClose asChild>
                 <Link
-                  href={`/user/${user.id}`}
+                  href={`/user/${userData.id}`}
                   className="flex text-lg px-2 py-1 flex-row items-center gap-4 hover:underline"
                 >
                   <IoPersonOutline /> マイページ
                 </Link>
               </SheetClose>
-              {affiliation && (
+              {affiliationData && (
                 <SheetClose asChild>
                   <Link
-                    href={`/lab/${affiliation.id}`}
+                    href={`/lab/${affiliationData.id}`}
                     className="flex text-lg px-2 py-1 flex-row items-center gap-4 hover:underline"
                   >
                     <ImLab /> マイラボ

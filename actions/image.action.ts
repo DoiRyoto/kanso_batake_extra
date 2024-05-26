@@ -9,7 +9,7 @@ import { storage } from "@/lib/firebase/storage";
 
 export async function uploadImage(
   file: File,
-  reviewId: string
+  reviewId: number
 ): Promise<string> {
   try {
     const storageRef = ref(storage, `Review/${reviewId}.jpg`);

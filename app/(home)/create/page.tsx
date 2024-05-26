@@ -10,7 +10,7 @@ const page = async () => {
 
   return (
     <div className="w-full">
-      <ReviewForm userId={userInfo.id} mode="create" />
+      <ReviewForm user={userInfo} mode="create" />
     </div>
   );
 };
