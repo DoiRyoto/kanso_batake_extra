@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Review } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 
-export async function fetchReview(reviewId: number): Promise<Review | null> {
+async function fetchReview(reviewId: number): Promise<Review | null> {
   try {
     const review: Review | null = await prisma.$queryRaw<Review[]>`
     SELECT * FROM "Reviews" WHERE id = ${reviewId};
