@@ -28,7 +28,7 @@ export async function GET(
     if (!review) {
       return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
     }
-    return NextResponse.json(review);
+    return NextResponse.json(review, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
