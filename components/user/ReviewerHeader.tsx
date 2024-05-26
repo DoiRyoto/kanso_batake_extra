@@ -6,7 +6,13 @@ import { fetchAffiliationsByUserId } from "@/actions/affiliation.action";
 import { fetchFieldsByUserId } from "@/actions/field.action";
 import { fetchWorksByUserId } from "@/actions/work.action";
 
-const ReviewHeader = async ({ userId }: { userId: string }) => {
+type Props = {
+  userId?: string;
+};
+
+const ReviewHeader = async ({ userId }: Props) => {
+  if (!userId) return null;
+
   const [user, affiliations, fields, works] = await Promise.all([
     fetchUser(userId),
     fetchAffiliationsByUserId(userId),

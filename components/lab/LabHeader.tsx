@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 import {
@@ -16,17 +10,23 @@ import {
 } from "@/components/ui/accordion";
 
 import { fetchUsersByAffiliationId } from "@/actions/user.action";
-import { userInterface } from "@/constants";
 import { fetchAffiliation } from "@/actions/affiliation.action";
+import { User } from "@/type";
 
-const LabHeader = async ({ affiliationId }: { affiliationId: number }) => {
+type Props = {
+  affiliationId?: number;
+};
+
+const LabHeader = async ({ affiliationId }: Props) => {
+  if (!affiliationId) return null;
+
   const [users, affiliation] = await Promise.all([
     fetchUsersByAffiliationId(affiliationId),
     fetchAffiliation(affiliationId),
   ]);
 
-  let teachers: userInterface[] = [];
-  let students: userInterface[] = [];
+  let teachers: User[] = [];
+  let students: User[] = [];
 
   // teacherとstudentに仕分け
   users.map((user) => {

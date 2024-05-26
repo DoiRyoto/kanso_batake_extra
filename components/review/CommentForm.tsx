@@ -1,53 +1,47 @@
 "use client";
 
-// 必要なライブラリやコンポーネントをインポート
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { commentInterface } from "@/constants";
+import { Comment } from "@/type";
 import React, { useRef } from "react";
 import { setComment } from "@/actions/comment.action";
 import { Button } from "../ui/button";
-import { usePathname } from "next/navigation";
 
-// フォームのバリデーションスキーマを定義
+type Props = {
+  userId?: string;
+  reviewId?: number;
+};
+
 const FormSchema = z.object({
-  // 各フィールドにバリデーションルールを設定
   comment: z.string().min(1),
 });
 
-// ReviewFormコンポーネントを定義
-export function CommentForm({
-  userId,
-  reviewId,
-}: {
-  userId: string;
-  reviewId: string;
-}) {
-  const isLoading = useRef(false); // ローディング状態を追跡するためのuseRef
-  const path = usePathname();
+export function CommentForm({ userId, reviewId }: Props) {
+  const isLoading = useRef(false);
 
-  // useFormフックを使ってフォームを初期化
   const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema), // zodResolverを使ってバリデーションを設定
+    resolver: zodResolver(FormSchema),
     defaultValues: {
-      // フォームフィールドのデフォルト値を設定
       comment: "",
     },
   });
 
-  // フォーム送信時の処理を定義
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (!reviewId) return null;
+    if (!userId) return null;
+
     isLoading.current = true;
 
-    const commentData: commentInterface = {
+    const commentData: Comment = {
       id: 0,
       content: data.comment,
       user_id: userId,
-      review_id: Number(reviewId), // Todo: キャストするのは良くない気がする
+      review_id: reviewId,
+      created_at: Date(),
     };
 
     try {
@@ -59,7 +53,6 @@ export function CommentForm({
     form.reset();
   }
 
-  // フォームのレンダリングを行う
   return (
     <Form {...form}>
       <form

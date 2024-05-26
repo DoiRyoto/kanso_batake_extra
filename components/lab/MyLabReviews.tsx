@@ -1,16 +1,17 @@
 import React from "react";
 import Review from "../Review";
-import { reviewInterface } from "@/constants";
 import { fetchReviewsByAffiliationId } from "@/actions/review.action";
+import { Review as ReviewType } from "@/type";
 
-const MyLabReviews = async ({
-  affiliationId,
-  tag,
-}: {
-  affiliationId: number;
+type Props = {
+  affiliationId?: number;
   tag?: string;
-}) => {
-  const reviewsData: reviewInterface[] = await fetchReviewsByAffiliationId(
+};
+
+const MyLabReviews = async ({ affiliationId, tag }: Props) => {
+  if (!affiliationId) return null;
+
+  const reviewsData: ReviewType[] = await fetchReviewsByAffiliationId(
     affiliationId
   );
 

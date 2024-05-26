@@ -15,14 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  affiliations,
-  fields,
-  affiliationInterface,
-  fieldInterface,
-  userInterface,
-  workInterface,
-} from "@/constants";
+import { affiliations, fields } from "@/constants";
 import { useRef } from "react";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
@@ -59,6 +52,7 @@ import {
 } from "../ui/select";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "../ui/scroll-area";
+import { Affiliation, Field, User, Work } from "@/type";
 
 const FormSchema = z.object({
   username: z.string().min(1, {
@@ -86,34 +80,38 @@ export function OnboadingForm({ userId }: { userId: string }) {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     isLoading.current = true;
+    const now = Date();
 
-    const userData: userInterface = {
+    const userData: User = {
       id: userId,
       name: data.username,
       role: data.role,
-      created_at: Date.now().toString(),
+      created_at: now,
     };
-    const affiliationData: affiliationInterface = {
+    const affiliationData: Affiliation = {
       id: 0,
       name: data.affiliation,
+      created_at: now,
     };
-    const fieldData: fieldInterface = {
+    const fieldData: Field = {
       id: 0,
       name: data.field,
+      created_at: now,
     };
-    const workData: workInterface = {
+    const workData: Work = {
       id: 0,
       url: data.url ? data.url : "",
       user_id: userId,
+      created_at: now,
     };
 
     let affiliationId = await fetchAffiliationIdByAffiliationName(
-      data.affiliation,
+      data.affiliation
     );
     if (affiliationId === 0) {
       setAffiliation(affiliationData);
       affiliationId = await fetchAffiliationIdByAffiliationName(
-        data.affiliation,
+        data.affiliation
       );
     }
     let fieldId = await fetchFieldIdByFieldName(data.field);
@@ -122,8 +120,8 @@ export function OnboadingForm({ userId }: { userId: string }) {
       fieldId = await fetchFieldIdByFieldName(data.field);
     }
     await setUser(userData);
-    await setAffiliationToUser(affiliationId[0].id, userId);
-    await setFieldToUser(fieldId[0].id, userId);
+    await setAffiliationToUser(affiliationId, userId);
+    await setFieldToUser(fieldId, userId);
     await setWork(workData);
 
     router.push("/");
@@ -167,12 +165,12 @@ export function OnboadingForm({ userId }: { userId: string }) {
                       role="combobox"
                       className={cn(
                         "w-full justify-between",
-                        !field.value && "text-muted-foreground",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value
                         ? affiliations.find(
-                            (affiliation) => affiliation.value === field.value,
+                            (affiliation) => affiliation.value === field.value
                           )?.label
                         : "所属を選択"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -198,7 +196,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
                                 "mr-2 h-4 w-4",
                                 affiliation.value === field.value
                                   ? "opacity-100"
-                                  : "opacity-0",
+                                  : "opacity-0"
                               )}
                             />
                             {affiliation.label}
@@ -233,7 +231,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
                       role="combobox"
                       className={cn(
                         "w-full justify-between",
-                        !field.value && "text-muted-foreground",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value
@@ -262,7 +260,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
                                 "mr-2 h-4 w-4",
                                 f.value === field.value
                                   ? "opacity-100"
-                                  : "opacity-0",
+                                  : "opacity-0"
                               )}
                             />
                             {f.label}

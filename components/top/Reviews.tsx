@@ -2,7 +2,11 @@ import { fetchReviewsByFilter } from "@/actions/review.action";
 import React from "react";
 import Review from "../Review";
 
-const Reviews = async ({ tag }: { tag?: string }) => {
+type Props = {
+  tag?: string;
+};
+
+const Reviews = async ({ tag }: Props) => {
   const reviewsData = await fetchReviewsByFilter(tag);
 
   return (
