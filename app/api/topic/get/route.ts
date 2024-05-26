@@ -17,7 +17,10 @@ async function fetchAllTopics(): Promise<Topic[]> {
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const topics = await fetchAllTopics();
-    return NextResponse.json(topics);
+    return NextResponse.json(
+      topics, 
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
