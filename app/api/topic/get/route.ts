@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Topic } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 
-export async function fetchAllTopics(): Promise<Topic[]> {
+async function fetchAllTopics(): Promise<Topic[]> {
   try {
     const topics: Topic[] = await prisma.$queryRaw<Topic[]>`
       SELECT * FROM "Topics" ORDER BY created_at DESC;
