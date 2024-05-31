@@ -1,5 +1,6 @@
 import { tagInterface } from "@/constants";
 import { prisma } from "@/lib/prisma/prisma-client";
+import { Tag } from "@/type";
 
 export async function fetchAllTags(): Promise<tagInterface[]> {
   try {
@@ -13,7 +14,7 @@ export async function fetchAllTags(): Promise<tagInterface[]> {
 }
 
 export async function fetchTagsByReviewId(
-  reviewId: number
+  reviewId: number,
 ): Promise<tagInterface[]> {
   try {
     const tagsData = await prisma.$queryRaw<tagInterface[]>`
@@ -30,13 +31,41 @@ export async function fetchTagsByReviewId(
   }
 }
 
-export async function setTag(tagData: tagInterface) {
+export async function setTag(tags: Tag[]) {
   try {
-    await prisma.$executeRaw<number>`
-      INSERT INTO "Tags" (name)
-      VALUES (${tagData.name});`;
+    for (const tagData of tags) {
+      await fetch("/api/tag/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tagData }),
+      });
+    }
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to set field.");
+    throw new Error("Failed to set tag.");
+  }
+}
+
+export async function setTagsToReview(reviewId: number, tags: Tag[]) {
+  try {
+    // tagを一個づつPOSTする
+    for (const tagData of tags) {
+      const body = {
+        tagData,
+        reviewId,
+      };
+      await fetch("/api/tagToreview/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ body }),
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to set TagToReview table.");
   }
 }
