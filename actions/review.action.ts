@@ -1,6 +1,6 @@
 "use server";
 
-import { reviewInterface } from "@/constants";
+// import { reviewInterface } from "@/constants";
 import { Review } from "@/type";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -21,9 +21,9 @@ export async function getAllReviews() {
 }
 */
 
-export async function fetchAllReviews(): Promise<reviewInterface[]> {
+export async function fetchAllReviews(): Promise<Review[]> {
   try {
-    const reviewsData = await prisma.$queryRaw<reviewInterface[]>`
+    const reviewsData = await prisma.$queryRaw<Review[]>`
         SELECT * FROM "Reviews" ORDER BY created_at DESC`;
 
     return reviewsData;
@@ -49,11 +49,9 @@ export async function fetchReview(reviewId: string) {
 }
 */
 
-export async function fetchReview(
-  reviewId: number,
-): Promise<reviewInterface[]> {
+export async function fetchReview(reviewId: number): Promise<Review[]> {
   try {
-    const reviewData = await prisma.$queryRaw<reviewInterface[]>`
+    const reviewData = await prisma.$queryRaw<Review[]>`
         SELECT * FROM "Reviews" WHERE id = ${reviewId};`;
 
     return reviewData;
@@ -106,10 +104,7 @@ export async function updateReview(
 }
 */
 
-export async function updateReview(
-  userId: string,
-  reviewData: reviewInterface,
-) {
+export async function updateReview(userId: string, reviewData: Review) {
   try {
     await prisma.$executeRaw`
         UPDATE "Reviews" 
@@ -140,12 +135,9 @@ export async function deleteReview(
 }
 */
 
-export async function deleteReview(
-  reviewData: reviewInterface,
-  userId: string,
-) {
+export async function deleteReview(reviewData: Review, userId: string) {
   try {
-    await prisma.$executeRaw<reviewInterface[]>`
+    await prisma.$executeRaw<Review[]>`
     DELETE FROM "Reviews"
     WHERE id = ${reviewData.id};`;
 
@@ -188,11 +180,9 @@ export async function fetchReviewsByUser(userId: string) {
 }
 */
 
-export async function fetchReviewsByUser(
-  userId: string,
-): Promise<reviewInterface[]> {
+export async function fetchReviewsByUser(userId: string): Promise<Review[]> {
   try {
-    const reviewsData = await prisma.$queryRaw<reviewInterface[]>`
+    const reviewsData = await prisma.$queryRaw<Review[]>`
       SELECT *
       FROM "Reviews"
       WHERE user_id = ${userId}
@@ -226,11 +216,9 @@ export async function fetchReviewsByTag(searchTag: string) {
 }
 */
 
-export async function fetchReviewsByTag(
-  searchTag: string,
-): Promise<reviewInterface[]> {
+export async function fetchReviewsByTag(searchTag: string): Promise<Review[]> {
   try {
-    const reviewsData = await prisma.$queryRaw<reviewInterface[]>`
+    const reviewsData = await prisma.$queryRaw<Review[]>`
       SELECT "Reviews".*
       FROM "Reviews"
       JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
@@ -272,9 +260,9 @@ export async function fetchReviewsByTagAndUser(
 export async function fetchReviewsByTagAndUser(
   searchTag: string,
   userId: string,
-): Promise<reviewInterface[]> {
+): Promise<Review[]> {
   try {
-    const reviewsData = await prisma.$queryRaw<reviewInterface[]>`
+    const reviewsData = await prisma.$queryRaw<Review[]>`
       SELECT "Reviews".*
       FROM "Reviews"
       JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
@@ -293,7 +281,7 @@ export async function fetchReviewsByTagAndUser(
 export async function fetchReviewsByFilter(
   searchTag?: string,
   userId?: string,
-): Promise<reviewInterface[]> {
+): Promise<Review[]> {
   try {
     if (!searchTag && !userId) {
       return fetchAllReviews();
@@ -316,9 +304,9 @@ export async function fetchReviewsByFilter(
 
 export async function fetchReviewsByAffiliationId(
   affiliationId: number,
-): Promise<reviewInterface[]> {
+): Promise<Review[]> {
   try {
-    const reviewsData = await prisma.$queryRaw<reviewInterface[]>`
+    const reviewsData = await prisma.$queryRaw<Review[]>`
       SELECT "Reviews".*
       FROM "Reviews"
       JOIN "Users" ON "Reviews".user_id = "Users".id
