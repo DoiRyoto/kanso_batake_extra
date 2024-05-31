@@ -1,6 +1,7 @@
 "use server";
 
 import { reviewInterface } from "@/constants";
+import { Review } from "@/type";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { deleteImage } from "./image.action";
@@ -74,21 +75,20 @@ export async function setReview(userId: string, reviewData: reviewInterface) {
 }
 */
 
-export async function setReview(
-  auth_userId: string,
-  reviewData: reviewInterface,
-): Promise<reviewInterface[]> {
+export async function setReview(auth_userId: string, reviewData: Review) {
   try {
-    await prisma.$executeRaw<reviewInterface[]>`
-        INSERT INTO "Reviews" (content, paper_data, paper_title, user_id, thumbnail_url, created_at)
-        VALUES (${reviewData.content}, ${reviewData.paper_data}, ${reviewData.paper_title}, ${reviewData.user_id}, ${reviewData.thumbnail_url}, ${reviewData.created_at});`;
+    // userIdとreviewDataをポストする
+    const response = await fetch("/api/post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reviewData }),
+    });
   } catch (error) {
     console.log(error);
     throw new Error("Failed to set review.");
   }
-
-  revalidatePath(`/user/${auth_userId}`);
-  redirect(`/user/${auth_userId}`);
 }
 
 /*
