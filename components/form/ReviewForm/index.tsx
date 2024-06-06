@@ -113,7 +113,8 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
       comments: [],
       user_id: user.id,
       created_at: Date(),
-      tags: createTags(data.tags, user.id),
+      // tags: createTags(data.tags, user.id),
+      tags: createTags(data.tags),
       thumbnail_url: url || "",
     };
 

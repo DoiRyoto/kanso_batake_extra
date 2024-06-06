@@ -10,7 +10,7 @@ export function urlDecode(text: string) {
   return decodeURIComponent(text);
 }
 
-export function createTags(tag: string, userId: string): Tag[] {
+export function createTags(tag: string): Tag[] {
   if (tag.length === 0) return [];
 
   const now = Date();
@@ -19,7 +19,6 @@ export function createTags(tag: string, userId: string): Tag[] {
     return {
       id: -1,
       name: tag,
-      user_id: userId,
       created_at: now,
     };
   });
