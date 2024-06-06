@@ -1,6 +1,6 @@
 import { fetchReviewsByFilter } from "@/actions/review.action";
 import React from "react";
-import Review from "../Review";
+import ReviewContainer from "../ReviewContainer";
 
 type Props = {
   tag?: string;
@@ -8,6 +8,8 @@ type Props = {
 
 const Reviews = async ({ tag }: Props) => {
   const reviewsData = await fetchReviewsByFilter(tag);
+  const reviewIds = reviewsData.map((review) => review.id);
+  // const reviewIds = await fetchReviewIdsByFilter(tag);
 
   return (
     <>
@@ -17,8 +19,10 @@ const Reviews = async ({ tag }: Props) => {
         </div>
       ) : null}
       <div className="flex flex-col gap-2">
-        {reviewsData.map((review) => {
-          return <Review key={review.id} reviewData={review} clamp={true} />;
+        {reviewIds.map((reviewId) => {
+          return (
+            <ReviewContainer key={reviewId} reviewId={reviewId} clamp={true} />
+          );
         })}
       </div>
     </>

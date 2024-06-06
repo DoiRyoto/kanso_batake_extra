@@ -1,23 +1,21 @@
-import { fetchUser } from "@/actions/user.action";
 import Image from "next/image";
 import React from "react";
 import icon from "@/public/icon.png";
 import Link from "next/link";
 import { CardContent } from "./ui/card";
+import { User } from "@/type";
 
 type Props = {
-  userId?: string;
+  userInfo?: User;
 };
 
-const ReviewUserInfo = async ({ userId }: Props) => {
-  if (!userId) return null;
-
-  const userInfo = await fetchUser(userId);
+const ReviewUserInfo = ({ userInfo }: Props) => {
+  if (!userInfo) return null;
 
   return (
     <CardContent>
       <Link
-        href={`/user/${userInfo[0].id}`}
+        href={`/user/${userInfo.id}`}
         className="flex text-blue-400 hover:text-blue-600 underline gap-2"
       >
         <Image
@@ -27,7 +25,7 @@ const ReviewUserInfo = async ({ userId }: Props) => {
           width={24}
           height={24}
         />
-        {userInfo[0].name}
+        {userInfo.name}
       </Link>
     </CardContent>
   );
