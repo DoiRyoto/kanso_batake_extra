@@ -1,7 +1,7 @@
 "use server";
 
-import { userInterface } from "@/constants";
 import { prisma } from "@/lib/prisma/prisma-client";
+import { User } from "@/type";
 
 /*
 export async function fetchUser(userId: string) {
@@ -19,9 +19,9 @@ export async function fetchUser(userId: string) {
 }
 */
 
-export async function fetchUser(userId: string): Promise<userInterface[]> {
+export async function fetchUser(userId: string): Promise<User[]> {
   try {
-    const userData = await prisma.$queryRaw<userInterface[]>`
+    const userData = await prisma.$queryRaw<User[]>`
         SELECT * FROM "Users" WHERE id = ${userId};`;
 
     return userData;
@@ -49,9 +49,9 @@ export async function fetchUserIdsByLabId(labId: string) {
 
 export async function fetchUsersByAffiliationId(
   affiliationId: number,
-): Promise<userInterface[]> {
+): Promise<User[]> {
   try {
-    const usersData = await prisma.$queryRaw<userInterface[]>`
+    const usersData = await prisma.$queryRaw<User[]>`
       SELECT "Users".*
       FROM "Users"
       JOIN "_AffiliationsToUsers" ON "Users".id = "_AffiliationsToUsers".user_id
@@ -90,7 +90,7 @@ export async function setUser(userData: userInterface) {
 }
 */
 
-export async function setUser(userData: userInterface) {
+export async function setUser(userData: User) {
   try {
     await prisma.$executeRaw`
       INSERT INTO "Users" (id, name, role)
@@ -106,7 +106,7 @@ export async function setUser(userData: userInterface) {
 
 export async function getUsersbyUserField(userId: string) {
   const user = await fetchUser(userId);
-  const users: userInterface[] = [];
+  const users: User[] = [];
   try {
     const usersSnapshot = await getDocs(collection(db, "users"));
     usersSnapshot.forEach((doc) => {

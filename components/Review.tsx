@@ -4,7 +4,7 @@ import remarkBreaks from "remark-breaks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
-import { Review as ReviewType } from "@/type";
+import { Review as ReviewType, User } from "@/type";
 import { Modal } from "./review/Modal";
 import clsx from "clsx";
 import PaperData from "./PaperData";
@@ -14,12 +14,13 @@ import ReviewAction from "./ReviewAction";
 
 type Props = {
   reviewData?: ReviewType;
-  userId?: string;
+  userInfo?: User;
   clamp?: boolean;
 };
 
-const Review = ({ reviewData, userId, clamp }: Props) => {
+const Review = ({ reviewData, userInfo, clamp }: Props) => {
   if (!reviewData) return null;
+  if (!userInfo) return null;
 
   return (
     <Card>
@@ -33,13 +34,13 @@ const Review = ({ reviewData, userId, clamp }: Props) => {
         <Separator />
       </CardHeader>
       <ReviewTags reviewId={reviewData.id} />
-      <ReviewUserInfo userId={reviewData.user_id} />
+      <ReviewUserInfo userInfo={userInfo} />
       {reviewData.thumbnail_url && (
         <CardContent>
           <Modal imageUrl={reviewData.thumbnail_url} />
         </CardContent>
       )}
-      <ReviewAction userId={userId} reviewData={reviewData} />
+      <ReviewAction userId={userInfo.id} reviewData={reviewData} />
       <CardContent className="markdown">
         <ReactMarkDown
           className={clsx(clamp ? "line-clamp-4" : "")}

@@ -1,20 +1,18 @@
 "use server";
 
-// import { reviewInterface } from "@/constants";
 import { Review } from "@/type";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { deleteImage } from "./image.action";
 import { prisma } from "@/lib/prisma/prisma-client";
 
 /*
 export async function getAllReviews() {
   const col = query(collection(db, "reviews"), orderBy("id", "desc"));
 
-  let result: reviewInterface[] = [];
+  let result: Review[] = [];
   const allReviewsSnapshot = await getDocs(col);
   allReviewsSnapshot.forEach((doc) => {
-    result.push(doc.data() as reviewInterface);
+    result.push(doc.data() as Review);
   });
 
   return result;
@@ -38,7 +36,7 @@ export async function fetchReview(reviewId: string) {
   try {
     const reviewData = await getDoc(doc(db, `reviews/${reviewId}`));
     if (reviewData.exists()) {
-      return reviewData.data() as reviewInterface;
+      return reviewData.data() as Review;
     } else {
       throw new Error("Failed to fetch review.");
     }
@@ -62,7 +60,7 @@ export async function fetchReview(reviewId: number): Promise<Review[]> {
 }
 
 /*
-export async function setReview(userId: string, reviewData: reviewInterface) {
+export async function setReview(userId: string, reviewData: Review) {
   await Promise.all([
     setDoc(doc(db, `reviews/${reviewData.id}`), reviewData),
     setDoc(doc(db, `users/${userId}/reviews/${reviewData.id}`), reviewData),
@@ -73,16 +71,14 @@ export async function setReview(userId: string, reviewData: reviewInterface) {
 }
 */
 
-export async function setReview(auth_userId: string, reviewData: Review) {
+export async function setReview(
+  auth_userId: string,
+  reviewData: Review,
+): Promise<Review[]> {
   try {
-    // userIdとreviewDataをポストする
-    const response = await fetch("/api/review/post", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ reviewData }),
-    });
+    await prisma.$executeRaw<Review[]>`
+        INSERT INTO "Reviews" (content, paper_data, paper_title, user_id, thumbnail_url, created_at)
+        VALUES (${reviewData.content}, ${reviewData.paper_data}, ${reviewData.paper_title}, ${reviewData.user_id}, ${reviewData.thumbnail_url}, ${reviewData.created_at});`;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to set review.");
@@ -92,7 +88,7 @@ export async function setReview(auth_userId: string, reviewData: Review) {
 /*
 export async function updateReview(
   userId: string,
-  reviewData: reviewInterface
+  reviewData: Review
 ) {
   await Promise.all([
     updateDoc(doc(db, `reviews/${reviewData.id}`), reviewData),
@@ -121,7 +117,7 @@ export async function updateReview(userId: string, reviewData: Review) {
 
 /*
 export async function deleteReview(
-  reviewData: reviewInterface,
+  reviewData: Review,
   userId: string
 ) {
   await Promise.all([
@@ -164,12 +160,12 @@ export async function fetchReviewsByUser(userId: string) {
     orderBy("id", "desc")
   );
 
-  let result: reviewInterface[] = [];
+  let result: Review[] = [];
 
   try {
     const allReviewsSnapshot = await getDocs(col);
     allReviewsSnapshot.forEach((doc) => {
-      result.push(doc.data() as reviewInterface);
+      result.push(doc.data() as Review);
     });
 
     return result;
@@ -201,11 +197,11 @@ export async function fetchReviewsByTag(searchTag: string) {
     collection(db, "reviews"),
     where("tags", "array-contains", searchTag)
   );
-  let result: reviewInterface[] = [];
+  let result: Review[] = [];
   try {
     const allReviewsSnapshot = await getDocs(col);
     allReviewsSnapshot.forEach((doc) => {
-      result.push(doc.data() as reviewInterface);
+      result.push(doc.data() as Review);
     });
 
     return result;
@@ -242,11 +238,11 @@ export async function fetchReviewsByTagAndUser(
     collection(db, `users/${userId}/reviews`),
     where("tags", "array-contains", searchTag)
   );
-  let result: reviewInterface[] = [];
+  let result: Review[] = [];
   try {
     const allReviewsSnapshot = await getDocs(col);
     allReviewsSnapshot.forEach((doc) => {
-      result.push(doc.data() as reviewInterface);
+      result.push(doc.data() as Review);
     });
 
     return result;

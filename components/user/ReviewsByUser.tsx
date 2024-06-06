@@ -1,6 +1,7 @@
 import { fetchReviewsByFilter } from "@/actions/review.action";
 import React from "react";
 import Review from "../Review";
+import { fetchUser } from "@/actions/user.action";
 
 type Props = {
   userId?: string;
@@ -8,7 +9,12 @@ type Props = {
 };
 
 const ReviewsByUser = async ({ userId, tag }: Props) => {
-  const reviewsData = await fetchReviewsByFilter(tag, userId);
+  if (!userId) return null;
+
+  const [reviewsData, userInfo] = await Promise.all([
+    fetchReviewsByFilter(tag, userId),
+    fetchUser(userId),
+  ]);
 
   if (reviewsData.length === 0) {
     return <div>No Reviews.</div>;
@@ -27,7 +33,7 @@ const ReviewsByUser = async ({ userId, tag }: Props) => {
             <Review
               key={review.id}
               reviewData={review}
-              userId={userId}
+              userInfo={userInfo[0]}
               clamp={true}
             />
           );
