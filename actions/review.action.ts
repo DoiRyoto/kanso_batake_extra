@@ -31,28 +31,12 @@ export async function fetchAllReviews(): Promise<Review[]> {
   }
 }
 
-/*
-export async function fetchReview(reviewId: string) {
-  try {
-    const reviewData = await getDoc(doc(db, `reviews/${reviewId}`));
-    if (reviewData.exists()) {
-      return reviewData.data() as Review;
-    } else {
-      throw new Error("Failed to fetch review.");
-    }
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch review.");
-  }
-}
-*/
-
 export async function getReview(reviewId: number) {
   try {
     // どれが正解？
     // ブランチをマージしたらコメントを外し正しいエンドポイントを指定する
     // const review = await fetch(`/api/review/${reviewId}`)
-    // const review = await fetch(`https://kanso-batake.vercel.app//api/review/${reviewId}`)
+    // const review = await fetch(`https://kanso-batake.vercel.app/api/review/${reviewId}`)
     // const review = await fetch(`http://localhost:3000/api/review/${reviewId}`);
     const review = await fetch(
       `http://localhost:3000/api/review/get/${reviewId}`,
@@ -106,34 +90,26 @@ export async function setReview(
   redirect(`/user/${auth_userId}`);
 }
 
-/*
-export async function updateReview(
-  userId: string,
-  reviewData: Review
-) {
-  await Promise.all([
-    updateDoc(doc(db, `reviews/${reviewData.id}`), reviewData),
-    updateDoc(doc(db, `users/${userId}/reviews/${reviewData.id}`), reviewData),
-  ]);
-
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
-}
-*/
-
-export async function updateReview(userId: string, reviewData: Review) {
+export async function updateReview(reviewData: Review) {
   try {
-    await prisma.$executeRaw`
-        UPDATE "Reviews" 
-        SET content = ${reviewData.content}, paper_data = ${reviewData.paper_data}, paper_title = ${reviewData.paper_title}, user_id = ${reviewData.user_id}, thumbnail_url = ${reviewData.thumbnail_url}
-        WHERE id = ${reviewData.id};`;
+    // どれが正解？
+    // ブランチをマージしたらコメントを外し正しいエンドポイントを指定する
+    // const review = await fetch(`/api/review/${reviewId}`)
+    // const review = await fetch(`https://kanso-batake.vercel.app/api/review/${reviewId}`)
+    const res = await fetch(
+      `http://localhost:3000/api/review/${reviewData.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reviewData }),
+      },
+    );
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to set review.");
+    throw new Error("Failed to update review.");
   }
-
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
 }
 
 /*
