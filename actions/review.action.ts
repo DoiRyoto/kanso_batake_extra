@@ -50,8 +50,10 @@ export async function fetchReview(reviewId: string) {
 export async function getReview(reviewId: number) {
   try {
     // どれが正解？
-    // const review = await fetch(`/api/review/get/${reviewId}`)
-    // const review = await fetch(`https://kanso-batake.vercel.app//api/review/get/${reviewId}`)
+    // ブランチをマージしたらコメントを外し正しいエンドポイントを指定する
+    // const review = await fetch(`/api/review/${reviewId}`)
+    // const review = await fetch(`https://kanso-batake.vercel.app//api/review/${reviewId}`)
+    // const review = await fetch(`http://localhost:3000/api/review/${reviewId}`);
     const review = await fetch(
       `http://localhost:3000/api/review/get/${reviewId}`,
     );
