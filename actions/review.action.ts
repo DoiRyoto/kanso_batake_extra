@@ -47,6 +47,16 @@ export async function fetchReview(reviewId: string) {
 }
 */
 
+export async function getReview(reviewId: number) {
+  try {
+    const review = await fetch(`api/review/get/${reviewId}`);
+    return review;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch review.");
+  }
+}
+
 export async function fetchReview(reviewId: number): Promise<Review[]> {
   try {
     const reviewData = await prisma.$queryRaw<Review[]>`
@@ -73,7 +83,7 @@ export async function setReview(userId: string, reviewData: Review) {
 
 export async function setReview(
   auth_userId: string,
-  reviewData: Review
+  reviewData: Review,
 ): Promise<Review[]> {
   try {
     await prisma.$executeRaw<Review[]>`
@@ -258,7 +268,7 @@ export async function fetchReviewsByTagAndUser(
 
 export async function fetchReviewsByTagAndUser(
   searchTag: string,
-  userId: string
+  userId: string,
 ): Promise<Review[]> {
   try {
     const reviewsData = await prisma.$queryRaw<Review[]>`
@@ -279,7 +289,7 @@ export async function fetchReviewsByTagAndUser(
 
 export async function fetchReviewsByFilter(
   searchTag?: string,
-  userId?: string
+  userId?: string,
 ): Promise<Review[]> {
   try {
     if (!searchTag && !userId) {
@@ -302,7 +312,7 @@ export async function fetchReviewsByFilter(
 }
 
 export async function fetchReviewsByAffiliationId(
-  affiliationId: number
+  affiliationId: number,
 ): Promise<Review[]> {
   try {
     const reviewsData = await prisma.$queryRaw<Review[]>`
