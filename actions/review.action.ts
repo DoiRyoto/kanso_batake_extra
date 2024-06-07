@@ -49,7 +49,13 @@ export async function fetchReview(reviewId: string) {
 
 export async function getReview(reviewId: number) {
   try {
-    const review = await fetch(`api/review/get/${reviewId}`);
+    // どれが正解？
+    // const review = await fetch(`/api/review/get/${reviewId}`)
+    // const review = await fetch(`https://kanso-batake.vercel.app//api/review/get/${reviewId}`)
+    const review = await fetch(
+      `http://localhost:3000/api/review/get/${reviewId}`,
+    );
+    console.log(reviewId);
     return review;
   } catch (error) {
     console.log(error);
