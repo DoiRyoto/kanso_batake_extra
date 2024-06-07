@@ -14,7 +14,6 @@ const page = async ({
   const _user = await currentUser();
   if (!_user) return null;
 
-  const reviewData = await getReview(Number(reviewId));
   return (
     <div className="flex flex-col gap-5">
       {/* <Review reviewData={reviewData} clamp={false} userId={_user.id} /> */}
