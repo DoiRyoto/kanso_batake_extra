@@ -16,6 +16,7 @@ import { setReview, updateReview } from "@/actions/review.action";
 import { Button } from "@/components/ui/button";
 import MultiStepFormNavBar from "../MultiStepFormNavBar";
 import { Review, User } from "@/type";
+import { useRouter } from "next/navigation";
 
 type Props = {
   user?: User;
@@ -52,6 +53,7 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
   const currentLabel = multiStepFormNavItemList.find(
     (item) => item.step === step,
   )?.label;
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -125,6 +127,8 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
     } catch (error) {
       console.log(error);
     }
+
+    router.back();
   }
 
   return (
