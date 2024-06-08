@@ -1,16 +1,15 @@
-import { fetchTagsByReviewId } from "@/actions/tag.action";
 import React from "react";
 import { CardContent } from "./ui/card";
 import Link from "next/link";
+import { Tag } from "@/type";
 
 type Props = {
-  reviewId?: number;
+  tagsData?: Tag[];
 };
 
-const ReviewTags = async ({ reviewId }: Props) => {
-  if (!reviewId) return null;
+const ReviewTags = ({ tagsData }: Props) => {
+  if (!tagsData) return null;
 
-  const tagsData = await fetchTagsByReviewId(reviewId);
   return (
     <>
       <CardContent className="flex gap-2">
