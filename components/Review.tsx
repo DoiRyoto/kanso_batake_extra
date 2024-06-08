@@ -14,13 +14,12 @@ import ReviewAction from "./ReviewAction";
 
 type Props = {
   reviewData?: ReviewType;
-  userInfo?: User;
+  userId?: string;
   clamp?: boolean;
 };
 
-const Review = ({ reviewData, userInfo, clamp }: Props) => {
+const Review = ({ reviewData, userId, clamp }: Props) => {
   if (!reviewData) return null;
-  if (!userInfo) return null;
 
   return (
     <Card>
@@ -33,14 +32,14 @@ const Review = ({ reviewData, userInfo, clamp }: Props) => {
         <PaperData paperData={reviewData.paper_data} />
         <Separator />
       </CardHeader>
-      <ReviewTags reviewId={reviewData.id} />
-      <ReviewUserInfo userInfo={userInfo} />
+      <ReviewTags tagsData={reviewData.tags} />
+      <ReviewUserInfo userInfo={reviewData.user_info} />
       {reviewData.thumbnail_url && (
         <CardContent>
           <Modal imageUrl={reviewData.thumbnail_url} />
         </CardContent>
       )}
-      <ReviewAction userId={userInfo.id} reviewData={reviewData} />
+      <ReviewAction userId={userId} reviewData={reviewData} />
       <CardContent className="markdown">
         <ReactMarkDown
           className={clsx(clamp ? "line-clamp-4" : "")}

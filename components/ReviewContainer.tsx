@@ -12,11 +12,10 @@ const ReviewContainer = async ({ reviewId, clamp }: Props) => {
   if (!reviewId) return null;
 
   const reviewData = await fetchReview(reviewId);
-  const userInfo = await fetchUser(reviewData[0].user_id);
 
   return (
     <>
-      <Review reviewData={reviewData[0]} userInfo={userInfo[0]} clamp={clamp} />
+      <Review reviewData={reviewData[0]} clamp={clamp} />
     </>
   );
 };
