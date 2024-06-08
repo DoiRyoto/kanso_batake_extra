@@ -128,26 +128,18 @@ export async function deleteReview(
 }
 */
 
-export async function deleteReview(reviewData: Review, userId: string) {
+export async function deleteReview(reviewId: number) {
   try {
-    await prisma.$executeRaw<Review[]>`
-    DELETE FROM "Reviews"
-    WHERE id = ${reviewData.id};`;
-
-    //わからん。
-    /*
-  try {
-    await Promise.all([deleteImage(reviewData.id.toString()), prismaQuery]);
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to delete review.");
-  }*/
+    // どれが正解？
+    // ブランチをマージしたらコメントを外し正しいエンドポイントを指定する
+    // const review = await fetch(`/api/review/${reviewId}`)
+    // const review = await fetch(`https://kanso-batake.vercel.app/api/review/${reviewId}`)
+    const res = await fetch(`http://localhost:3000/api/review/${reviewId}`, {
+      method: "DELETE",
+    });
   } catch (error) {
     throw new Error("failed to delete review.");
   }
-
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
 }
 
 /*
