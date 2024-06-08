@@ -24,13 +24,13 @@ const Header = async () => {
           href="/"
           className={clsx(
             kaisei.className,
-            "text-2xl flex flex-row items-center justify-center"
+            "text-2xl flex flex-row items-center justify-center",
           )}
         >
           <Image src="/appicon.png" width={50} height={50} alt="logo" />
           感想畑
         </Link>
-        <HeaderContents user={user} affiliation={affiliation} />
+        <HeaderContents userData={user} affiliationData={affiliation} />
       </div>
     </header>
   );
