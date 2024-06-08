@@ -84,6 +84,8 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
     },
   });
 
+  if (!user) return null;
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     if (!user) return null;
 
@@ -110,7 +112,7 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
         link: data.link,
       },
       comments: [],
-      user_id: user.id,
+      user_info: user,
       created_at: Date(),
       tags: createTags(data.tags, user.id),
       thumbnail_url: url || "",
@@ -146,7 +148,7 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
                 {step === 1 && <PaperDataForm form={form} />}
                 {step === 2 && <ReviewAndTagForm form={form} />}
                 {step === 3 && <ImageForm form={form} setFiles={setFiles} />}
-                {step === 4 && <Preview form={form} />}
+                {step === 4 && <Preview form={form} userInfo={user} />}
                 <div className="flex flex-row justify-end pt-8 gap-8">
                   {step !== MIN_STEP && (
                     <Button
