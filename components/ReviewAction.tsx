@@ -33,15 +33,15 @@ const ReviewAction = ({ reviewData, userId }: Props) => {
 
   return (
     <CardContent>
-      {userId === reviewData.user_id && (
+      {userId === reviewData.user_info.id && (
         <div className="flex flex-row gap-2 py-3">
-          {userId == reviewData.user_id && (
+          {userId == reviewData.user_info.id && (
             <a href={`/edit/${reviewData.id}`} target="">
               <FaRegEdit size="2rem" />
             </a>
           )}
 
-          {userId === reviewData.user_id && (
+          {userId === reviewData.user_info.id && (
             <>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
