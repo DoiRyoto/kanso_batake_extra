@@ -58,14 +58,14 @@ export async function fetchAffiliationIdByAffiliationName(
     if (affiliationId == 0) {
       return 0;
     }
-    return affiliationId;
+    return affiliationId[0].id;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch affiliation id.");
   }
 }
 
-export async function setAffiliation(affiliationData: affiliationInterface) {
+export async function setAffiliation(affiliationData: Affiliation) {
   try {
     await prisma.$executeRaw<number>`
       INSERT INTO "Affiliations" (name)

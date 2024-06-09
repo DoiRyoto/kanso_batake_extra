@@ -35,14 +35,14 @@ export async function fetchFieldIdByFieldName(
   fieldName: string,
 ): Promise<number> {
   try {
-    const fieldId = await prisma.$queryRaw<number>`
+    const fieldId = await prisma.$queryRaw<{ id: number }[]>`
       SELECT "id"
       FROM "Fields"
       WHERE name = ${fieldName};`;
-    if (fieldId == 0) {
+    if (!fieldId) {
       return 0;
     }
-    return fieldId;
+    return fieldId[0].id;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch field id.");
