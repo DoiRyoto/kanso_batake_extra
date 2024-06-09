@@ -1,11 +1,11 @@
 "use server";
 
-import { fieldInterface } from "@/constants";
+import { Field } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 
-export async function fetchAllFields(): Promise<fieldInterface[]> {
+export async function fetchAllFields(): Promise<Field[]> {
   try {
-    const fieldsData = await prisma.$queryRaw<fieldInterface[]>`
+    const fieldsData = await prisma.$queryRaw<Field[]>`
         SELECT * FROM "Fields"`;
 
     return fieldsData;
@@ -14,11 +14,9 @@ export async function fetchAllFields(): Promise<fieldInterface[]> {
   }
 }
 
-export async function fetchFieldsByUserId(
-  userId: string,
-): Promise<fieldInterface[]> {
+export async function fetchFieldsByUserId(userId: string): Promise<Field[]> {
   try {
-    const affiliationsData = await prisma.$queryRaw<fieldInterface[]>`
+    const affiliationsData = await prisma.$queryRaw<Field[]>`
         SELECT "Fields".*
         FROM "Fields"
         JOIN "_FieldsToUsers" ON "Fields".id = "_FieldsToUsers".field_id
@@ -49,7 +47,7 @@ export async function fetchFieldIdByFieldName(
   }
 }
 
-export async function setField(fieldData: fieldInterface) {
+export async function setField(fieldData: Field) {
   try {
     await prisma.$executeRaw<number>`
       INSERT INTO "Fields" (name)

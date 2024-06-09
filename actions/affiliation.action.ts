@@ -1,11 +1,11 @@
 "use server";
 
-import { affiliationInterface } from "@/constants";
+import { Affiliation } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 
-export async function fetchAllAffiliations(): Promise<affiliationInterface[]> {
+export async function fetchAllAffiliations(): Promise<Affiliation[]> {
   try {
-    const affiliationsData = await prisma.$queryRaw<affiliationInterface[]>`
+    const affiliationsData = await prisma.$queryRaw<Affiliation[]>`
         SELECT * FROM "Affiliations"`;
 
     return affiliationsData;
@@ -17,9 +17,9 @@ export async function fetchAllAffiliations(): Promise<affiliationInterface[]> {
 
 export async function fetchAffiliation(
   affiliationId: number,
-): Promise<affiliationInterface[]> {
+): Promise<Affiliation[]> {
   try {
-    const affiliationsData = await prisma.$queryRaw<affiliationInterface[]>`
+    const affiliationsData = await prisma.$queryRaw<Affiliation[]>`
         SELECT * FROM "Affiliations" WHERE id = ${affiliationId}`;
 
     return affiliationsData;
@@ -31,9 +31,9 @@ export async function fetchAffiliation(
 
 export async function fetchAffiliationsByUserId(
   userId: string,
-): Promise<affiliationInterface[]> {
+): Promise<Affiliation[]> {
   try {
-    const affiliationsData = await prisma.$queryRaw<affiliationInterface[]>`
+    const affiliationsData = await prisma.$queryRaw<Affiliation[]>`
         SELECT "Affiliations".*
         FROM "Affiliations"
         JOIN "_AffiliationsToUsers" ON "Affiliations".id = "_AffiliationsToUsers".affiliation_id
@@ -51,11 +51,11 @@ export async function fetchAffiliationIdByAffiliationName(
   AffiliationName: string,
 ): Promise<number> {
   try {
-    const affiliationId = await prisma.$queryRaw<number>`
+    const affiliationId = await prisma.$queryRaw<{ id: number }[]>`
       SELECT "id"
       FROM "Affiliations"
       WHERE name = ${AffiliationName};`;
-    if (affiliationId == 0) {
+    if (!affiliationId) {
       return 0;
     }
     return affiliationId[0].id;
