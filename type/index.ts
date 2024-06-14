@@ -46,7 +46,7 @@ export type Review = {
   content: string | null;
   paper_title: string;
   paper_data: Paper;
-  user_id: string;
+  user_info: User;
   comments: Comment[];
   tags: Tag[];
   created_at: string | Date;

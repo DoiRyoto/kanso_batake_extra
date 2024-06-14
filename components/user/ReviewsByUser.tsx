@@ -29,14 +29,7 @@ const ReviewsByUser = async ({ userId, tag }: Props) => {
       )}
       <div className="flex flex-col gap-2">
         {reviewsData.map((review) => {
-          return (
-            <Review
-              key={review.id}
-              reviewData={review}
-              userInfo={userInfo[0]}
-              clamp={true}
-            />
-          );
+          return <Review key={review.id} reviewData={review} clamp={true} />;
         })}
       </div>
     </>

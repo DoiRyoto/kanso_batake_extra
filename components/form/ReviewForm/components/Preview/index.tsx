@@ -1,7 +1,6 @@
 import Review from "@/components/Review";
-// import { reviewType } from "@/constants";
 import { createTags } from "@/lib/utils";
-import { Review as ReviewType } from "@/type";
+import { Review as ReviewType, User } from "@/type";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -24,9 +23,10 @@ type Props = {
     any,
     undefined
   >;
+  userInfo: User;
 };
 
-export const Preview = ({ form }: Props) => {
+export const Preview = ({ form, userInfo }: Props) => {
   const review: ReviewType = {
     id: 0,
     paper_title: form.getValues("paperTitle"),
@@ -41,10 +41,10 @@ export const Preview = ({ form }: Props) => {
       doi: form.getValues("doi"),
       link: form.getValues("link"),
     },
-    tags: createTags(form.getValues("tags")),
+    tags: createTags(form.getValues("tags"), userInfo.id),
     thumbnail_url: form.getValues("imageUrl"),
     content: form.getValues("reviewContents"),
-    user_id: "",
+    user_info: userInfo,
     comments: [],
     created_at: "",
   };
