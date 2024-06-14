@@ -115,7 +115,6 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
       comments: [],
       user_info: user,
       created_at: Date(),
-      // tags: createTags(data.tags, user.id),
       tags: createTags(data.tags),
       thumbnail_url: url || "",
     };
@@ -123,8 +122,6 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
     try {
       if (mode === "create") {
         await setReview(user.id, reviewData);
-        await setTag(reviewData.tags);
-        await setTagsToReview(reviewData.id, reviewData.tags);
       } else if (mode === "edit") {
         await updateReview(user.id, reviewData);
       }
