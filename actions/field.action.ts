@@ -1,11 +1,11 @@
 "use server";
 
-import { fieldInterface } from "@/constants";
+import { Field } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 
-export async function fetchAllFields(): Promise<fieldInterface[]> {
+export async function fetchAllFields(): Promise<Field[]> {
   try {
-    const fieldsData = await prisma.$queryRaw<fieldInterface[]>`
+    const fieldsData = await prisma.$queryRaw<Field[]>`
         SELECT * FROM "Fields"`;
 
     return fieldsData;
@@ -14,11 +14,9 @@ export async function fetchAllFields(): Promise<fieldInterface[]> {
   }
 }
 
-export async function fetchFieldsByUserId(
-  userId: string,
-): Promise<fieldInterface[]> {
+export async function fetchFieldsByUserId(userId: string): Promise<Field[]> {
   try {
-    const affiliationsData = await prisma.$queryRaw<fieldInterface[]>`
+    const affiliationsData = await prisma.$queryRaw<Field[]>`
         SELECT "Fields".*
         FROM "Fields"
         JOIN "_FieldsToUsers" ON "Fields".id = "_FieldsToUsers".field_id
@@ -35,21 +33,21 @@ export async function fetchFieldIdByFieldName(
   fieldName: string,
 ): Promise<number> {
   try {
-    const fieldId = await prisma.$queryRaw<number>`
+    const fieldId = await prisma.$queryRaw<{ id: number }[]>`
       SELECT "id"
       FROM "Fields"
       WHERE name = ${fieldName};`;
-    if (fieldId == 0) {
+    if (!fieldId) {
       return 0;
     }
-    return fieldId;
+    return fieldId[0].id;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch field id.");
   }
 }
 
-export async function setField(fieldData: fieldInterface) {
+export async function setField(fieldData: Field) {
   try {
     await prisma.$executeRaw<number>`
       INSERT INTO "Fields" (name)
