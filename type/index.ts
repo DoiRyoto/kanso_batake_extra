@@ -57,7 +57,6 @@ export type Review = {
 export type Tag = {
   id: number;
   name: string;
-  user_id: string;
   created_at: string | Date;
 };
 

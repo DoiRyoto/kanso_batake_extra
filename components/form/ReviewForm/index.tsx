@@ -16,6 +16,7 @@ import { setReview, updateReview } from "@/actions/review.action";
 import { Button } from "@/components/ui/button";
 import MultiStepFormNavBar from "../MultiStepFormNavBar";
 import { Review, User } from "@/type";
+import { setTag, setTagsToReview } from "@/actions/tag.action";
 
 type Props = {
   user?: User;
@@ -50,7 +51,7 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
   const [step, setStep] = useState<number>(MIN_STEP);
   const [files, setFiles] = useState<File[]>([]);
   const currentLabel = multiStepFormNavItemList.find(
-    (item) => item.step === step
+    (item) => item.step === step,
   )?.label;
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -114,7 +115,7 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
       comments: [],
       user_info: user,
       created_at: Date(),
-      tags: createTags(data.tags, user.id),
+      tags: createTags(data.tags),
       thumbnail_url: url || "",
     };
 

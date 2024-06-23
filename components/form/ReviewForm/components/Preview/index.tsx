@@ -41,7 +41,7 @@ export const Preview = ({ form, userInfo }: Props) => {
       doi: form.getValues("doi"),
       link: form.getValues("link"),
     },
-    tags: createTags(form.getValues("tags"), userInfo.id),
+    tags: createTags(form.getValues("tags")),
     thumbnail_url: form.getValues("imageUrl"),
     content: form.getValues("reviewContents"),
     user_info: userInfo,
