@@ -121,7 +121,7 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
     };
     try {
       if (mode === "create") {
-        await setReview(user.id, reviewData);
+        await setReview(reviewData);
       } else if (mode === "edit") {
         await updateReview(user.id, reviewData);
       }

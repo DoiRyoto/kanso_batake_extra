@@ -73,7 +73,7 @@ export async function setReview(userId: string, reviewData: reviewInterface) {
 }
 */
 
-export async function setReview(auth_userId: string, reviewData: Review) {
+export async function setReview(reviewData: Review) {
   try {
     // userIdとreviewDataをポストする
     const response = await fetch("http://localhost:3000/api/reviews", {
