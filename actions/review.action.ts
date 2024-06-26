@@ -76,7 +76,7 @@ export async function setReview(userId: string, reviewData: reviewInterface) {
 export async function setReview(auth_userId: string, reviewData: Review) {
   try {
     // userIdとreviewDataをポストする
-    const response = await fetch("/api/reviews", {
+    const response = await fetch("http://localhost:3000/api/reviews", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
