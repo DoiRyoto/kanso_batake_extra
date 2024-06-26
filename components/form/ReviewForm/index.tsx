@@ -16,7 +16,7 @@ import { setReview, updateReview } from "@/actions/review.action";
 import { Button } from "@/components/ui/button";
 import MultiStepFormNavBar from "../MultiStepFormNavBar";
 import { Review, User } from "@/type";
-import { setTag, setTagsToReview } from "@/actions/tag.action";
+import { useRouter } from "next/navigation";
 
 type Props = {
   user?: User;
@@ -47,6 +47,7 @@ const FormSchema = z.object({
 });
 
 export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
+  const router = useRouter();
   const isLoading = useRef(false); // ローディング状態を追跡するためのuseRef
   const [step, setStep] = useState<number>(MIN_STEP);
   const [files, setFiles] = useState<File[]>([]);
@@ -118,7 +119,6 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
       tags: createTags(data.tags),
       thumbnail_url: url || "",
     };
-
     try {
       if (mode === "create") {
         await setReview(user.id, reviewData);
@@ -128,6 +128,8 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
     } catch (error) {
       console.log(error);
     }
+
+    router.back();
   }
 
   return (
