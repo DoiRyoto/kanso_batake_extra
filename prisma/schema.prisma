@@ -29,6 +29,7 @@ model Comments {
   created_at DateTime @default(now()) @db.Timestamptz(6)
   review     Reviews  @relation(fields: [review_id], references: [id])
   user       Users    @relation(fields: [user_id], references: [id])
+  ReviewsToComments ReviewsToComments[]
 }
 
 model Fields {
@@ -56,6 +57,7 @@ model Reviews {
   comments      Comments[]
   user          Users           @relation(fields: [user_id], references: [id])
   ReviewsToTags ReviewsToTags[]
+  ReviewsToComments ReviewsToComments[]
 }
 
 model Tags {
@@ -128,5 +130,16 @@ model ReviewsToTags {
   @@unique([review_id, tag_id], map: "_ReviewsToTags_AB_unique")
   @@index([tag_id], map: "_ReviewsToTags_B_index")
   @@map("_ReviewsToTags")
+}
+
+model ReviewsToComments {
+  review_id Int
+  comment_id Int
+  Reviews   Reviews @relation(fields: [review_id], references: [id], onDelete: Cascade, map: "_ReviewsToComments_A_fkey")
+  Comments      Comments    @relation(fields: [comment_id], references: [id], onDelete: Cascade, map: "_ReviewsToComments_B_fkey")
+
+  @@unique([review_id, comment_id], map: "_ReviewsToComments_AB_unique")
+  @@index([comment_id], map: "_ReviewsToComments_B_index")
+  @@map("_ReviewsToComments")
 }
 
