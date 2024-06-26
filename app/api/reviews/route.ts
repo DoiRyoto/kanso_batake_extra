@@ -43,14 +43,10 @@ async function setTag(tag: Tag): Promise<Tag[]> {
 async function setReview(reviewData: Review) {
   try {
     // ReviewDataをセット
-    console.log("in API reviewData.user_info : ", reviewData.user_info);
-    console.log("in API reviewData.user_info.id : ", reviewData.user_info.id);
-
     const newReviewData = await prisma.$queryRaw<Review[]>`
         INSERT INTO "Reviews" (content, paper_data, paper_title, user_id, thumbnail_url)
         VALUES (${reviewData.content}, ${reviewData.paper_data}, ${reviewData.paper_title}, ${reviewData.user_info.id}, ${reviewData.thumbnail_url})
         RETURNING *;`;
-    console.log("newReviewData : ", newReviewData);
     // TagとReviewsToTagsのセット
     const req = reviewData.tags.map(async (tag) => {
       const newTag = await setTag(tag);
@@ -95,9 +91,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const params = await request.json();
-  console.log("in API:params : ", params);
+  const data: Review = params.reviewData;
   try {
-    await setReview(params);
+    await setReview(data);
     return NextResponse.json({ status: 200 });
   } catch (error) {
     return NextResponse.json(
