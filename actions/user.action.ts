@@ -48,7 +48,7 @@ export async function fetchUserIdsByLabId(labId: string) {
 */
 
 export async function fetchUsersByAffiliationId(
-  affiliationId: number
+  affiliationId: number,
 ): Promise<User[]> {
   try {
     const usersData = await prisma.$queryRaw<User[]>`

@@ -16,6 +16,7 @@ import { setReview, updateReview } from "@/actions/review.action";
 import { Button } from "@/components/ui/button";
 import MultiStepFormNavBar from "../MultiStepFormNavBar";
 import { Review, User } from "@/type";
+import { useRouter } from "next/navigation";
 
 type Props = {
   user?: User;
@@ -46,11 +47,12 @@ const FormSchema = z.object({
 });
 
 export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
+  const router = useRouter();
   const isLoading = useRef(false); // ローディング状態を追跡するためのuseRef
   const [step, setStep] = useState<number>(MIN_STEP);
   const [files, setFiles] = useState<File[]>([]);
   const currentLabel = multiStepFormNavItemList.find(
-    (item) => item.step === step
+    (item) => item.step === step,
   )?.label;
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -84,6 +86,8 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
     },
   });
 
+  if (!user) return null;
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     if (!user) return null;
 
@@ -110,21 +114,22 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
         link: data.link,
       },
       comments: [],
-      user_id: user.id,
+      user_info: user,
       created_at: Date(),
-      tags: createTags(data.tags, user.id),
+      tags: createTags(data.tags),
       thumbnail_url: url || "",
     };
-
     try {
       if (mode === "create") {
-        await setReview(user.id, reviewData);
+        await setReview(reviewData);
       } else if (mode === "edit") {
         await updateReview(user.id, reviewData);
       }
     } catch (error) {
       console.log(error);
     }
+
+    router.back();
   }
 
   return (
@@ -146,7 +151,7 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
                 {step === 1 && <PaperDataForm form={form} />}
                 {step === 2 && <ReviewAndTagForm form={form} />}
                 {step === 3 && <ImageForm form={form} setFiles={setFiles} />}
-                {step === 4 && <Preview form={form} />}
+                {step === 4 && <Preview form={form} userInfo={user} />}
                 <div className="flex flex-row justify-end pt-8 gap-8">
                   {step !== MIN_STEP && (
                     <Button

@@ -11,9 +11,8 @@ type Props = {
 const MyLabReviews = async ({ affiliationId, tag }: Props) => {
   if (!affiliationId) return null;
 
-  const reviewsData: ReviewType[] = await fetchReviewsByAffiliationId(
-    affiliationId
-  );
+  const reviewsData: ReviewType[] =
+    await fetchReviewsByAffiliationId(affiliationId);
 
   if (reviewsData.length === 0) {
     return <div>No Reviews.</div>;

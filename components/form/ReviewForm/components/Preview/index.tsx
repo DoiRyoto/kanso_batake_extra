@@ -1,5 +1,6 @@
 import Review from "@/components/Review";
-import { reviewType } from "@/constants";
+import { createTags } from "@/lib/utils";
+import { Review as ReviewType, User } from "@/type";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -22,26 +23,30 @@ type Props = {
     any,
     undefined
   >;
+  userInfo: User;
 };
 
-export const Preview = ({ form }: Props) => {
-  const review: reviewType = {
-    id: "",
-    paperTitle: form.getValues("paperTitle"),
-    venue: form.getValues("venue"),
-    year: form.getValues("year"),
-    journal_name: form.getValues("journalName"),
-    journal_pages: form.getValues("journalPages"),
-    journal_vol: form.getValues("journalVol"),
-    authors: form.getValues("authors"),
-    doi: form.getValues("doi"),
-    link: form.getValues("link"),
-    tags: form.getValues("tags").split(","),
-    imageUrl: form.getValues("imageUrl"),
-    contents: form.getValues("reviewContents"),
-    reviewerName: "",
-    reviewerFields: [""],
-    createdBy: "Your Name",
+export const Preview = ({ form, userInfo }: Props) => {
+  const review: ReviewType = {
+    id: 0,
+    paper_title: form.getValues("paperTitle"),
+    paper_data: {
+      id: "",
+      venue: form.getValues("venue"),
+      year: form.getValues("year"),
+      journal_name: form.getValues("journalName"),
+      journal_pages: form.getValues("journalPages"),
+      journal_vol: form.getValues("journalVol"),
+      authors: form.getValues("authors"),
+      doi: form.getValues("doi"),
+      link: form.getValues("link"),
+    },
+    tags: createTags(form.getValues("tags")),
+    thumbnail_url: form.getValues("imageUrl"),
+    content: form.getValues("reviewContents"),
+    user_info: userInfo,
+    comments: [],
+    created_at: "",
   };
   return (
     <div className="flex flex-col">

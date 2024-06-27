@@ -50,13 +50,13 @@ export const PaperDataForm = ({ form }: Props) => {
     }
 
     form.setValue("paperTitle", paperData.title);
-    form.setValue("venue", paperData.venue);
-    form.setValue("year", paperData.year);
-    form.setValue("journalName", paperData.journal.name);
-    form.setValue("journalPages", paperData.journal.pages);
-    form.setValue("journalVol", paperData.journal.vol);
-    form.setValue("authors", paperData.authors[0].name);
-    form.setValue("link", paperData.url);
+    form.setValue("venue", paperData.venue || "");
+    form.setValue("year", paperData.year.toString() || "");
+    form.setValue("journalName", paperData.journal.name || "");
+    form.setValue("journalPages", paperData.journal.pages || "");
+    form.setValue("journalVol", paperData.journal.vol || "");
+    form.setValue("authors", paperData.authors[0].name || "");
+    form.setValue("link", paperData.url || "");
   }, 1000);
 
   return (
