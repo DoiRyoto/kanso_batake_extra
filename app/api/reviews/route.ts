@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Review, Tag } from "@/type";
+import { Paper, Review, Tag } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
+import { Reviews, Users, Tags } from "@prisma/client";
 
 // fetchReviews()の作成により廃止
 // async function fetchAllReviews(): Promise<Review[]> {
@@ -18,20 +19,20 @@ import { prisma } from "@/lib/prisma/prisma-client";
 async function fetchReviews(
   tag: string | null,
   id: string | null,
-): Promise<Review[]> {
+): Promise<Reviews[]> {
   try {
-    let reviews: Review[];
+    let reviews: Reviews[];
     if (!tag && !id) {
-      reviews = await prisma.$queryRaw<Review[]>`
+      reviews = await prisma.$queryRaw<Reviews[]>`
       SELECT * FROM "Reviews" ORDER BY created_at DESC;`;
     } else if (!tag && id) {
-      reviews = await prisma.$queryRaw<Review[]>`
+      reviews = await prisma.$queryRaw<Reviews[]>`
         SELECT *
         FROM "Reviews"
         WHERE user_id = ${id}
         ORDER BY created_at DESC;`;
     } else if (tag && !id) {
-      reviews = await prisma.$queryRaw<Review[]>`
+      reviews = await prisma.$queryRaw<Reviews[]>`
         SELECT "Reviews".*
         FROM "Reviews"
         JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
@@ -39,7 +40,7 @@ async function fetchReviews(
         WHERE "Tags".name = ${tag}
         ORDER BY "Reviews".created_at DESC;`;
     } else if (tag && id) {
-      reviews = await prisma.$queryRaw<Review[]>`
+      reviews = await prisma.$queryRaw<Reviews[]>`
         SELECT "Reviews".*
         FROM "Reviews"
         JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
@@ -48,7 +49,7 @@ async function fetchReviews(
         AND "Reviews".user_id = ${id}
         ORDER BY "Reviews".created_at DESC;`;
     } else {
-      reviews = await prisma.$queryRaw<Review[]>`
+      reviews = await prisma.$queryRaw<Reviews[]>`
         SELECT * FROM "Reviews" ORDER BY created_at DESC;`;
     }
     return reviews;
@@ -105,6 +106,33 @@ async function setReview(reviewData: Review) {
   }
 }
 
+async function fetchTagsByReviewId(reviewId: number): Promise<Tags[]> {
+  try {
+    const tags = await prisma.$queryRaw<Tags[]>`
+        SELECT "Tags".*
+        FROM "Tags"
+        JOIN "_ReviewsToTags" ON "Tags".id = "_ReviewsToTags".tag_id
+        JOIN "Reviews" ON "_ReviewsToTags".review_id = "Reviews".id
+        WHERE "Reviews".id = ${reviewId};`;
+    return tags;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch tags.");
+  }
+}
+
+async function fetchUser(userId: string): Promise<Users[]> {
+  try {
+    const userData = await prisma.$queryRaw<Users[]>`
+        SELECT * FROM "Users" WHERE id = ${userId};`;
+
+    return userData;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch user.");
+  }
+}
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const searchParams = request.nextUrl.searchParams;
   const searchTag = searchParams.get("searchTag");
@@ -113,7 +141,24 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     // const reviews = await fetchAllReviews();
     const reviews = await fetchReviews(searchTag, userId);
-    return NextResponse.json(reviews, { status: 200 });
+    const req = reviews.map(async (review) => {
+      const tags = await fetchTagsByReviewId(review.id);
+      const user = await fetchUser(review.user_id);
+      const reviewData: Review = {
+        id: review.id,
+        content: review.content,
+        paper_title: review.paper_title,
+        paper_data: review.paper_data as Paper,
+        user_info: user[0],
+        comments: [],
+        tags: tags,
+        created_at: review.created_at,
+        thumbnail_url: review.thumbnail_url,
+      };
+      return reviewData;
+    });
+    const reviewDatas = await Promise.all(req);
+    return NextResponse.json(reviewDatas, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
