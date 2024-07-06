@@ -7,31 +7,18 @@ import { redirect } from "next/navigation";
 import { deleteImage } from "./image.action";
 import { prisma } from "@/lib/prisma/prisma-client";
 
-/*
-export async function getAllReviews() {
-  const col = query(collection(db, "reviews"), orderBy("id", "desc"));
-
-  let result: reviewInterface[] = [];
-  const allReviewsSnapshot = await getDocs(col);
-  allReviewsSnapshot.forEach((doc) => {
-    result.push(doc.data() as reviewInterface);
-  });
-
-  return result;
-}
-*/
-
-export async function fetchAllReviews(): Promise<Review[]> {
-  try {
-    const reviewsData = await prisma.$queryRaw<Review[]>`
-        SELECT * FROM "Reviews" ORDER BY created_at DESC`;
-
-    return reviewsData;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch reviews.");
-  }
-}
+// export async function fetchAllReviews(): Promise<Review[]> {
+//   try {
+//     const response = await fetch(`http://localhost:3000/api/reviews/`, {
+//       method: "GET",
+//     });
+//     const reviewData: Review[] = await response.json();
+//     return reviewData;
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error("Failed to fetch reviews.");
+//   }
+// }
 
 export async function fetchReview(reviewId: number): Promise<Review> {
   try {
@@ -64,21 +51,6 @@ export async function setReview(reviewData: Review) {
     throw new Error("Failed to set review.");
   }
 }
-
-/*
-export async function updateReview(
-  userId: string,
-  reviewData: reviewInterface
-) {
-  await Promise.all([
-    updateDoc(doc(db, `reviews/${reviewData.id}`), reviewData),
-    updateDoc(doc(db, `users/${userId}/reviews/${reviewData.id}`), reviewData),
-  ]);
-
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
-}
-*/
 
 export async function updateReview(userId: string, reviewData: Review) {
   try {
@@ -133,145 +105,22 @@ export async function deleteReview(reviewData: Review, userId: string) {
   redirect(`/user/${userId}`);
 }
 
-/*
-export async function fetchReviewsByUser(userId: string) {
-  const col = query(
-    collection(db, `users/${userId}/reviews`),
-    orderBy("id", "desc")
-  );
-
-  let result: reviewInterface[] = [];
-
-  try {
-    const allReviewsSnapshot = await getDocs(col);
-    allReviewsSnapshot.forEach((doc) => {
-      result.push(doc.data() as reviewInterface);
-    });
-
-    return result;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch reviews.");
-  }
-}
-*/
-
-export async function fetchReviewsByUser(userId: string): Promise<Review[]> {
-  try {
-    const reviewsData = await prisma.$queryRaw<Review[]>`
-      SELECT *
-      FROM "Reviews"
-      WHERE user_id = ${userId}
-      ORDER BY created_at DESC;`;
-
-    return reviewsData;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fecth reviews.");
-  }
-}
-
-/*
-export async function fetchReviewsByTag(searchTag: string) {
-  const col = query(
-    collection(db, "reviews"),
-    where("tags", "array-contains", searchTag)
-  );
-  let result: reviewInterface[] = [];
-  try {
-    const allReviewsSnapshot = await getDocs(col);
-    allReviewsSnapshot.forEach((doc) => {
-      result.push(doc.data() as reviewInterface);
-    });
-
-    return result;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch reviews.");
-  }
-}
-*/
-
-export async function fetchReviewsByTag(searchTag: string): Promise<Review[]> {
-  try {
-    const reviewsData = await prisma.$queryRaw<Review[]>`
-      SELECT "Reviews".*
-      FROM "Reviews"
-      JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
-      JOIN "Tags" ON "_ReviewsToTags".tag_id = "Tags".id
-      WHERE "Tags".name = ${searchTag}
-      ORDER BY "Reviews".created_at DESC;`;
-
-    return reviewsData;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fecth reviews.");
-  }
-}
-
-/*
-export async function fetchReviewsByTagAndUser(
-  searchTag: string,
-  userId: string
-) {
-  const col = query(
-    collection(db, `users/${userId}/reviews`),
-    where("tags", "array-contains", searchTag)
-  );
-  let result: reviewInterface[] = [];
-  try {
-    const allReviewsSnapshot = await getDocs(col);
-    allReviewsSnapshot.forEach((doc) => {
-      result.push(doc.data() as reviewInterface);
-    });
-
-    return result;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch reviews.");
-  }
-}
-*/
-
-export async function fetchReviewsByTagAndUser(
-  searchTag: string,
-  userId: string,
-): Promise<Review[]> {
-  try {
-    const reviewsData = await prisma.$queryRaw<Review[]>`
-      SELECT "Reviews".*
-      FROM "Reviews"
-      JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
-      JOIN "Tags" ON "_ReviewsToTags".tag_id = "Tags".id
-      WHERE "Tags".name = ${searchTag}
-      AND "Reviews".user_id = ${userId}
-      ORDER BY "Reviews".created_at DESC;`;
-
-    return reviewsData;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fecth reviews.");
-  }
-}
-
 export async function fetchReviewsByFilter(
   searchTag?: string,
   userId?: string,
 ): Promise<Review[]> {
   try {
-    if (!searchTag && !userId) {
-      return fetchAllReviews();
-    } else if (!searchTag && userId) {
-      return fetchReviewsByUser(userId);
-    } else if (searchTag && !userId) {
-      return fetchReviewsByTag(searchTag);
-    } else if (searchTag && !userId) {
-      return fetchReviewsByTag(searchTag);
-    } else if (searchTag && userId) {
-      return fetchReviewsByTagAndUser(searchTag, userId);
-    } else {
-      return [];
-    }
+    const uriTag = searchTag ? `searchTag=${searchTag}&` : ``;
+    const uriId = userId ? `userId=${userId}` : ``;
+    console.log(`http://localhost:3000/api/reviews?` + uriTag + uriId);
+    const response = await fetch(
+      `http://localhost:3000/api/reviews?` + uriTag + uriId,
+      {
+        method: "GET",
+      },
+    );
+    const reviewData: Review[] = await response.json();
+    return reviewData;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch reviews.");
@@ -298,19 +147,3 @@ export async function fetchReviewsByAffiliationId(
     throw new Error("Failed to fetch reviews.");
   }
 }
-
-/*
-
-こういう汎用的な関数は今後使わなくなるはず
-
-export async function fetchReviewsByUserIds(userIds: string[], tag?: string) {
-  try {
-    const promises = userIds.map((userId) => fetchReviewsByFilter(tag, userId));
-    const reviews = await Promise.all(promises);
-    return reviews.flat().sort();
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch reviews.");
-  }
-}
-*/
