@@ -68,7 +68,6 @@ export async function GET(
     if (isNaN(reviewId)) {
       return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
     }
-
     // reviewsテーブルからreviewsを取得
     const review = await fetchReview(reviewId);
     if (!review.length) {
@@ -76,13 +75,11 @@ export async function GET(
     }
     // Tagsテーブルから該当するタグをすべて取得
     const tags = await fetchTagsByReviewId(reviewId);
-
     // Usersテーブルからレビューの筆者を取得
     const user = await fetchUser(review[0].user_id);
-
     // Commentsテーブルからレビューの筆者を取得
     const comments = await fetchCommentsByReviewId(review[0].id);
-
+    // Review型を構成
     const reviewData: Review = {
       id: reviewId,
       content: review[0].content,
