@@ -11,10 +11,7 @@ type Props = {
 const ReviewsByUser = async ({ userId, tag }: Props) => {
   if (!userId) return null;
 
-  const [reviewsData, userInfo] = await Promise.all([
-    fetchReviewsByFilter(tag, userId),
-    fetchUser(userId),
-  ]);
+  const [reviewsData] = await Promise.all([fetchReviewsByFilter(tag, userId)]);
 
   if (reviewsData.length === 0) {
     return <div>No Reviews.</div>;

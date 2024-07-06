@@ -112,7 +112,6 @@ export async function fetchReviewsByFilter(
   try {
     const uriTag = searchTag ? `searchTag=${searchTag}&` : ``;
     const uriId = userId ? `userId=${userId}` : ``;
-    console.log(`http://localhost:3000/api/reviews?` + uriTag + uriId);
     const response = await fetch(
       `http://localhost:3000/api/reviews?` + uriTag + uriId,
       {
