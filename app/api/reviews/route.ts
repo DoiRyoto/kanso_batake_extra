@@ -2,11 +2,55 @@ import { NextRequest, NextResponse } from "next/server";
 import { Review, Tag } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 
-async function fetchAllReviews(): Promise<Review[]> {
+// fetchReviews()の作成により廃止
+// async function fetchAllReviews(): Promise<Review[]> {
+//   try {
+//     const reviews: Review[] = await prisma.$queryRaw<Review[]>`
+//       SELECT * FROM "Reviews" ORDER BY created_at DESC;
+//     `;
+//     return reviews;
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error("Failed to fetch all reviews.");
+//   }
+// }
+
+async function fetchReviews(
+  tag: string | null,
+  id: string | null,
+): Promise<Review[]> {
   try {
-    const reviews: Review[] = await prisma.$queryRaw<Review[]>`
-      SELECT * FROM "Reviews" ORDER BY created_at DESC;
-    `;
+    let reviews: Review[];
+    if (!tag && !id) {
+      reviews = await prisma.$queryRaw<Review[]>`
+      SELECT * FROM "Reviews" ORDER BY created_at DESC;`;
+    } else if (!tag && id) {
+      reviews = await prisma.$queryRaw<Review[]>`
+        SELECT *
+        FROM "Reviews"
+        WHERE user_id = ${id}
+        ORDER BY created_at DESC;`;
+    } else if (tag && !id) {
+      reviews = await prisma.$queryRaw<Review[]>`
+        SELECT "Reviews".*
+        FROM "Reviews"
+        JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
+        JOIN "Tags" ON "_ReviewsToTags".tag_id = "Tags".id
+        WHERE "Tags".name = ${tag}
+        ORDER BY "Reviews".created_at DESC;`;
+    } else if (tag && id) {
+      reviews = await prisma.$queryRaw<Review[]>`
+        SELECT "Reviews".*
+        FROM "Reviews"
+        JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
+        JOIN "Tags" ON "_ReviewsToTags".tag_id = "Tags".id
+        WHERE "Tags".name = ${tag}
+        AND "Reviews".user_id = ${id}
+        ORDER BY "Reviews".created_at DESC;`;
+    } else {
+      reviews = await prisma.$queryRaw<Review[]>`
+        SELECT * FROM "Reviews" ORDER BY created_at DESC;`;
+    }
     return reviews;
   } catch (error) {
     console.error(error);
@@ -62,8 +106,13 @@ async function setReview(reviewData: Review) {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  const searchParams = request.nextUrl.searchParams;
+  const searchTag = searchParams.get("searchTag");
+  const userId = searchParams.get("userId");
+
   try {
-    const reviews = await fetchAllReviews();
+    // const reviews = await fetchAllReviews();
+    const reviews = await fetchReviews(searchTag, userId);
     return NextResponse.json(reviews, { status: 200 });
   } catch (error) {
     console.error(error);
