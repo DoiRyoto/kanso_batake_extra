@@ -33,45 +33,21 @@ export async function fetchAllReviews(): Promise<Review[]> {
   }
 }
 
-/*
-export async function fetchReview(reviewId: string) {
+export async function fetchReview(reviewId: number): Promise<Review> {
   try {
-    const reviewData = await getDoc(doc(db, `reviews/${reviewId}`));
-    if (reviewData.exists()) {
-      return reviewData.data() as reviewInterface;
-    } else {
-      throw new Error("Failed to fetch review.");
-    }
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch review.");
-  }
-}
-*/
-
-export async function fetchReview(reviewId: number): Promise<Review[]> {
-  try {
-    const reviewData = await prisma.$queryRaw<Review[]>`
-        SELECT * FROM "Reviews" WHERE id = ${reviewId};`;
-
+    const response = await fetch(
+      `http://localhost:3000/api/reviews/${reviewId}`,
+      {
+        method: "GET",
+      },
+    );
+    const reviewData: Review = await response.json();
     return reviewData;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch review.");
   }
 }
-
-/*
-export async function setReview(userId: string, reviewData: reviewInterface) {
-  await Promise.all([
-    setDoc(doc(db, `reviews/${reviewData.id}`), reviewData),
-    setDoc(doc(db, `users/${userId}/reviews/${reviewData.id}`), reviewData),
-  ]);
-
-  revalidatePath("/create");
-  redirect("/");
-}
-*/
 
 export async function setReview(reviewData: Review) {
   try {
