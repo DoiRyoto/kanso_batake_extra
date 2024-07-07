@@ -37,7 +37,7 @@ export async function fetchFieldIdByFieldName(
       SELECT "id"
       FROM "Fields"
       WHERE name = ${fieldName};`;
-    if (!fieldId) {
+    if (!fieldId.length) {
       return 0;
     }
     return fieldId[0].id;

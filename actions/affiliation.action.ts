@@ -55,7 +55,8 @@ export async function fetchAffiliationIdByAffiliationName(
       SELECT "id"
       FROM "Affiliations"
       WHERE name = ${AffiliationName};`;
-    if (!affiliationId) {
+    console.log(affiliationId);
+    if (!affiliationId.length) {
       return 0;
     }
     return affiliationId[0].id;
