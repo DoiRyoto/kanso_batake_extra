@@ -18,7 +18,7 @@ const ReviewContainer = async ({ reviewId, clamp }: Props) => {
 
   return (
     <>
-      <Review reviewData={reviewData[0]} userId={_user.id} clamp={clamp} />
+      <Review reviewData={reviewData} userId={_user.id} clamp={clamp} />
     </>
   );
 };
