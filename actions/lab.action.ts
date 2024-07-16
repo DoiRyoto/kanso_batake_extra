@@ -7,10 +7,10 @@ import {
   doc,
   query,
   orderBy,
-  where,
 } from "firebase/firestore";
 import db from "@/lib/firebase/store";
-import { labType, affiliations } from "@/constants";
+import { affiliations } from "@/constants";
+import { Affiliation } from "@/type";
 
 export const setAllLabs = async () => {
   try {
@@ -30,10 +30,10 @@ export const setAllLabs = async () => {
 export async function fetchAllLabs() {
   const col = query(collection(db, "labs"), orderBy("value", "desc"));
 
-  let result: labType[] = [];
+  let result: Affiliation[] = [];
   const allReviewsSnapshot = await getDocs(col);
   allReviewsSnapshot.forEach((doc) => {
-    result.push(doc.data() as labType);
+    result.push(doc.data() as Affiliation);
   });
   return result;
 }
