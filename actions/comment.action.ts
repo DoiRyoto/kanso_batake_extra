@@ -3,6 +3,7 @@
 import { commentInterface } from "@/constants";
 import db from "@/lib/firebase/store";
 import { prisma } from "@/lib/prisma/prisma-client";
+import { commentType } from "@/type";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
@@ -84,4 +85,16 @@ export async function fetchCommentsByReviewId(reviewId: number) {
     console.log(error);
     throw new Error("Failed to fetch comment.");
   }
+}
+
+export async function fetchCommentsByReviewIdByFB(id: string) {
+  const col = collection(db, `reviews/${id}/comments`);
+
+  let result: commentType[] = [];
+  const allReviewsSnapshot = await getDocs(col);
+  allReviewsSnapshot.forEach((doc) => {
+    result.push(doc.data() as commentType);
+  });
+
+  return result;
 }

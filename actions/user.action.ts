@@ -1,7 +1,9 @@
 "use server";
 
+import db from "@/lib/firebase/store";
 import { prisma } from "@/lib/prisma/prisma-client";
-import { User } from "@/type";
+import { User, userType } from "@/type";
+import { doc, getDoc } from "firebase/firestore";
 
 /*
 export async function fetchUser(userId: string) {
@@ -123,3 +125,17 @@ export async function getUsersbyUserField(userId: string) {
   }
 }
 */
+
+export async function fetchUserByFB(userId: string) {
+  try {
+    const userData = await getDoc(doc(db, `users/${userId}`));
+    if (userData.exists()) {
+      return userData.data() as userType;
+    } else {
+      throw new Error("Failed to fetch user.");
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch user.");
+  }
+}

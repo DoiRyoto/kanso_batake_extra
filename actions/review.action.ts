@@ -1,11 +1,13 @@
 "use server";
 
 // import { reviewInterface } from "@/constants";
-import { Review } from "@/type";
+import { Review, reviewType } from "@/type";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { deleteImage } from "./image.action";
 import { prisma } from "@/lib/prisma/prisma-client";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import db from "@/lib/firebase/store";
 
 // export async function fetchAllReviews(): Promise<Review[]> {
 //   try {
@@ -145,4 +147,16 @@ export async function fetchReviewsByAffiliationId(
     console.log(error);
     throw new Error("Failed to fetch reviews.");
   }
+}
+
+export async function fetchAllReviewsByFB() {
+  const col = query(collection(db, "reviews"), orderBy("id", "desc"));
+
+  let result: reviewType[] = [];
+  const allReviewsSnapshot = await getDocs(col);
+  allReviewsSnapshot.forEach((doc) => {
+    result.push(doc.data() as reviewType);
+  });
+
+  return result;
 }
