@@ -26,7 +26,7 @@ export async function fetchReview(reviewId: number): Promise<Review> {
       `http://localhost:3000/api/reviews/${reviewId}`,
       {
         method: "GET",
-      },
+      }
     );
     const reviewData: Review = await response.json();
     return reviewData;
@@ -56,7 +56,7 @@ export async function updateReview(userId: string, reviewData: Review) {
   try {
     await prisma.$executeRaw`
         UPDATE "Reviews" 
-        SET content = ${reviewData.content}, paper_data = ${reviewData.paper_data}, paper_title = ${reviewData.paper_title}, user_id = ${reviewData.user_id}, thumbnail_url = ${reviewData.thumbnail_url}
+        SET content = ${reviewData.content}, paper_data = ${reviewData.paper_data}, paper_title = ${reviewData.paper_title}, user_id = ${userId}, thumbnail_url = ${reviewData.thumbnail_url}
         WHERE id = ${reviewData.id};`;
   } catch (error) {
     console.log(error);
@@ -107,7 +107,7 @@ export async function deleteReview(reviewData: Review, userId: string) {
 
 export async function fetchReviewsByFilter(
   searchTag?: string,
-  userId?: string,
+  userId?: string
 ): Promise<Review[]> {
   try {
     const uriTag = searchTag ? `searchTag=${searchTag}&` : ``;
@@ -116,7 +116,7 @@ export async function fetchReviewsByFilter(
       `http://localhost:3000/api/reviews?` + uriTag + uriId,
       {
         method: "GET",
-      },
+      }
     );
     const reviewData: Review[] = await response.json();
     return reviewData;
@@ -127,7 +127,7 @@ export async function fetchReviewsByFilter(
 }
 
 export async function fetchReviewsByAffiliationId(
-  affiliationId: number,
+  affiliationId: number
 ): Promise<Review[]> {
   try {
     const reviewsData = await prisma.$queryRaw<Review[]>`
