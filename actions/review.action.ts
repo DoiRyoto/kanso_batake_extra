@@ -22,12 +22,9 @@ import { prisma } from "@/lib/prisma/prisma-client";
 
 export async function fetchReview(reviewId: number): Promise<Review> {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/reviews/${reviewId}`,
-      {
-        method: "GET",
-      }
-    );
+    const response = await fetch(`${process.env.API_URL}/reviews/${reviewId}`, {
+      method: "GET",
+    });
     const reviewData: Review = await response.json();
     return reviewData;
   } catch (error) {
@@ -39,7 +36,7 @@ export async function fetchReview(reviewId: number): Promise<Review> {
 export async function setReview(reviewData: Review) {
   try {
     // userIdとreviewDataをポストする
-    const response = await fetch("http://localhost:3000/api/reviews", {
+    const response = await fetch(`${process.env.API_URL}/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +110,7 @@ export async function fetchReviewsByFilter(
     const uriTag = searchTag ? `searchTag=${searchTag}&` : ``;
     const uriId = userId ? `userId=${userId}` : ``;
     const response = await fetch(
-      `http://localhost:3000/api/reviews?` + uriTag + uriId,
+      `${process.env.API_URL}/reviews?` + uriTag + uriId,
       {
         method: "GET",
       }
