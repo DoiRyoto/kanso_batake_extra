@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 export type paperDetailsType = {
   title: string;
@@ -25,14 +25,13 @@ export type paperDetailsType = {
 
 export type paperErrorType = {
   error: string;
-}
+};
 
 export const fetchPaperByDOI = async (doi: string) => {
   const params = {
     fields:
       // "title,year,isOpenAccess,externalIds,url,openAccessPdf,journal,authors,venue",
       "title,year,externalIds,url,journal,authors,venue",
-
   };
 
   const urlSearchParams = new URLSearchParams(params).toString();

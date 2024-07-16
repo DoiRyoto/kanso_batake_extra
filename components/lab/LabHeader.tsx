@@ -1,91 +1,100 @@
-import React from 'react'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card"
-import Link from 'next/link'
+import React from "react";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-  } from "@/components/ui/accordion"
-  
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
-import { fetchUser } from '@/actions/user.action'
-import { fetchUserIdsByLabId } from '@/actions/user.action'
-import { fetchUsers } from '@/actions/user.action'
-import { userType } from '@/constants'
+import { fetchUsersByAffiliationId } from "@/actions/user.action";
+import { fetchAffiliation } from "@/actions/affiliation.action";
+import { User } from "@/type";
 
+type Props = {
+  affiliationId?: number;
+};
 
-const LabHeader = async (
-	{ labId } : {labId: string}
-) => {
-  const userIds:string[] = await fetchUserIdsByLabId(labId)
-	const users:userType[] = await fetchUsers(userIds)
-  let teachers: userType[] = []
-  let students: userType[] = []
+const LabHeader = async ({ affiliationId }: Props) => {
+  if (!affiliationId) return null;
+
+  const [users, affiliation] = await Promise.all([
+    fetchUsersByAffiliationId(affiliationId),
+    fetchAffiliation(affiliationId),
+  ]);
+
+  let teachers: User[] = [];
+  let students: User[] = [];
 
   // teacherとstudentに仕分け
   users.map((user) => {
     switch (user.role) {
-      case '教員':
+      case "教員":
         teachers.push(user);
         break;
-      case '学生':
+      case "学生":
         students.push(user);
         break;
     }
   });
 
-  return ( 
+  return (
     <Card>
       <CardHeader>
         <CardTitle className="truncate leading-normal">
-          {labId}
+          {affiliation[0].name}
         </CardTitle>
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
-          <AccordionTrigger className="
-          text-muted-foreground font-bold text-xl">メンバー一覧</AccordionTrigger>
-          <AccordionContent>
-            <div className='text-base text-muted-foreground'>
-              <div className="flex flex-row">
-                <p className="font-bold whitespace-nowrap">教員：</p>
-                <div className="flex flex-wrap whitespace-nowrap gap-4">
-                {teachers.map((teacher) => {
-                  return (
-                    <Link href={`/user/${teacher.id}`} className="hover:text-gray-400">
-                    {teacher.name}
-                    </Link>
-                    
-                  )
-                })}
+            <AccordionTrigger
+              className="
+          text-muted-foreground font-bold text-xl"
+            >
+              メンバー一覧
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="text-base text-muted-foreground">
+                <div className="flex flex-row">
+                  <p className="font-bold whitespace-nowrap">教員：</p>
+                  <div className="flex flex-wrap whitespace-nowrap gap-4">
+                    {teachers.map((teacher) => {
+                      return (
+                        <Link
+                          key={teacher.id}
+                          href={`/user/${teacher.id}`}
+                          className="hover:text-gray-400"
+                        >
+                          {teacher.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="flex flex-row">
+                  <p className="font-bold whitespace-nowrap">学生：</p>
+                  <div className="flex flex-wrap whitespace-nowrap gap-4">
+                    {students.map((student) => {
+                      return (
+                        <Link
+                          key={student.id}
+                          href={`/user/${student.id}`}
+                          className="hover:text-gray-400"
+                        >
+                          {student.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-row">
-                <p className="font-bold whitespace-nowrap">学生：</p>
-                <div className="flex flex-wrap whitespace-nowrap gap-4">
-                {students.map((student) => {
-                  return (
-                    <Link href={`/user/${student.id}`} className="hover:text-gray-400">
-                    {student.name}
-                    </Link>
-                  )
-                })}
-                </div>
-              </div>
-            </div>
-          </AccordionContent>
+            </AccordionContent>
           </AccordionItem>
         </Accordion>
       </CardHeader>
     </Card>
-  )
-}
+  );
+};
 
-export default LabHeader
+export default LabHeader;

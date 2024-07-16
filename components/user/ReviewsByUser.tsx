@@ -1,19 +1,19 @@
 import { fetchReviewsByFilter } from "@/actions/review.action";
 import React from "react";
 import Review from "../Review";
-import { currentUser } from "@clerk/nextjs";
+import { fetchUser } from "@/actions/user.action";
 
-const ReviewsByUser = async ({
-  userId,
-  tag,
-}: {
-  userId: string;
+type Props = {
+  userId?: string;
   tag?: string;
-}) => {
-  const user = await currentUser();
-  const reviewsData = await fetchReviewsByFilter(tag, userId);
+};
 
-  if (reviewsData.length == 0) {
+const ReviewsByUser = async ({ userId, tag }: Props) => {
+  if (!userId) return null;
+
+  const [reviewsData] = await Promise.all([fetchReviewsByFilter(tag, userId)]);
+
+  if (reviewsData.length === 0) {
     return <div>No Reviews.</div>;
   }
 
@@ -26,7 +26,7 @@ const ReviewsByUser = async ({
       )}
       <div className="flex flex-col gap-2">
         {reviewsData.map((review) => {
-          return <Review key={review.id} reviewData={review} userId={user?.id} clamp={true}/>;
+          return <Review key={review.id} reviewData={review} clamp={true} />;
         })}
       </div>
     </>

@@ -6,18 +6,26 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Separator } from "../ui/separator";
-import { commentType } from "@/constants";
+import { Comment as CommentType } from "@/type";
 import { fetchUser } from "@/actions/user.action";
 
-const Comment = async ({ commentData }: { commentData: commentType }) => {
-  const user = await fetchUser(commentData.userId);
+type Props = {
+  commentData?: CommentType;
+};
+
+const Comment = async ({ commentData }: Props) => {
+  if (!commentData) return null;
+
+  const user = (await fetchUser(commentData.user_id))[0];
   return (
     <Card>
       <CardHeader>
         <CardDescription>{user.name}</CardDescription>
         <Separator />
       </CardHeader>
-      <CardContent className="break-words whitespace-pre-line">{commentData.contents}</CardContent>
+      <CardContent className="break-words whitespace-pre-line">
+        {commentData.content}
+      </CardContent>
     </Card>
   );
 };

@@ -1,26 +1,27 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { boolean } from "zod";
- 
+import { Tag } from "@/type";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-export function urlDecode(text:string) {
+export function urlDecode(text: string) {
   return decodeURIComponent(text);
 }
 
-export function delEmpty_tag(tag: string): string[] {
-  let tags = tag.split(",")
-  if ((tags && tags.length !== 0)){
-    tags = tags.filter(item => item.trim() !== '');
-  }
-  return tags
-}
+export function createTags(tag: string): Tag[] {
+  if (tag.length === 0) return [];
 
-export async function checkInStringArray(el: string, array: string[]) {
-    array.forEach(a => {
-        if (a == el) return true;
-    })
-    return false;
+  const now = Date();
+  const rowTags = tag.split(",");
+  const tags = rowTags.map((tag) => {
+    return {
+      id: -1,
+      name: tag,
+      created_at: now,
+    };
+  });
+
+  return tags;
 }

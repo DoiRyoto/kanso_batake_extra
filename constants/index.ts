@@ -1,81 +1,42 @@
-import { paperDetailsType } from "@/actions/paper.action";
+import { Review } from "@/type";
 
-type paperInterface = {
-  id: string;
-  title: string;
-  tldr: string;
+export const emptyReview: Review = {
+  id: 0,
+  content: "",
+  paper_title: "",
+  paper_data: {},
+  user_info: {
+    id: "-1",
+    name: "Preview",
+    role: "Test",
+    created_at: "",
+  },
+  created_at: "",
+  comments: [],
+  tags: [],
+  thumbnail_url: "",
 };
 
-export type labType ={
-    value: string;
-    users: string[];
-    label: string;
-}
+export const multiStepFormNavItemList = [
+  {
+    label: "Paper Data",
+    step: 1,
+  },
+  {
+    label: "Review / Tags",
+    step: 2,
+  },
+  {
+    label: "Image",
+    step: 3,
+  },
+  {
+    label: "Preview",
+    step: 4,
+  },
+];
 
-
-export type reviewType = {
-  id: string;
-  contents: string;
-  paperTitle: string;
-  reviewerName: string;
-  createdBy: string;
-  venue: string;
-  year: string;
-  journal_name: string;
-  journal_pages: string;
-  journal_vol: string;
-  authors: string;
-  doi: string;
-  link: string;
-  tags: string[];
-  imageUrl: string;
-};
-
-export type commentType = {
-  id: string;
-  contents: string;
-  userId: string;
-  parentId: string;
-};
-
-// 現在使用してい以内
-// export type postType = {
-//     id: string;
-//     contents: string;
-//     paperTitle: string;
-// }
-
-export type userType = {
-  id: string;
-  name: string;
-  affiliation: string[];
-  field: string[];
-  role: string;
-  // いったん　Student or Teacher
-  works: string[];
-};
-
-export const emptyReview: reviewType = {
-  id: "",
-  contents: "",
-  paperTitle: "",
-  reviewerName: "",
-  createdBy: "",
-  venue: "",
-  year: "",
-  journal_name: "",
-  journal_pages: "",
-  journal_vol: "",
-  authors: "",
-  doi: "",
-  link: "",
-  tags: []
-}
-
-export const role = [
-    "学生",
-    "教員",
-]
+export const role = ["学生", "教員"];
 
 export const affiliations = [
   {
@@ -566,16 +527,3 @@ export const fields = [
 ]
   .sort((a, b) => a.label.localeCompare(b.label, "ja"))
   .concat({ value: "その他", label: "その他" });
-
-export const paperData: paperInterface[] = [
-  {
-    id: "1",
-    title: "Python",
-    tldr: "Programming langauge",
-  },
-  {
-    id: "2",
-    title: "情報工学先生",
-    tldr: "論文検索システム",
-  },
-];

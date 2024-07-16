@@ -1,53 +1,54 @@
-import React from 'react'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card"
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { fetchUser } from '@/actions/user.action'
-import { currentUser } from '@clerk/nextjs';
-import Link from 'next/link';
+import { fetchUser } from "@/actions/user.action";
+import { fetchAffiliationsByUserId } from "@/actions/affiliation.action";
+import { fetchFieldsByUserId } from "@/actions/field.action";
+import { fetchWorksByUserId } from "@/actions/work.action";
 
-const ReviewHeader = async (
-	{ userId } : {userId: string}
-) => {
-	const currentuser = await currentUser();
-	const user = await fetchUser(userId)
-  
-	return ( 
-	<Card>
-		<CardHeader>
-			<CardTitle className="truncate leading-normal">
-				{user.name}
-			</CardTitle>
-			<div className='text-sm text-muted-foreground'>
-				{user.affiliation.map((institution) => {
-						return (<p key={institution}>所属: {institution}</p>)
-					})}
-				{user.field.map((f) => {
-						return (<p key={f}>分野: {f}</p>)
-					})}
-				<p>役職: { user.role }</p>
-				{user.works.map((work) => {
-						return (<p key={work}>URL: <a href={work} target='_blank'>{work}</a></p>)
-					})}
-			</div>
-			<div className="flex flex-row-reverse leading-normal text-blue-600 hover:text-blue-400 hover:underline">
-				{userId === currentuser?.id && (
-					<Link href={`/profile/${userId}`}>
-						ユーザ情報を編集する
-					</Link>
-				)}
-			</div>
-		</CardHeader>
-		<CardContent className='break-words whitespace-pre-line'>
-			
-		</CardContent>
-	</Card>
-	)
-}
+type Props = {
+  userId?: string;
+};
 
-export default ReviewHeader
+const ReviewHeader = async ({ userId }: Props) => {
+  if (!userId) return null;
+
+  const [user, affiliations, fields, works] = await Promise.all([
+    fetchUser(userId),
+    fetchAffiliationsByUserId(userId),
+    fetchFieldsByUserId(userId),
+    fetchWorksByUserId(userId),
+  ]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="truncate leading-normal">
+          {user[0].name}
+        </CardTitle>
+        <div className="text-sm text-muted-foreground">
+          {affiliations.map((institution) => {
+            return <p key={institution.id}>所属: {institution.name}</p>;
+          })}
+          {fields.map((f) => {
+            return <p key={f.id}>分野: {f.name}</p>;
+          })}
+          <p>役職: {user[0].role}</p>
+          {works.map((work) => {
+            return (
+              <p key={work.id}>
+                URL:{" "}
+                <a href={work.url || ""} target="_blank">
+                  {work.url}
+                </a>
+              </p>
+            );
+          })}
+        </div>
+      </CardHeader>
+      <CardContent className="break-words whitespace-pre-line"></CardContent>
+    </Card>
+  );
+};
+
+export default ReviewHeader;

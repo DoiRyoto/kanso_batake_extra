@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { affiliations, fields, userType } from "@/constants";
+import { affiliations, fields } from "@/constants";
 import { useRef } from "react";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
@@ -33,6 +33,17 @@ import {
 import { cn } from "@/lib/utils";
 import { setUser } from "@/actions/user.action";
 import {
+  fetchAffiliationIdByAffiliationName,
+  setAffiliation,
+  setAffiliationToUser,
+} from "@/actions/affiliation.action";
+import {
+  fetchFieldIdByFieldName,
+  setField,
+  setFieldToUser,
+} from "@/actions/field.action";
+import { setWork } from "@/actions/work.action";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -41,6 +52,7 @@ import {
 } from "../ui/select";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "../ui/scroll-area";
+import { Affiliation, Field, User, Work } from "@/type";
 
 const FormSchema = z.object({
   username: z.string().min(1, {
@@ -68,17 +80,50 @@ export function OnboadingForm({ userId }: { userId: string }) {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     isLoading.current = true;
+    const now = Date();
 
-    const userData: userType = {
+    const userData: User = {
       id: userId,
       name: data.username,
-      affiliation: [data.affiliation],
-      field: [data.field],
       role: data.role,
-      works: [data.url || ""],
+      created_at: now,
+    };
+    const affiliationData: Affiliation = {
+      id: 0,
+      name: data.affiliation,
+      created_at: now,
+    };
+    const fieldData: Field = {
+      id: 0,
+      name: data.field,
+      created_at: now,
+    };
+    const workData: Work = {
+      id: 0,
+      url: data.url ? data.url : "",
+      user_id: userId,
+      created_at: now,
     };
 
+    let affiliationId = await fetchAffiliationIdByAffiliationName(
+      data.affiliation
+    );
+    if (affiliationId === 0) {
+      setAffiliation(affiliationData);
+      affiliationId = await fetchAffiliationIdByAffiliationName(
+        data.affiliation
+      );
+    }
+    let fieldId = await fetchFieldIdByFieldName(data.field);
+    if (fieldId === 0) {
+      setField(fieldData);
+      fieldId = await fetchFieldIdByFieldName(data.field);
+    }
     await setUser(userData);
+    await setAffiliationToUser(affiliationId, userId);
+    await setFieldToUser(fieldId, userId);
+    await setWork(workData);
+
     router.push("/");
   }
 
@@ -90,7 +135,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
           name="username"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="flex flex-row gap-1">名前<p className="text-red-600">*</p></FormLabel>
+              <FormLabel className="flex flex-row gap-1">
+                名前<p className="text-red-600">*</p>
+              </FormLabel>
               <FormControl>
                 <Input placeholder="名前を入力してください" {...field} />
               </FormControl>
@@ -104,7 +151,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
           name="affiliation"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="flex flex-row gap-1">所属<p className="text-red-600">*</p></FormLabel>
+              <FormLabel className="flex flex-row gap-1">
+                所属<p className="text-red-600">*</p>
+              </FormLabel>
               <FormDescription className="text-xs">
                 自身の所属がない場合は「その他」を選んでください。
               </FormDescription>
@@ -168,7 +217,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
           name="field"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="flex flex-row gap-1">研究分野<p className="text-red-600">*</p></FormLabel>
+              <FormLabel className="flex flex-row gap-1">
+                研究分野<p className="text-red-600">*</p>
+              </FormLabel>
               <FormDescription className="text-xs">
                 自身の研究分野がない場合は「その他」を選んでください。
               </FormDescription>
@@ -230,7 +281,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex flex-row gap-1">役職<p className="text-red-600">*</p></FormLabel>
+              <FormLabel className="flex flex-row gap-1">
+                役職<p className="text-red-600">*</p>
+              </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>

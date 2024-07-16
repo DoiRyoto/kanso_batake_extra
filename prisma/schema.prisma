@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Affiliations {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  AffiliationsToUsers AffiliationsToUsers[]
+}
+
+model Comments {
+  id         Int      @id @default(autoincrement())
+  content    String
+  review_id  Int
+  user_id    String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  review     Reviews  @relation(fields: [review_id], references: [id])
+  user       Users    @relation(fields: [user_id], references: [id])
+  ReviewsToComments ReviewsToComments[]
+}
+
+model Fields {
+  id            Int             @id @default(autoincrement())
+  name          String
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  FieldsToUsers FieldsToUsers[]
+}
+
+model Topics {
+  id            Int             @id @default(autoincrement())
+  name          String
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  TopicsToUsers TopicsToUsers[]
+}
+
+model Reviews {
+  id            Int             @id @default(autoincrement())
+  content       String?
+  paper_data    Json
+  paper_title   String
+  thumbnail_url String?
+  user_id       String
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  comments      Comments[]
+  user          Users           @relation(fields: [user_id], references: [id])
+  ReviewsToTags ReviewsToTags[]
+  ReviewsToComments ReviewsToComments[]
+}
+
+model Tags {
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  ReviewsToTags ReviewsToTags[]
+}
+
+model Users {
+  id                  String                @id @unique
+  name                String
+  role                String?
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  comments            Comments[]
+  reviews             Reviews[]
+  works               Works[]
+  AffiliationsToUsers AffiliationsToUsers[]
+  FieldsToUsers       FieldsToUsers[]
+  TopicsToUsers       TopicsToUsers[]
+}
+
+model Works {
+  id         Int      @id @default(autoincrement())
+  url        String?
+  user_id    String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  user       Users    @relation(fields: [user_id], references: [id])
+}
+
+model AffiliationsToUsers {
+  affiliation_id Int
+  user_id        String
+  Affiliations   Affiliations @relation(fields: [affiliation_id], references: [id], onDelete: Cascade, map: "_AffiliationsToUsers_A_fkey")
+  Users          Users        @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "_AffiliationsToUsers_B_fkey")
+
+  @@unique([affiliation_id, user_id], map: "_AffiliationsToUsers_AB_unique")
+  @@index([user_id], map: "_AffiliationsToUsers_B_index")
+  @@map("_AffiliationsToUsers")
+}
+
+model FieldsToUsers {
+  field_id Int
+  user_id  String
+  Fields   Fields @relation(fields: [field_id], references: [id], onDelete: Cascade, map: "_FieldsToUsers_A_fkey")
+  Users    Users  @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "_FieldsToUsers_B_fkey")
+
+  @@unique([field_id, user_id], map: "_FieldsToUsers_AB_unique")
+  @@index([user_id], map: "_FieldsToUsers_B_index")
+  @@map("_FieldsToUsers")
+}
+
+model TopicsToUsers {
+  topic_id Int
+  user_id  String
+  Topics   Topics @relation(fields: [topic_id], references: [id], onDelete: Cascade, map: "_TopicsToUsers_A_fkey")
+  Users    Users  @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "_TopicsToUsers_B_fkey")
+
+  @@unique([topic_id, user_id], map: "_TopicsToUsers_AB_unique")
+  @@index([user_id], map: "_TopicsToUsers_B_index")
+  @@map("_TopicsToUsers")
+}
+
+model ReviewsToTags {
+  review_id Int
+  tag_id    Int
+  Reviews   Reviews @relation(fields: [review_id], references: [id], onDelete: Cascade, map: "_ReviewsToTags_A_fkey")
+  Tags      Tags    @relation(fields: [tag_id], references: [id], onDelete: Cascade, map: "_ReviewsToTags_B_fkey")
+
+  @@unique([review_id, tag_id], map: "_ReviewsToTags_AB_unique")
+  @@index([tag_id], map: "_ReviewsToTags_B_index")
+  @@map("_ReviewsToTags")
+}
+
+model ReviewsToComments {
+  review_id Int
+  comment_id Int
+  Reviews   Reviews @relation(fields: [review_id], references: [id], onDelete: Cascade, map: "_ReviewsToComments_A_fkey")
+  Comments      Comments    @relation(fields: [comment_id], references: [id], onDelete: Cascade, map: "_ReviewsToComments_B_fkey")
+
+  @@unique([review_id, comment_id], map: "_ReviewsToComments_AB_unique")
+  @@index([comment_id], map: "_ReviewsToComments_B_index")
+  @@map("_ReviewsToComments")
+}
+

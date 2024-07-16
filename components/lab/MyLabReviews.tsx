@@ -1,21 +1,23 @@
-import { fetchReviewsByUserIds } from "@/actions/review.action";
 import React from "react";
 import Review from "../Review";
-import { fetchUserIdsByLabId } from "@/actions/user.action";
+import { fetchReviewsByAffiliationId } from "@/actions/review.action";
+import { Review as ReviewType } from "@/type";
 
-const MyLabReviews = async ({
-  labId,
-  tag,
-}: {
-  labId: string;
+type Props = {
+  affiliationId?: number;
   tag?: string;
-}) => {
-  const userIds: string[] = await fetchUserIdsByLabId(labId);
-  const reviewsData = await fetchReviewsByUserIds(userIds, tag);
+};
 
-  if (reviewsData.length == 0) {
+const MyLabReviews = async ({ affiliationId, tag }: Props) => {
+  if (!affiliationId) return null;
+
+  const reviewsData: ReviewType[] =
+    await fetchReviewsByAffiliationId(affiliationId);
+
+  if (reviewsData.length === 0) {
     return <div>No Reviews.</div>;
   }
+
   return (
     <>
       {tag ? (
@@ -25,7 +27,6 @@ const MyLabReviews = async ({
       ) : null}
       <div className="flex flex-col gap-2">
         {reviewsData.map((review) => {
-          //return <Review key={review.id} reviewData={review} userId={user.id}/>;
           return <Review key={review.id} reviewData={review} clamp={true} />;
         })}
       </div>

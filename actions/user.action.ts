@@ -1,14 +1,14 @@
 "use server";
 
-import { userType } from "@/constants";
-import db from "@/lib/firebase/store";
-import { arrayUnion, doc, getDoc, setDoc, updateDoc, query, where, collection, getDocs } from "firebase/firestore";
+import { prisma } from "@/lib/prisma/prisma-client";
+import { User } from "@/type";
 
+/*
 export async function fetchUser(userId: string) {
   try {
     const userData = await getDoc(doc(db, `users/${userId}`));
     if (userData.exists()) {
-      return userData.data() as userType;
+      return userData.data() as userInterface;
     } else {
       throw new Error("Failed to fetch user.");
     }
@@ -17,28 +17,66 @@ export async function fetchUser(userId: string) {
     throw new Error("Failed to fetch user.");
   }
 }
+*/
 
-export async function fetchUserIdsByLabId(labId: string) {
-    try {
-        const labData = await getDoc(doc(db, `labs/${labId}`))
-        if (labData.exists()) {
-          return labData.data().users as string[];  
-        } else {
-            throw new Error("LabData does not exist.");
-        }
-    } catch (error) {
-        console.log(error)
-        throw new Error("Failed to fetch reviews.")
-    }
+export async function fetchUser(userId: string): Promise<User[]> {
+  try {
+    const userData = await prisma.$queryRaw<User[]>`
+        SELECT * FROM "Users" WHERE id = ${userId};`;
+
+    return userData;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch user.");
+  }
 }
+
+/* 
+export async function fetchUserIdsByLabId(labId: string) {
+  try {
+    const labData = await getDoc(doc(db, `labs/${labId}`));
+    if (labData.exists()) {
+      return labData.data().users as string[];
+    } else {
+      throw new Error("LabData does not exist.");
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch reviews.");
+  }
+}
+*/
+
+export async function fetchUsersByAffiliationId(
+  affiliationId: number,
+): Promise<User[]> {
+  try {
+    const usersData = await prisma.$queryRaw<User[]>`
+      SELECT "Users".*
+      FROM "Users"
+      JOIN "_AffiliationsToUsers" ON "Users".id = "_AffiliationsToUsers".user_id
+      JOIN "Affiliations" ON "_AffiliationsToUsers".affiliation_id = "Affiliations".id
+      WHERE "Affiliations".id = ${affiliationId};`;
+
+    return usersData;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch users.");
+  }
+}
+
+/*
+もうまとめてユーザーを取得する必要はない
 
 export async function fetchUsers(userIds: string[]) {
-    const promises = userIds.map((userId) => fetchUser(userId))
-    const users = await Promise.all(promises);
-    return users;
+  const promises = userIds.map((userId) => fetchUser(userId));
+  const users = await Promise.all(promises);
+  return users;
 }
+*/
 
-export async function setUser(userData: userType) {
+/*
+export async function setUser(userData: userInterface) {
   try {
     await Promise.all([
       setDoc(doc(db, `users/${userData.id}`), userData),
@@ -50,45 +88,38 @@ export async function setUser(userData: userType) {
     throw new Error("Failed to set user.");
   }
 }
+*/
 
-// reviewsコレクション内のreviewのユーザー情報を更新
-async function updateUserInfoOnReview(userData: userType) {
-  // reviewsコレクション内の書き換え
-  const col = query(
-    collection(db, `reviews`),
-    where("createdBy", "==", userData.id)
-  );
-  let docRef;
-
+export async function setUser(userData: User) {
   try {
-    const allReviewsSnapshot = await getDocs(col);
-    allReviewsSnapshot.forEach((docSnap) => {
-      docRef = doc(db, "reviews", docSnap.id);
-      updateDoc(docRef, {"reviewerName": userData.name, "reviewerFields": userData.field});
-    });
-  } catch(e) {
-    throw new Error("Failed to update user info on review.");
-  }
-
-  // users コレクション内のreviewsサブコレクションの書き換え
-  try {
-    const allUserReviewsSnapshot = await getDocs(collection(db, `users/${userData.id}/reviews`));
-    allUserReviewsSnapshot.forEach((docSnap) => {
-        docRef = doc(db, `users/${userData.id}/reviews`, docSnap.id);
-        updateDoc(docRef, {"reviewerName": userData.name, "reviewerFields":userData.field});
-    })
-  } catch(e) {
-    throw new Error("Fialed to update user info on user's review.");
-  }
-}
-
-export async function updateUser(userData: userType) {
-  try {
-    await Promise.all([
-      updateDoc(doc(db, `users/${userData.id}`), userData),
-      updateUserInfoOnReview(userData),
-    ]);
+    await prisma.$executeRaw`
+      INSERT INTO "Users" (id, name, role)
+      VALUES (${userData.id}, ${userData.name}, ${userData.role});`;
   } catch (error) {
-    throw new Error("Failed to update user.");
+    console.log(error);
+    throw new Error("Failed to set user.");
   }
 }
+
+/*
+同じ分野のユーザーを取得する関数を使う場所が多分ない
+
+export async function getUsersbyUserField(userId: string) {
+  const user = await fetchUser(userId);
+  const users: User[] = [];
+  try {
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    usersSnapshot.forEach((doc) => {
+      //userIdさんと別人かつ同じ分野の人か？
+      if (doc.id != userId && (doc.data() as userInterface).field == user.field) {
+        //同じならusersにプッシュする
+        users.push(doc.data() as userInterface);
+      }
+    });
+    return users;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch users.");
+  }
+}
+*/

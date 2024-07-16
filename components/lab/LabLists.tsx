@@ -1,19 +1,19 @@
 import React from "react";
-import { labType } from "@/constants";
+import { Affiliation } from "@/type";
 import LabCard from "./LabCard";
-import { fetchAllLabs } from "@/actions/lab.action";
+import { fetchAllAffiliations } from "@/actions/affiliation.action";
 
-const LabLists = async ({ tag } : { tag?: string }) => {
-  const labLists: labType[] = await fetchAllLabs();
+const LabLists = async () => {
+  const affiliations: Affiliation[] = await fetchAllAffiliations();
 
   return (
     <>
-    <p className="text-muted-foreground font-2xl"> 研究室一覧 </p>
-    <div className="flex flex-col gap-2">
-      {labLists.map((lab) => {
-        return <LabCard key={lab.value} labData={lab} />;
-      })}
-    </div>
+      <p className="text-muted-foreground font-2xl"> 研究室一覧 </p>
+      <div className="flex flex-col gap-2">
+        {affiliations.map((affiliation) => {
+          return <LabCard key={affiliation.id} affiliationData={affiliation} />;
+        })}
+      </div>
     </>
   );
 };

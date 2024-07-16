@@ -18,23 +18,31 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { userType } from "@/constants";
 import Link from "next/link";
 
 import { useClerk } from "@clerk/nextjs";
 import { Kaisei_Tokumin } from "next/font/google";
 import clsx from "clsx";
 import Image from "next/image";
+import { Affiliation, User } from "@/type";
 const kaisei = Kaisei_Tokumin({ weight: "400", subsets: ["cyrillic"] });
 
-export function HeaderContents({ user }: { user?: userType }) {
+type Props = {
+  userData?: User;
+  affiliationData?: Affiliation;
+};
+
+export function HeaderContents({ userData, affiliationData }: Props) {
   const { signOut } = useClerk();
 
-  if (!user) {
+  if (!userData) {
     return (
       <Sheet>
         <SheetTrigger asChild className="hover:cursor-pointer">
-          <RxHamburgerMenu size={"2rem"} class="transform hover:scale-110"/>
+          <RxHamburgerMenu
+            size={"2rem"}
+            className="transform hover:scale-110"
+          />
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
@@ -60,8 +68,12 @@ export function HeaderContents({ user }: { user?: userType }) {
                 </a>
               </div>
             </div>
-            <Link href="/sign-in" className="flex text-lg px-2 py-1 flex-row gap-4 items-center justify-center hover:underline">
-              <RiLoginBoxLine />サインイン
+            <Link
+              href="/sign-in"
+              className="flex text-lg px-2 py-1 flex-row gap-4 items-center justify-center hover:underline"
+            >
+              <RiLoginBoxLine />
+              サインイン
             </Link>
           </div>
         </SheetContent>
@@ -72,7 +84,7 @@ export function HeaderContents({ user }: { user?: userType }) {
   return (
     <Sheet>
       <SheetTrigger asChild className="hover:cursor-pointer">
-        <RxHamburgerMenu size={"2rem"} class="transform hover:scale-110"/>
+        <RxHamburgerMenu size={"2rem"} className="transform hover:scale-110" />
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
@@ -108,20 +120,22 @@ export function HeaderContents({ user }: { user?: userType }) {
               </SheetClose>
               <SheetClose asChild>
                 <Link
-                  href={`/user/${user.id}`}
+                  href={`/user/${userData.id}`}
                   className="flex text-lg px-2 py-1 flex-row items-center gap-4 hover:underline"
                 >
                   <IoPersonOutline /> マイページ
                 </Link>
               </SheetClose>
-              <SheetClose asChild>
-                <Link
-                  href={`/lab/${user.affiliation}`}
-                  className="flex text-lg px-2 py-1 flex-row items-center gap-4 hover:underline"
-                >
-                  <ImLab /> マイラボ
-                </Link>
-              </SheetClose>
+              {affiliationData && (
+                <SheetClose asChild>
+                  <Link
+                    href={`/lab/${affiliationData.id}`}
+                    className="flex text-lg px-2 py-1 flex-row items-center gap-4 hover:underline"
+                  >
+                    <ImLab /> マイラボ
+                  </Link>
+                </SheetClose>
+              )}
               <SheetClose asChild>
                 <Link
                   href={`/lab`}
@@ -144,7 +158,10 @@ export function HeaderContents({ user }: { user?: userType }) {
               </a>
             </div>
           </div>
-          <button onClick={() => signOut()} className="flex text-lg px-2 py-1 flex-row gap-4 items-center justify-center hover:underline">
+          <button
+            onClick={() => signOut()}
+            className="flex text-lg px-2 py-1 flex-row gap-4 items-center justify-center hover:underline"
+          >
             <RiLogoutBoxRLine /> サインアウト
           </button>
         </div>
