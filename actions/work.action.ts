@@ -1,11 +1,11 @@
 "use server";
 
-import { workInterface } from "@/constants";
+import { Work } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 
-export async function fetchAllWorks(): Promise<workInterface[]> {
+export async function fetchAllWorks(): Promise<Work[]> {
   try {
-    const worksData = await prisma.$queryRaw<workInterface[]>`
+    const worksData = await prisma.$queryRaw<Work[]>`
         SELECT * FROM "Works"`;
 
     return worksData;
@@ -15,11 +15,9 @@ export async function fetchAllWorks(): Promise<workInterface[]> {
   }
 }
 
-export async function fetchWorksByUserId(
-  userId: string,
-): Promise<workInterface[]> {
+export async function fetchWorksByUserId(userId: string): Promise<Work[]> {
   try {
-    const affiliationsData = await prisma.$queryRaw<workInterface[]>`
+    const affiliationsData = await prisma.$queryRaw<Work[]>`
         SELECT *
         FROM "Works"
         WHERE user_id = ${userId};`;
@@ -31,7 +29,7 @@ export async function fetchWorksByUserId(
   }
 }
 
-export async function setWork(workData: workInterface) {
+export async function setWork(workData: Work) {
   try {
     await prisma.$executeRaw<number>`
       INSERT INTO "Works" (url, user_id)
