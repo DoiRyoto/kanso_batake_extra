@@ -49,19 +49,20 @@ export async function setReview(reviewData: Review) {
   }
 }
 
-export async function updateReview(userId: string, reviewData: Review) {
+export async function updateReview(reviewData: Review) {
   try {
-    await prisma.$executeRaw`
-        UPDATE "Reviews" 
-        SET content = ${reviewData.content}, paper_data = ${reviewData.paper_data}, paper_title = ${reviewData.paper_title}, user_id = ${userId}, thumbnail_url = ${reviewData.thumbnail_url}
-        WHERE id = ${reviewData.id};`;
+    const requestUrl = new URL(`${process.env.API_URL}/reviews`);
+    await fetch(requestUrl, {
+      method: "PUT",
+      body: JSON.stringify(reviewData),
+    });
   } catch (error) {
     console.log(error);
     throw new Error("Failed to set review.");
   }
 
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
+  revalidatePath(`/user/${reviewData.user_info.id}`);
+  redirect(`/user/${reviewData.user_info.id}`);
 }
 
 /*
