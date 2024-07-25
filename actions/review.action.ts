@@ -51,7 +51,9 @@ export async function setReview(reviewData: Review) {
 
 export async function updateReview(reviewData: Review) {
   try {
-    const requestUrl = new URL(`${process.env.API_URL}/reviews`);
+    const requestUrl = new URL(
+      `${process.env.API_URL}/reviews/${reviewData.id}`
+    );
     await fetch(requestUrl, {
       method: "PUT",
       body: JSON.stringify(reviewData),
