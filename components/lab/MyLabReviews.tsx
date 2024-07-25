@@ -1,6 +1,6 @@
 import React from "react";
 import Review from "../Review";
-import { fetchReviewsByAffiliationId } from "@/actions/review.action";
+import { fetchReviewsByFilter } from "@/actions/review.action";
 import { Review as ReviewType } from "@/type";
 
 type Props = {
@@ -11,8 +11,10 @@ type Props = {
 const MyLabReviews = async ({ affiliationId, tag }: Props) => {
   if (!affiliationId) return null;
 
-  const reviewsData: ReviewType[] =
-    await fetchReviewsByAffiliationId(affiliationId);
+  const reviewsData: ReviewType[] = await fetchReviewsByFilter({
+    searchTag: tag,
+    affiliationId: affiliationId.toString(),
+  });
 
   if (reviewsData.length === 0) {
     return <div>No Reviews.</div>;
