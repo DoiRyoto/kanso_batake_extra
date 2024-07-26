@@ -58,11 +58,11 @@ async function fetchUser(userId: string): Promise<Users[]> {
   }
 }
 
-async function deleteReview(reviewId: number) {
+async function deleteReview(reviewId: number): Promise<number> {
   try {
-    await prisma.$executeRaw`
-    DELETE FROM "Reviews"
-    WHERE id = ${reviewId};`;
+    const res = await prisma.$executeRaw`
+        DELETE FROM "Reviews" WHERE id = ${reviewId};`;
+    return res;
   } catch (error) {
     throw new Error("failed to delete review.");
   }
