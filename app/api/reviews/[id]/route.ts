@@ -126,6 +126,16 @@ async function fetchUser(userId: string): Promise<Users[]> {
   }
 }
 
+async function deleteReview(reviewId: number) {
+  try {
+    await prisma.$executeRaw`
+    DELETE FROM "Reviews"
+    WHERE id = ${reviewId};`;
+  } catch (error) {
+    throw new Error("failed to delete review.");
+  }
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
@@ -183,6 +193,27 @@ export async function PUT(
   } catch (error) {
     return NextResponse.json(
       { error: `Failed to post Review` },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+): Promise<NextResponse> {
+  try {
+    // ReviewIdをnumberに変換
+    const reviewId = parseInt(params.id);
+    if (isNaN(reviewId)) {
+      return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
+    }
+    console.log(reviewId);
+    const res = await deleteReview(reviewId);
+    return NextResponse.json(res, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: `Failed to delete review with ID = ${params.id}` },
       { status: 500 },
     );
   }
