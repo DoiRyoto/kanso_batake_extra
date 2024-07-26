@@ -214,17 +214,6 @@ async function setTag(tag: Tag): Promise<Tag[]> {
   }
 }
 
-// async function updateReview(reviewData: Review) {
-//   try {
-//     await prisma.$executeRaw`
-//         INSERT INTO "Reviews" (content, paper_data, paper_title, user_id, thumbnail_url, created_at)
-//         VALUES (${reviewData.content}, ${reviewData.paper_data}, ${reviewData.paper_title}, ${reviewData.user_info.id}, ${reviewData.thumbnail_url}, ${reviewData.created_at});`;
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error("Failed to update review.");
-//   }
-// }
-
 async function setReview(reviewData: Review) {
   try {
     // ReviewDataをセット
@@ -295,21 +284,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     );
   }
 }
-
-// export async function PUT(request: NextRequest): Promise<NextResponse> {
-//   const params = await request.json();
-//   console.log(params);
-//   try {
-//     await updateReview(params);
-//     return NextResponse.json({ status: 200 });
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json(
-//       { error: `Failed to update Review` },
-//       { status: 500 },
-//     );
-//   }
-// }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const params = await request.json();
