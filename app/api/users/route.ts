@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma/prisma-client";
-import { UserDetail } from "@/type";
+import { UserDetail, Work, Field, Affiliation } from "@/type";
 
 async function fetchUsers(affiliationId: number | null): Promise<UserDetail[]> {
   try {
@@ -75,6 +75,93 @@ async function fetchUsers(affiliationId: number | null): Promise<UserDetail[]> {
   }
 }
 
+async function setWork(work: Work, userId: string) {
+  try {
+    await prisma.$executeRaw`
+        INSERT INTO "Works" (url, user_id)
+        VALUES (${work.url}, ${userId}) 
+        `;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to set work.");
+  }
+}
+
+async function setField(field: Field): Promise<Field[]> {
+  try {
+    const newField = await prisma.$queryRaw<Field[]>`
+            INSERT INTO "Fields" (id, name)
+            VALUES (${field.id}, ${field.name})
+            ON CONFLICT (id) DO UPDATE
+            SET id = EXCLUDED.id
+            RETURNING *;
+        `;
+    return newField;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to set field");
+  }
+}
+
+async function setAffiliation(
+  affiliation: Affiliation,
+): Promise<Affiliation[]> {
+  try {
+    const newAffiliation = await prisma.$queryRaw<Affiliation[]>`
+            INSERT INTO "Affiliations" (id, name)
+            VALUES (${affiliation.id}, ${affiliation.name})
+            ON CONFLICT (id) DO UPDATE
+            SET id = EXCLUDED.id
+            RETURNING *;
+        `;
+    return newAffiliation;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to set affiliation");
+  }
+}
+
+async function setUser(userData: UserDetail) {
+  try {
+    const newUserData = await prisma.$queryRaw<UserDetail[]>`
+        INSERT INTO "Users" (id, name, role)
+        VALUES (${userData.id}, ${userData.name}, ${userData.role})
+        ON CONFLICT (id) DO UPDATE
+        SET id = EXCLUDED.id
+        RETURNING *;
+        `;
+
+    // worksをset
+    const setWorkReq = userData.works.map(async (work) => {
+      await setWork(work, userData.id);
+    });
+    await Promise.all(setWorkReq);
+
+    // fieldsをset
+    const setFieldReq = userData.fields.map(async (field) => {
+      const newField = await setField(field);
+      await prisma.$executeRaw`
+                INSERT INTO "_FieldsToUsers" (user_id, field_id)
+                VALUES (${userData.id}, ${newField[0].id});
+            `;
+    });
+    await Promise.all(setFieldReq);
+
+    // affiliationsをset
+    const setAffiliationReq = userData.affiliations.map(async (affiliation) => {
+      const newAffiliation = await setAffiliation(affiliation);
+      await prisma.$executeRaw`
+                INSERT INTO "_AffiliationsToUsers" (user_id, affiliation_id)
+                VALUES (${userData.id}, ${newAffiliation[0].id});
+            `;
+    });
+    await Promise.all(setAffiliationReq);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to post user.");
+  }
+}
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const searchParams = request.nextUrl.searchParams;
   const affiliationIdString = searchParams.get("affiliationId");
@@ -93,5 +180,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       { error: `Failed to fetch users` },
       { status: 500 },
     );
+  }
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  const params = await request.json();
+  try {
+    await setUser(params);
+    return NextResponse.json({ status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: `Failed to post User` }, { status: 500 });
   }
 }
