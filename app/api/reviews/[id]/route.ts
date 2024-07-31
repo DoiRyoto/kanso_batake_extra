@@ -36,27 +36,47 @@ async function putReview(
   }
 }
 
-async function putTags(reviewId: number, tags: Tag[]): Promise<number> {
+async function putTags(reviewId: number, tags: Tag[]) {
   try {
     // TagとReviewsToTagsのセット
     const req = tags.map(async (tag) => {
       const newTag = await prisma.$queryRaw<Tag[]>`
-          INSERT INTO "Tags" (name)
-          VALUES (${tag.name})
-          ON CONFLICT (name) DO NOTHING;`;
-      if (newTag.length === 0) {
-        return undefined;
-      }
-      return await prisma.$queryRaw<ReviewsToTags[]>`
-            INSERT INTO "_ReviewsToTags" (review_id, tag_id)
-            VALUES (${reviewId}, ${newTag[0].id})
-            RETURNING *;`;
+          WITH inserted AS (
+            INSERT INTO "Tags" (name)
+            VALUES (${tag.name})
+            ON CONFLICT (name) DO NOTHING
+            RETURNING *
+          )
+          SELECT *
+          FROM inserted
+          UNION ALL
+          SELECT *
+          FROM "Tags"
+          WHERE name = (${tag.name})
+          AND NOT EXISTS (SELECT 1 FROM inserted);`;
+
+      await prisma.$queryRaw<ReviewsToTags[]>`
+          INSERT INTO "_ReviewsToTags" (review_id, tag_id)
+          VALUES (${reviewId}, ${newTag[0].id})
+          ON CONFLICT (review_id, tag_id) DO NOTHING
+          RETURNING *;`;
+      return newTag[0];
     });
-    const res = await Promise.all(req);
-    const resNonUndefined = res.filter(
-      (element) => element !== undefined,
-    ).length;
-    return resNonUndefined;
+    const newTags = await Promise.all(req);
+
+    const rtts = await prisma.$queryRaw<ReviewsToTags[]>`
+          SELECT *
+          FROM "_ReviewsToTags"
+          WHERE review_id = ${reviewId};`;
+    const req2 = rtts.map(async (rtt) => {
+      if (!newTags.some((newTag) => newTag.id === rtt.tag_id)) {
+        await prisma.$executeRaw`
+          DELETE FROM "_ReviewsToTags"
+          WHERE review_id = ${reviewId}
+            AND tag_id = ${rtt.tag_id};`;
+      }
+    });
+    await Promise.all(req2);
   } catch (error) {
     console.log(error);
     throw new Error("Failed to update review.");
@@ -157,12 +177,8 @@ export async function PUT(
   const requestBody = await request.json();
   const reviewData: Review = requestBody.reviewData;
   try {
-    const review_res = await putReview(reviewId, reviewData);
-    const tag_res = await putTags(reviewId, reviewData.tags);
-    const res = {
-      reviewResponse: review_res,
-      tagResponse: tag_res,
-    };
+    const res = await putReview(reviewId, reviewData);
+    await putTags(reviewId, reviewData.tags);
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
     return NextResponse.json(
