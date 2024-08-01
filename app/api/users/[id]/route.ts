@@ -48,7 +48,7 @@ export async function GET(
     }
 
     const userData = await fetchUser(id);
-    if (!userData) {
+    if (!userData.length) {
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
     return NextResponse.json(userData, { status: 200 });
