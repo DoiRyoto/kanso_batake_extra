@@ -90,10 +90,10 @@ async function setWork(work: Work, userId: string) {
 async function setField(field: Field): Promise<Field[]> {
   try {
     const newField = await prisma.$queryRaw<Field[]>`
-            INSERT INTO "Fields" (id, name)
-            VALUES (${field.id}, ${field.name})
-            ON CONFLICT (id) DO UPDATE
-            SET id = EXCLUDED.id
+            INSERT INTO "Fields" (name)
+            VALUES (${field.name})
+            ON CONFLICT (name) DO UPDATE
+            SET name = EXCLUDED.name
             RETURNING *;
         `;
     return newField;
@@ -110,8 +110,8 @@ async function setAffiliation(
     const newAffiliation = await prisma.$queryRaw<Affiliation[]>`
             INSERT INTO "Affiliations" (id, name)
             VALUES (${affiliation.id}, ${affiliation.name})
-            ON CONFLICT (id) DO UPDATE
-            SET id = EXCLUDED.id
+            ON CONFLICT (name) DO UPDATE
+            SET name = EXCLUDED.name
             RETURNING *;
         `;
     return newAffiliation;
@@ -132,30 +132,38 @@ async function setUser(userData: UserDetail) {
         `;
 
     // worksをset
-    const setWorkReq = userData.works.map(async (work) => {
-      await setWork(work, userData.id);
-    });
-    await Promise.all(setWorkReq);
+    if (userData.works) {
+      const setWorkReq = userData.works.map(async (work) => {
+        await setWork(work, userData.id);
+      });
+      await Promise.all(setWorkReq);
+    }
 
     // fieldsをset
-    const setFieldReq = userData.fields.map(async (field) => {
-      const newField = await setField(field);
-      await prisma.$executeRaw`
-                INSERT INTO "_FieldsToUsers" (user_id, field_id)
-                VALUES (${userData.id}, ${newField[0].id});
-            `;
-    });
-    await Promise.all(setFieldReq);
+    if (userData.fields) {
+      const setFieldReq = userData.fields.map(async (field) => {
+        const newField = await setField(field);
+        await prisma.$executeRaw`
+                    INSERT INTO "_FieldsToUsers" (user_id, field_id)
+                    VALUES (${userData.id}, ${newField[0].id});
+                `;
+      });
+      await Promise.all(setFieldReq);
+    }
 
     // affiliationsをset
-    const setAffiliationReq = userData.affiliations.map(async (affiliation) => {
-      const newAffiliation = await setAffiliation(affiliation);
-      await prisma.$executeRaw`
-                INSERT INTO "_AffiliationsToUsers" (user_id, affiliation_id)
-                VALUES (${userData.id}, ${newAffiliation[0].id});
-            `;
-    });
-    await Promise.all(setAffiliationReq);
+    if (userData.affiliations) {
+      const setAffiliationReq = userData.affiliations.map(
+        async (affiliation) => {
+          const newAffiliation = await setAffiliation(affiliation);
+          await prisma.$executeRaw`
+                    INSERT INTO "_AffiliationsToUsers" (user_id, affiliation_id)
+                    VALUES (${userData.id}, ${newAffiliation[0].id});
+                `;
+        },
+      );
+      await Promise.all(setAffiliationReq);
+    }
   } catch (error) {
     console.log(error);
     throw new Error("Failed to post user.");
@@ -170,9 +178,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     : null;
   try {
     const userDatas = await fetchUsers(affiliationId);
-    if (!userDatas.length) {
-      return NextResponse.json({ error: "No user" }, { status: 400 });
-    }
     return NextResponse.json(userDatas, { status: 200 });
   } catch (error) {
     console.error(error);
