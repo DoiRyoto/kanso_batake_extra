@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Paper, Review, Tag, User } from "@/type";
+import { Paper, Review, Tag } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 import { Reviews, Users, Tags } from "@prisma/client";
 
@@ -18,179 +18,39 @@ import { Reviews, Users, Tags } from "@prisma/client";
 
 async function fetchReviews(
   tag: string | null,
-  userId: string | null,
-  affiliationId: number | null,
-): Promise<Review[]> {
+  id: string | null,
+): Promise<Reviews[]> {
   try {
-    let reviews: Review[];
-    if (!tag && !userId && !affiliationId) {
-      reviews = await prisma.$queryRaw<Review[]>`
-        SELECT
-            r.*,
-            json_build_object(
-              'id', u.id,
-              'name', u.name,
-              'role', u.role,
-              'created_at', u.created_at
-            ) AS user_info,
-            json_agg(json_build_object(
-              'id', t.id,
-              'name', t.name,
-              'created_at', t.created_at
-            )) AS tags
-        FROM "Reviews" r
-        LEFT JOIN "Users" u ON r.user_id = u.id
-        LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
-        LEFT JOIN "Tags" t ON rtt.tag_id = t.id
-        GROUP BY r.id, u.id
-        ORDER BY r.created_at DESC;`;
-    } else if (!tag && userId && !affiliationId) {
-      reviews = await prisma.$queryRaw<Review[]>`
-        SELECT
-            r.*,
-            json_build_object(
-              'id', u.id,
-              'name', u.name,
-              'role', u.role,
-              'created_at', u.created_at
-            ) AS user_info,
-            json_agg(json_build_object(
-              'id', t.id,
-              'name', t.name,
-              'created_at', t.created_at
-            )) AS tags
-        FROM "Reviews" r
-        LEFT JOIN "Users" u ON r.user_id = u.id
-        LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
-        LEFT JOIN "Tags" t ON rtt.tag_id = t.id
-        WHERE r.user_id = ${userId}
-        GROUP BY r.id, u.id
-        ORDER BY r.created_at DESC;`;
-    } else if (tag && !userId && !affiliationId) {
-      reviews = await prisma.$queryRaw<Review[]>`
-        SELECT
-            r.*,
-            json_build_object(
-              'id', u.id,
-              'name', u.name,
-              'role', u.role,
-              'created_at', u.created_at
-            ) AS user_info,
-            json_agg(json_build_object(
-              'id', t.id,
-              'name', t.name,
-              'created_at', t.created_at
-            )) AS tags
-        FROM "Reviews" r
-        LEFT JOIN "Users" u ON r.user_id = u.id
-        LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
-        LEFT JOIN "Tags" t ON rtt.tag_id = t.id
-        WHERE r.id IN (
-          SELECT rtt.review_id
-          FROM "_ReviewsToTags" rtt
-          JOIN "Tags" t ON rtt.tag_id = t.id
-          WHERE t.name = ${tag})
-        GROUP BY r.id, u.id
-        ORDER BY r.created_at DESC;`;
-    } else if (tag && !userId && affiliationId) {
-      reviews = await prisma.$queryRaw<Review[]>`
-        SELECT
-            r.*,
-            json_build_object(
-              'id', u.id,
-              'name', u.name,
-              'role', u.role,
-              'created_at', u.created_at
-            ) AS user_info,
-            json_agg(json_build_object(
-              'id', t.id,
-              'name', t.name,
-              'created_at', t.created_at
-            )) AS tags
-        FROM "Reviews" r
-        LEFT JOIN "Users" u ON r.user_id = u.id
-        LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
-        LEFT JOIN "Tags" t ON rtt.tag_id = t.id
-        LEFT JOIN "_AffiliationsToUsers" atu ON u.id = atu.user_id
-        WHERE atu.affiliation_id = ${affiliationId}
-          AND r.id IN (
-            SELECT rtt.review_id
-            FROM "_ReviewsToTags" rtt
-            JOIN "Tags" t ON rtt.tag_id = t.id
-            WHERE t.name = ${tag})
-        GROUP BY r.id, u.id
-        ORDER BY r.created_at DESC;`;
-    } else if (tag && userId && !affiliationId) {
-      reviews = await prisma.$queryRaw<Review[]>`
-      SELECT
-            r.*,
-            json_build_object(
-              'id', u.id,
-              'name', u.name,
-              'role', u.role,
-              'created_at', u.created_at
-            ) AS user_info,
-            json_agg(json_build_object(
-              'id', t.id,
-              'name', t.name,
-              'created_at', t.created_at
-            )) AS tags
-        FROM "Reviews" r
-        LEFT JOIN "Users" u ON r.user_id = u.id
-        LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
-        LEFT JOIN "Tags" t ON rtt.tag_id = t.id
-        WHERE r.user_id = ${userId}
-          AND r.id IN (
-            SELECT rtt.review_id
-            FROM "_ReviewsToTags" rtt
-            JOIN "Tags" t ON rtt.tag_id = t.id
-            WHERE t.name = ${tag})
-        GROUP BY r.id, u.id
-        ORDER BY r.created_at DESC;`;
-    } else if (!tag && !userId && affiliationId) {
-      reviews = await prisma.$queryRaw<Review[]>`
-        SELECT
-            r.*,
-            json_build_object(
-              'id', u.id,
-              'name', u.name,
-              'role', u.role,
-              'created_at', u.created_at
-            ) AS user_info,
-            json_agg(json_build_object(
-              'id', t.id,
-              'name', t.name,
-              'created_at', t.created_at
-            )) AS tags
-        FROM "Reviews" r
-        LEFT JOIN "Users" u ON r.user_id = u.id
-        LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
-        LEFT JOIN "Tags" t ON rtt.tag_id = t.id
-        LEFT JOIN "_AffiliationsToUsers" atu ON u.id = atu.user_id
-        WHERE atu.affiliation_id = ${affiliationId}
-        GROUP BY r.id, u.id
-        ORDER BY r.created_at DESC;`;
+    let reviews: Reviews[];
+    if (!tag && !id) {
+      reviews = await prisma.$queryRaw<Reviews[]>`
+      SELECT * FROM "Reviews" ORDER BY created_at DESC;`;
+    } else if (!tag && id) {
+      reviews = await prisma.$queryRaw<Reviews[]>`
+        SELECT *
+        FROM "Reviews"
+        WHERE user_id = ${id}
+        ORDER BY created_at DESC;`;
+    } else if (tag && !id) {
+      reviews = await prisma.$queryRaw<Reviews[]>`
+        SELECT "Reviews".*
+        FROM "Reviews"
+        JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
+        JOIN "Tags" ON "_ReviewsToTags".tag_id = "Tags".id
+        WHERE "Tags".name = ${tag}
+        ORDER BY "Reviews".created_at DESC;`;
+    } else if (tag && id) {
+      reviews = await prisma.$queryRaw<Reviews[]>`
+        SELECT "Reviews".*
+        FROM "Reviews"
+        JOIN "_ReviewsToTags" ON "Reviews".id = "_ReviewsToTags".review_id
+        JOIN "Tags" ON "_ReviewsToTags".tag_id = "Tags".id
+        WHERE "Tags".name = ${tag}
+        AND "Reviews".user_id = ${id}
+        ORDER BY "Reviews".created_at DESC;`;
     } else {
-      reviews = await prisma.$queryRaw<Review[]>`
-        SELECT
-            r.*,
-            json_build_object(
-              'id', u.id,
-              'name', u.name,
-              'role', u.role,
-              'created_at', u.created_at
-            ) AS user_info,
-            json_agg(json_build_object(
-              'id', t.id,
-              'name', t.name,
-              'created_at', t.created_at
-            )) AS tags
-        FROM "Reviews" r
-        LEFT JOIN "Users" u ON r.user_id = u.id
-        LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
-        LEFT JOIN "Tags" t ON rtt.tag_id = t.id
-        GROUP BY r.id, u.id
-        ORDER BY r.created_at DESC;`;
+      reviews = await prisma.$queryRaw<Reviews[]>`
+        SELECT * FROM "Reviews" ORDER BY created_at DESC;`;
     }
     return reviews;
   } catch (error) {
@@ -213,6 +73,17 @@ async function setTag(tag: Tag): Promise<Tag[]> {
     throw new Error(`Failed to set tag.${tag.name}`);
   }
 }
+
+// async function updateReview(reviewData: Review) {
+//   try {
+//     await prisma.$executeRaw`
+//         INSERT INTO "Reviews" (content, paper_data, paper_title, user_id, thumbnail_url, created_at)
+//         VALUES (${reviewData.content}, ${reviewData.paper_data}, ${reviewData.paper_title}, ${reviewData.user_info.id}, ${reviewData.thumbnail_url}, ${reviewData.created_at});`;
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error("Failed to update review.");
+//   }
+// }
 
 async function setReview(reviewData: Review) {
   try {
@@ -267,14 +138,26 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const searchTag = searchParams.get("searchTag");
   const userId = searchParams.get("userId");
 
-  const convertStringToNumber = (value: string | null): number | null =>
-    value !== null ? (isNaN(parseInt(value)) ? null : parseInt(value)) : null;
-  const affiliationId = convertStringToNumber(
-    searchParams.get("affiliationId"),
-  );
-
   try {
-    const reviewDatas = await fetchReviews(searchTag, userId, affiliationId);
+    // const reviews = await fetchAllReviews();
+    const reviews = await fetchReviews(searchTag, userId);
+    const req = reviews.map(async (review) => {
+      const tags = await fetchTagsByReviewId(review.id);
+      const user = await fetchUser(review.user_id);
+      const reviewData: Review = {
+        id: review.id,
+        content: review.content,
+        paper_title: review.paper_title,
+        paper_data: review.paper_data as Paper,
+        user_info: user[0],
+        comments: [],
+        tags: tags,
+        created_at: review.created_at,
+        thumbnail_url: review.thumbnail_url,
+      };
+      return reviewData;
+    });
+    const reviewDatas = await Promise.all(req);
     return NextResponse.json(reviewDatas, { status: 200 });
   } catch (error) {
     console.error(error);
@@ -284,6 +167,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     );
   }
 }
+
+// export async function PUT(request: NextRequest): Promise<NextResponse> {
+//   const params = await request.json();
+//   console.log(params);
+//   try {
+//     await updateReview(params);
+//     return NextResponse.json({ status: 200 });
+//   } catch (error) {
+//     console.error(error);
+//     return NextResponse.json(
+//       { error: `Failed to update Review` },
+//       { status: 500 },
+//     );
+//   }
+// }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const params = await request.json();
