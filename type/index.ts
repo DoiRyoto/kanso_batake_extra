@@ -79,7 +79,7 @@ export type Work = {
 export type UserDetail = {
   id: string;
   name: string;
-  role: string | null; // いったん　Student or Teacher
+  role: string | null;
   created_at: string | Date;
   works: Work[];
   fields: Field[];
