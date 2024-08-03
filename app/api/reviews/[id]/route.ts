@@ -130,3 +130,23 @@ export async function DELETE(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+): Promise<NextResponse> {
+  try {
+    // ReviewIdをnumberに変換
+    const reviewId = parseInt(params.id);
+    if (isNaN(reviewId)) {
+      return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
+    }
+    const res = await deleteReview(reviewId);
+    return NextResponse.json(res, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: `Failed to delete review with ID = ${params.id}` },
+      { status: 500 },
+    );
+  }
+}
