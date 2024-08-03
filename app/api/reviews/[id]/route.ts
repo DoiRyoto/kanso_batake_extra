@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Paper, Review } from "@/type";
+import { Paper, Review, Tag } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
-import { Reviews, Users, Tags, Comments } from "@prisma/client";
+import { Reviews, Users, Tags, Comments, ReviewsToTags } from "@prisma/client";
 
 async function fetchReview(reviewId: number): Promise<Reviews[]> {
   try {
@@ -12,6 +12,74 @@ async function fetchReview(reviewId: number): Promise<Reviews[]> {
   } catch (error) {
     console.error(error);
     throw new Error("Failed to fetch reviews.");
+  }
+}
+
+async function putReview(
+  reviewId: number,
+  reviewData: Review,
+): Promise<number> {
+  try {
+    const res = await prisma.$executeRaw`
+      INSERT INTO "Reviews" (id, content, paper_data, paper_title, user_id, thumbnail_url)
+      VALUES (${reviewId}, ${reviewData.content}, ${reviewData.paper_data}, ${reviewData.paper_title}, ${reviewData.user_info.id}, ${reviewData.thumbnail_url})
+      ON CONFLICT (id) DO UPDATE SET
+        content = EXCLUDED.content,
+        paper_data = EXCLUDED.paper_data,
+        paper_title = EXCLUDED.paper_title,
+        user_id = EXCLUDED.user_id,
+        thumbnail_url = EXCLUDED.thumbnail_url;`;
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to update review.");
+  }
+}
+
+async function putTags(reviewId: number, tags: Tag[]) {
+  try {
+    // TagとReviewsToTagsのセット
+    const req = tags.map(async (tag) => {
+      const newTag = await prisma.$queryRaw<Tag[]>`
+          WITH inserted AS (
+            INSERT INTO "Tags" (name)
+            VALUES (${tag.name})
+            ON CONFLICT (name) DO NOTHING
+            RETURNING *
+          )
+          SELECT *
+          FROM inserted
+          UNION ALL
+          SELECT *
+          FROM "Tags"
+          WHERE name = (${tag.name})
+          AND NOT EXISTS (SELECT 1 FROM inserted);`;
+
+      await prisma.$queryRaw<ReviewsToTags[]>`
+          INSERT INTO "_ReviewsToTags" (review_id, tag_id)
+          VALUES (${reviewId}, ${newTag[0].id})
+          ON CONFLICT (review_id, tag_id) DO NOTHING
+          RETURNING *;`;
+      return newTag[0];
+    });
+    const newTags = await Promise.all(req);
+
+    const rtts = await prisma.$queryRaw<ReviewsToTags[]>`
+          SELECT *
+          FROM "_ReviewsToTags"
+          WHERE review_id = ${reviewId};`;
+    const req2 = rtts.map(async (rtt) => {
+      if (!newTags.some((newTag) => newTag.id === rtt.tag_id)) {
+        await prisma.$executeRaw`
+          DELETE FROM "_ReviewsToTags"
+          WHERE review_id = ${reviewId}
+            AND tag_id = ${rtt.tag_id};`;
+      }
+    });
+    await Promise.all(req2);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to update review.");
   }
 }
 
@@ -58,16 +126,6 @@ async function fetchUser(userId: string): Promise<Users[]> {
   }
 }
 
-async function deleteReview(reviewId: number): Promise<number> {
-  try {
-    const res = await prisma.$executeRaw`
-        DELETE FROM "Reviews" WHERE id = ${reviewId};`;
-    return res;
-  } catch (error) {
-    throw new Error("failed to delete review.");
-  }
-}
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
@@ -111,41 +169,20 @@ export async function GET(
   }
 }
 
-export async function DELETE(
+export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } },
 ): Promise<NextResponse> {
+  const reviewId = parseInt(params.id);
+  const requestBody = await request.json();
+  const reviewData: Review = requestBody.reviewData;
   try {
-    // ReviewIdをnumberに変換
-    const reviewId = parseInt(params.id);
-    if (isNaN(reviewId)) {
-      return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
-    }
-    const res = await deleteReview(reviewId);
+    const res = await putReview(reviewId, reviewData);
+    await putTags(reviewId, reviewData.tags);
     return NextResponse.json(res, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: `Failed to delete review with ID = ${params.id}` },
-      { status: 500 },
-    );
-  }
-}
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-): Promise<NextResponse> {
-  try {
-    // ReviewIdをnumberに変換
-    const reviewId = parseInt(params.id);
-    if (isNaN(reviewId)) {
-      return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
-    }
-    const res = await deleteReview(reviewId);
-    return NextResponse.json(res, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: `Failed to delete review with ID = ${params.id}` },
+      { error: `Failed to post Review` },
       { status: 500 },
     );
   }
