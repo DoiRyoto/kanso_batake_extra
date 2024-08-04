@@ -75,3 +75,13 @@ export type Work = {
   user_id: string;
   created_at: string | Date;
 };
+
+export type UserDetail = {
+  id: string;
+  name: string;
+  role: string | null; // いったん　Student or Teacher
+  created_at: string | Date;
+  works: Work[];
+  fields: Field[];
+  affiliations: Affiliation[];
+};
