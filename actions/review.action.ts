@@ -102,15 +102,11 @@ export async function deleteReview(reviewData: Review, userId: string) {
   redirect(`/user/${userId}`);
 }
 
-export async function fetchReviewsByFilter({
-  searchTag = "",
-  userId = "",
-  affiliationId = "",
-}: {
-  searchTag?: string;
-  userId?: string;
-  affiliationId?: string;
-}): Promise<Review[]> {
+export async function fetchReviewsByFilter(
+  searchTag?: string,
+  userId?: string,
+  affiliationId?: string,
+): Promise<Review[]> {
   try {
     const params = {
       searchTag: searchTag || "",
@@ -120,10 +116,8 @@ export async function fetchReviewsByFilter({
 
     const urlSearchParam = new URLSearchParams(params).toString();
     const requestUrl = new URL(
-      `${process.env.API_URL}/reviews?` + urlSearchParam
+      `${process.env.API_URL}/reviews?` + urlSearchParam,
     );
-
-    console.log(requestUrl);
 
     const response = await fetch(requestUrl, {
       method: "GET",
