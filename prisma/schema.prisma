@@ -27,8 +27,8 @@ model Comments {
   review_id  Int
   user_id    String
   created_at DateTime @default(now()) @db.Timestamptz(6)
-  review     Reviews  @relation(fields: [review_id], references: [id])
-  user       Users    @relation(fields: [user_id], references: [id])
+  review     Reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade) 
+  user       Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   ReviewsToComments ReviewsToComments[]
 }
 
