@@ -52,11 +52,11 @@ export async function setReview(reviewData: Review) {
 export async function updateReview(reviewData: Review) {
   try {
     const requestUrl = new URL(
-      `${process.env.API_URL}/reviews/${reviewData.id}`
+      `${process.env.API_URL}/reviews/${reviewData.id}`,
     );
     await fetch(requestUrl, {
       method: "PUT",
-      body: JSON.stringify(reviewData),
+      body: JSON.stringify({ reviewData: reviewData }),
     });
   } catch (error) {
     console.log(error);
@@ -107,7 +107,7 @@ export async function deleteReview(reviewData: Review, userId: string) {
 
 export async function fetchReviewsByFilter(
   searchTag?: string,
-  userId?: string
+  userId?: string,
 ): Promise<Review[]> {
   try {
     const uriTag = searchTag ? `searchTag=${searchTag}&` : ``;
@@ -116,7 +116,7 @@ export async function fetchReviewsByFilter(
       `${process.env.API_URL}/reviews?` + uriTag + uriId,
       {
         method: "GET",
-      }
+      },
     );
     const reviewData: Review[] = await response.json();
     return reviewData;
@@ -127,7 +127,7 @@ export async function fetchReviewsByFilter(
 }
 
 export async function fetchReviewsByAffiliationId(
-  affiliationId: number
+  affiliationId: number,
 ): Promise<Review[]> {
   try {
     const reviewsData = await prisma.$queryRaw<Review[]>`
