@@ -103,39 +103,25 @@ export async function deleteReview(reviewData: Review) {
 export async function fetchReviewsByFilter(
   searchTag?: string,
   userId?: string,
+  affiliationId?: string,
 ): Promise<Review[]> {
   try {
-    const uriTag = searchTag ? `searchTag=${searchTag}&` : ``;
-    const uriId = userId ? `userId=${userId}` : ``;
-    const response = await fetch(
-      `${process.env.API_URL}/reviews?` + uriTag + uriId,
-      {
-        method: "GET",
-      },
+    const params = {
+      searchTag: searchTag || "",
+      userId: userId || "",
+      affiliationId: affiliationId || "",
+    };
+
+    const urlSearchParam = new URLSearchParams(params).toString();
+    const requestUrl = new URL(
+      `${process.env.API_URL}/reviews?` + urlSearchParam,
     );
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+    });
     const reviewData: Review[] = await response.json();
     return reviewData;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch reviews.");
-  }
-}
-
-export async function fetchReviewsByAffiliationId(
-  affiliationId: number,
-): Promise<Review[]> {
-  try {
-    const reviewsData = await prisma.$queryRaw<Review[]>`
-      SELECT "Reviews".*
-      FROM "Reviews"
-      JOIN "Users" ON "Reviews".user_id = "Users".id
-      JOIN "_AffiliationsToUsers" ON "Users".id = "_AffiliationsToUsers".user_id
-      JOIN "Affiliations" ON "_AffiliationsToUsers".affiliation_id = "Affiliations".id
-      WHERE "Affiliations".id = ${affiliationId}
-      ORDER BY "Reviews".created_at DESC;
-    `;
-
-    return reviewsData;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch reviews.");
