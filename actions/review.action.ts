@@ -49,19 +49,22 @@ export async function setReview(reviewData: Review) {
   }
 }
 
-export async function updateReview(userId: string, reviewData: Review) {
+export async function updateReview(reviewData: Review) {
   try {
-    await prisma.$executeRaw`
-        UPDATE "Reviews" 
-        SET content = ${reviewData.content}, paper_data = ${reviewData.paper_data}, paper_title = ${reviewData.paper_title}, user_id = ${userId}, thumbnail_url = ${reviewData.thumbnail_url}
-        WHERE id = ${reviewData.id};`;
+    const requestUrl = new URL(
+      `${process.env.API_URL}/reviews/${reviewData.id}`,
+    );
+    await fetch(requestUrl, {
+      method: "PUT",
+      body: JSON.stringify({ reviewData: reviewData }),
+    });
   } catch (error) {
     console.log(error);
     throw new Error("Failed to set review.");
   }
 
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
+  revalidatePath(`/user/${reviewData.user_info.id}`);
+  redirect(`/user/${reviewData.user_info.id}`);
 }
 
 /*
@@ -80,26 +83,21 @@ export async function deleteReview(
 }
 */
 
-export async function deleteReview(reviewData: Review, userId: string) {
+export async function deleteReview(reviewData: Review) {
   try {
-    await prisma.$executeRaw<Review[]>`
-    DELETE FROM "Reviews"
-    WHERE id = ${reviewData.id};`;
-
-    //わからん。
-    /*
-  try {
-    await Promise.all([deleteImage(reviewData.id.toString()), prismaQuery]);
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to delete review.");
-  }*/
+    const requestUrl = new URL(
+      `${process.env.API_URL}/reviews/${reviewData.id}`,
+    );
+    const delReq = fetch(requestUrl, {
+      method: "DELETE",
+    });
+    await Promise.all([delReq]); // Todo: deleteImage(reviewData.id)を追加する
   } catch (error) {
     throw new Error("failed to delete review.");
   }
 
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
+  revalidatePath(`/user/${reviewData.user_info.id}`);
+  redirect(`/user/${reviewData.user_info.id}`);
 }
 
 export async function fetchReviewsByFilter(
