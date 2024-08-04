@@ -9,7 +9,7 @@ import { storage } from "@/lib/firebase/storage";
 
 export async function uploadImage(
   file: File,
-  reviewId: number
+  reviewId: number,
 ): Promise<string> {
   try {
     const storageRef = ref(storage, `Review/${reviewId}.jpg`);
@@ -24,7 +24,7 @@ export async function uploadImage(
   }
 }
 
-export async function deleteImage(reviewId: string) {
+export async function deleteImage(reviewId: number) {
   try {
     const desertRef = ref(storage, `Review/${reviewId}.jpg`);
     await deleteObject(desertRef);
