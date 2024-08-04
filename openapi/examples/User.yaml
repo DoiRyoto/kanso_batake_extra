@@ -1,0 +1,119 @@
+User:
+  {
+    "id": "user_01234567",
+    "name": "サンプル 太郎",
+    "role": "学生",
+    "created_at": "2024-08-01T01:01:01.070Z",
+    "works":
+      [
+        "http://sample-api.com/01234/43210",
+        "http://kanso-batake-sample.com/01234/43210",
+      ],
+    "fields":
+      [
+        {
+          "id": 0,
+          "name": "API解析",
+          "created_at": "2024-08-01T15:38:21.280976+00:00",
+        },
+      ],
+    "affiliations":
+      [
+        {
+          "id": 0,
+          "name": "サンプル研究室",
+          "created_at": "2024-08-01T15:38:21.280976+00:00",
+        },
+      ],
+  }
+Users:
+  [
+    {
+      "id": "user_00000000",
+      "name": "サンプル 太郎",
+      "role": "学生",
+      "created_at": "2024-08-01T01:01:01.070Z",
+      "works":
+        [
+          "http://sample-api.com/01234/43210",
+          "http://kanso-batake-sample.com/01234/43210",
+        ],
+      "fields":
+        [
+          {
+            "id": 0,
+            "name": "API解析",
+            "created_at": "2024-08-01T01:01:01.280976+00:00",
+          },
+        ],
+      "affiliations":
+        [
+          {
+            "id": 0,
+            "name": "サンプル研究室",
+            "created_at": "2024-08-01T01:01:01.280976+00:00",
+          },
+        ],
+    },
+    {
+      "id": "user_00000001",
+      "name": "サンプル 次郎",
+      "role": "教授",
+      "created_at": "2024-08-01T01:01:01.070Z",
+      "works":
+        [
+          "http://sample-api2.com/01234/43210",
+          "http://kanso-batake-sample2.com/01234/43210",
+        ],
+      "fields":
+        [
+          {
+            "id": 1,
+            "name": "OpenAPI",
+            "created_at": "2024-08-01T01:01:01.280976+00:00",
+          },
+          {
+            "id": 2,
+            "name": "SAMPLE FIELDS",
+            "created_at": "2024-08-01T01:01:01.280976+00:00",
+          },
+        ],
+      "affiliations":
+        [
+          {
+            "id": 0,
+            "name": "サンプル研究室",
+            "created_at": "2024-08-01T01:01:01.280976+00:00",
+          },
+          {
+            "id": 1,
+            "name": "API研究センター",
+            "created_at": "2024-08-01T01:01:01.280976+00:00",
+          },
+        ],
+    },
+  ]
+UserPost:
+  {
+    "id": null,
+    "name": "サンプル ポストの介",
+    "role": "学生",
+    "created_at": null,
+    "works": ["http://kanso-batake-sample3.com/01234/43210"],
+    "fields":
+      [
+        {
+          "id": 3,
+          "name": "ポスト工学",
+          "created_at": "2024-08-01T01:01:01.280976+00:00",
+        },
+      ],
+    "affiliations":
+      [
+        {
+          "id": 0,
+          "name": "サンプル研究室",
+          "created_at": "2024-08-01T15:38:21.280976+00:00",
+        },
+      ],
+  }

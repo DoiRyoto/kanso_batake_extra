@@ -1,0 +1,304 @@
+openapi: "3.0.3"
+info:
+  title: 感想畑 API
+  version: "1.0"
+  description: |
+    感想畑のAPIを定義するためのドキュメントです。
+servers:
+  - url: https://kanso-batake.vercel.app
+    description: 本番環境
+  - url: http://localhost:3000
+    description: ローカル環境
+tags:
+  - name: users
+    description: ユーザーに関する操作
+  - name: reviews
+    description: レビューに関する操作
+  - name: tags
+    description: タグに関する操作
+  - name: comments
+    description: コメントに関する操作
+  - name: affiliations
+    description: 所属に関する操作
+  - name: fields
+    description: 研究分野に関する操作
+  - name: topics
+    description: 興味のある分野に関する操作
+paths:
+  /api/users:
+    get:
+      summary: すべてのユーザーを取得する
+      description: |
+        すべてのユーザーを取得する。
+        affiliationIdが指定された場合、そのaffiliationに所属するユーザーをすべて取得する。
+      tags: [users]
+      parameters:
+        - name: affiliationId
+          in: query
+          description: 所属を表すaffiliationのid。
+          allowEmptyValue: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "./openapi/schemas.json#/User"
+              example:
+                $ref: "./openapi/examples/User.yaml#/Users"
+    post:
+      summary: ユーザーを新規登録する
+      description: ユーザーを新規登録する。DBにユーザー情報を挿入する
+      tags: [users]
+      requestBody:
+        description: "ユーザー情報"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./openapi/schemas.json#/User"
+            example:
+              $ref: "./openapi/examples/User.yaml#/UserPost"
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: ユーザーの投稿に失敗
+  /api/users/{id}:
+    get:
+      summary: 特定のユーザ情報の取得
+      description: idで指定されたユーザ情報を取得する
+      tags: [users]
+      parameters:
+        - name: id
+          in: query
+          description: ユーザID
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./openapi/schemas.json#/User"
+              example:
+                $ref: "./openapi/examples/User.yaml#/User"
+        "500":
+          description: ユーザ情報の取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /api/reviews:
+    get:
+      summary: レビューを取得する
+      description: クエリパラメータの条件に合うレビューをすべて取得する
+      tags: [reviews]
+      parameters:
+        - name: searchTag
+          in: query
+          schema:
+            type: string
+          example: sample
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          example: 0
+        - name: affiliationId
+          in: query
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "./openapi/schemas.json#/Review"
+              example:
+                $ref: "./openapi/examples/Review.yaml#/Reviews"
+    post:
+      summary: レビューを投稿する
+      description: レビューをDBに新規挿入する
+      tags: [reviews]
+      requestBody:
+        description: 新規挿入するレビューの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./openapi/schemas.json#/Review"
+            example:
+              $ref: "./openapi/examples/Review.yaml#/ReviewPost"
+      responses:
+        "200":
+          description: レビューの新規投稿に成功
+        "500":
+          description: レビューの新規投稿に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to post review" }
+  /api/reviews/{id}:
+    get:
+      summary: 特定のレビューを取得する
+      description: idで指定されたレビューの情報を取得する
+      tags: [reviews]
+      parameters:
+        - name: id
+          in: path
+          description: 取得したいレビューのid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "./openapi/schemas.json#/Review"
+              example:
+                $ref: "./openapi/examples/Review.yaml#/Review"
+        "500":
+          description: レビューの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to fetch review with ID = {id}
+    put:
+      summary: 特定のレビューを更新する
+      description: idで指定されたレビューを新しいレビュー情報で上書きする
+      tags: [reviews]
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 更新したいレビューのid
+          schema:
+            type: integer
+          example: 0
+      requestBody:
+        description: 新しく上書きするレビューの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./openapi/schemas.json#/Review"
+            example:
+              $ref: "./openapi/examples/Review.yaml#/ReviewUpdate"
+      responses:
+        "200":
+          description: レビューの更新に成功
+        "500":
+          description: レビューの更新に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to post Review
+    delete:
+      summary: 特定のレビューを削除する
+      description: idで指定されたレビューをDBから削除する
+      tags: [reviews]
+      parameters:
+        - name: id
+          description: 削除したいレビューのid
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの削除に成功
+        "500":
+          description: レビューの削除に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to delete review with ID = {id}
+  /api/topics:
+    get:
+      summary: すべての研究分野を取得する
+      description: DBに登録されているすべての研究分野を取得する
+      tags: [topics]
+      responses:
+        "200":
+          description: 研究分野の取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    created_at:
+                      type: string
+        "500":
+          description: 研究分野の取得に失敗
+          content:
+            application/json:
+              schema:
+                $ref: "./openapi/schemas.json#/Topic"
+  #   post:
+  #   put:
+  #   delete:
+  # /api/tags:
+  #   get:
+  #   post:
+  #   put:
+  #   delete:
+  # /api/comments:
+  #   get:
+  #   post:
+  #   put:
+  #   delete:
+  # /api/affiliations:
+  #   get:
+  #   post:
+  #   put:
+  #   delete:
+  # /api/fields:
+  #   get:
+  #   post:
+  #   put:
+  #   delete:
