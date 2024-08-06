@@ -82,12 +82,6 @@ export function OnboadingForm({ userId }: { userId: string }) {
     isLoading.current = true;
     const now = Date();
 
-    const userData: User = {
-      id: userId,
-      name: data.username,
-      role: data.role,
-      created_at: now,
-    };
     const affiliationData: Affiliation = {
       id: 0,
       name: data.affiliation,
@@ -104,14 +98,23 @@ export function OnboadingForm({ userId }: { userId: string }) {
       user_id: userId,
       created_at: now,
     };
+    const userData: User = {
+      id: userId,
+      name: data.username,
+      role: data.role,
+      created_at: now,
+      works: [workData],
+      fields: [fieldData],
+      affiliations: [affiliationData],
+    };
 
     let affiliationId = await fetchAffiliationIdByAffiliationName(
-      data.affiliation
+      data.affiliation,
     );
     if (affiliationId === 0) {
       setAffiliation(affiliationData);
       affiliationId = await fetchAffiliationIdByAffiliationName(
-        data.affiliation
+        data.affiliation,
       );
     }
     let fieldId = await fetchFieldIdByFieldName(data.field);
@@ -165,12 +168,12 @@ export function OnboadingForm({ userId }: { userId: string }) {
                       role="combobox"
                       className={cn(
                         "w-full justify-between",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value
                         ? affiliations.find(
-                            (affiliation) => affiliation.value === field.value
+                            (affiliation) => affiliation.value === field.value,
                           )?.label
                         : "所属を選択"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -196,7 +199,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
                                 "mr-2 h-4 w-4",
                                 affiliation.value === field.value
                                   ? "opacity-100"
-                                  : "opacity-0"
+                                  : "opacity-0",
                               )}
                             />
                             {affiliation.label}
@@ -231,7 +234,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
                       role="combobox"
                       className={cn(
                         "w-full justify-between",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value
@@ -260,7 +263,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
                                 "mr-2 h-4 w-4",
                                 f.value === field.value
                                   ? "opacity-100"
-                                  : "opacity-0"
+                                  : "opacity-0",
                               )}
                             />
                             {f.label}

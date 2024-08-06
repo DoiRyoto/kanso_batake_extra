@@ -60,14 +60,6 @@ export type Tag = {
   created_at: string | Date;
 };
 
-// Users Table: id, user_id, name, role, created_at
-export type User = {
-  id: string;
-  name: string;
-  role: string | null; // いったん　Student or Teacher
-  created_at: string | Date;
-};
-
 // Works Table: id, url, user_id, created_at
 export type Work = {
   id: number;
@@ -76,7 +68,7 @@ export type Work = {
   created_at: string | Date;
 };
 
-export type UserDetail = {
+export type User = {
   id: string;
   name: string;
   role: string | null; // いったん　Student or Teacher
@@ -85,3 +77,11 @@ export type UserDetail = {
   fields: Field[];
   affiliations: Affiliation[];
 };
+
+// deprecated
+// export type User = {
+//   id: string;
+//   name: string;
+//   role: string | null; // いったん　Student or Teacher
+//   created_at: string | Date;
+// };

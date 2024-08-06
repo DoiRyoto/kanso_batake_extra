@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma/prisma-client";
-import { UserDetail, Work, Field, Affiliation } from "@/type";
+import { User, Work, Field, Affiliation } from "@/type";
 
-async function fetchUsers(affiliationId: number | null): Promise<UserDetail[]> {
+async function fetchUsers(affiliationId: number | null): Promise<User[]> {
   try {
-    let users: UserDetail[];
+    let users: User[];
     if (affiliationId) {
       users = await prisma.$queryRaw`
         SELECT
@@ -38,7 +38,7 @@ async function fetchUsers(affiliationId: number | null): Promise<UserDetail[]> {
     ORDER BY users.created_at DESC;
         `;
     } else {
-      users = await prisma.$queryRaw<UserDetail[]>`
+      users = await prisma.$queryRaw<User[]>`
         SELECT
       users.*,
         (SELECT json_agg(json_build_object(
@@ -121,9 +121,9 @@ async function setAffiliation(
   }
 }
 
-async function setUser(userData: UserDetail) {
+async function setUser(userData: User) {
   try {
-    const newUserData = await prisma.$queryRaw<UserDetail[]>`
+    const newUserData = await prisma.$queryRaw<User[]>`
         INSERT INTO "Users" (id, name, role)
         VALUES (${userData.id}, ${userData.name}, ${userData.role})
         ON CONFLICT (id) DO UPDATE

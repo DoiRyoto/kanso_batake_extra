@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Paper, Review, Tag } from "@/type";
+import { Paper, Review, Tag, User } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 import { Reviews, Users, Tags, Comments, ReviewsToTags } from "@prisma/client";
 
@@ -163,7 +163,15 @@ export async function GET(
       content: review[0].content,
       paper_title: review[0].paper_title,
       paper_data: review[0].paper_data as Paper,
-      user_info: user[0],
+      user_info: {
+        id: user[0].id,
+        name: user[0].name,
+        role: user[0].role,
+        created_at: user[0].created_at,
+        works: [],
+        fields: [],
+        affiliations: [],
+      } as User,
       comments: comments,
       tags: tags,
       created_at: review[0].created_at,

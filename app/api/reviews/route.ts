@@ -192,7 +192,21 @@ async function fetchReviews(
         GROUP BY r.id, u.id
         ORDER BY r.created_at DESC;`;
     }
-    return reviews;
+
+    const reviewDatas = reviews.map((review) => ({
+      ...review,
+      user_info: {
+        id: review.user_info.id,
+        name: review.user_info.name,
+        role: review.user_info.role,
+        created_at: review.user_info.created_at,
+        works: review.user_info.works || [],
+        fields: review.user_info.fields || [],
+        affiliations: review.user_info.affiliations || [],
+      },
+    }));
+
+    return reviewDatas;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to fetch all reviews.");
