@@ -48,16 +48,17 @@ export async function fetchUserIdsByLabId(labId: string) {
 */
 
 export async function fetchUsersByAffiliationId(
-  affiliationId: number
+  affiliationId: number,
 ): Promise<User[]> {
   try {
-    const usersData = await prisma.$queryRaw<User[]>`
-      SELECT "Users".*
-      FROM "Users"
-      JOIN "_AffiliationsToUsers" ON "Users".id = "_AffiliationsToUsers".user_id
-      JOIN "Affiliations" ON "_AffiliationsToUsers".affiliation_id = "Affiliations".id
-      WHERE "Affiliations".id = ${affiliationId};`;
+    const requestUrl = new URL(
+      `${process.env.API_URL}/users?affiliationId=${affiliationId}`,
+    );
+    const response = await fetch(requestUrl, {
+      method: "GET",
+    });
 
+    const usersData = await response.json();
     return usersData;
   } catch (error) {
     console.log(error);
