@@ -17,11 +17,18 @@ async function fetchReview(reviewId: number): Promise<Review[]> {
           'works', json_agg(DISTINCT w.*),
           'affiliations', json_agg(DISTINCT a.*)
         ) AS user_info,
-          json_agg(json_build_object(
-            'id', t.id,
-            'name', t.name,
-            'created_at', t.created_at
-          )) AS tags
+        json_agg(json_build_object(
+          'id', t.id,
+          'name', t.name,
+          'created_at', t.created_at
+        )) AS tags,
+        json_agg(json_build_object(
+          'id', c.id,
+          'content', c.content,
+          'user_id', c.user_id,
+          'review_id', c.review_id,
+          'created_at', c.created_at
+        )) AS comments
       FROM "Reviews" r
       LEFT JOIN "Users" u ON r.user_id = u.id
       LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -31,6 +38,7 @@ async function fetchReview(reviewId: number): Promise<Review[]> {
       LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
       LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
       LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+      LEFT JOIN "Comments" c ON r.id = c.review_id
       WHERE r.id = ${reviewId}
       GROUP BY r.id, u.id, f.id, w.id, a.id
       ORDER BY r.created_at DESC;`;
