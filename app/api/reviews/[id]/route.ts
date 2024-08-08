@@ -3,12 +3,39 @@ import { Paper, Review, Tag, User } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 import { Reviews, Users, Tags, Comments, ReviewsToTags } from "@prisma/client";
 
-async function fetchReview(reviewId: number): Promise<Reviews[]> {
+async function fetchReview(reviewId: number): Promise<Review[]> {
   try {
-    const review = await prisma.$queryRaw<Reviews[]>`
-      SELECT * FROM "Reviews" WHERE id = ${reviewId};
-    `;
-    return review;
+    const reviews = await prisma.$queryRaw<Review[]>`
+      SELECT 
+        r.*,
+        json_build_object(
+          'id', u.id,
+          'name', u.name,
+          'role', u.role,
+          'created_at', u.created_at,
+          'fields', json_agg(DISTINCT f.*),
+          'works', json_agg(DISTINCT w.*),
+          'affiliations', json_agg(DISTINCT a.*)
+        ) AS user_info,
+          json_agg(json_build_object(
+            'id', t.id,
+            'name', t.name,
+            'created_at', t.created_at
+          )) AS tags
+      FROM "Reviews" r
+      LEFT JOIN "Users" u ON r.user_id = u.id
+      LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
+      LEFT JOIN "Fields" f ON ftu.field_id = f.id
+      LEFT JOIN "Works" w ON u.id = w.user_id
+      LEFT JOIN "_AffiliationsToUsers" atu ON u.id = atu.user_id
+      LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
+      LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
+      LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+      WHERE r.id = ${reviewId}
+      GROUP BY r.id, u.id, f.id, w.id, a.id
+      ORDER BY r.created_at DESC;`;
+
+    return reviews;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to fetch reviews.");
@@ -83,60 +110,6 @@ async function putTags(reviewId: number, tags: Tag[]) {
   }
 }
 
-async function fetchTagsByReviewId(reviewId: number): Promise<Tags[]> {
-  try {
-    const tags = await prisma.$queryRaw<Tags[]>`
-        SELECT "Tags".*
-        FROM "Tags"
-        JOIN "_ReviewsToTags" ON "Tags".id = "_ReviewsToTags".tag_id
-        JOIN "Reviews" ON "_ReviewsToTags".review_id = "Reviews".id
-        WHERE "Reviews".id = ${reviewId};`;
-    return tags;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch tags.");
-  }
-}
-
-async function fetchCommentsByReviewId(reviewId: number): Promise<Comments[]> {
-  try {
-    const comments = await prisma.$queryRaw<Comments[]>`
-        SELECT "Comments".*
-        FROM "Comments"
-        JOIN "_ReviewsToComments" ON "Comments".id = "_ReviewsToComments".comment_id
-        JOIN "Reviews" ON "_ReviewsToComments".review_id = "Reviews".id
-        WHERE "Reviews".id = ${reviewId};`;
-
-    return comments;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch comments.");
-  }
-}
-
-async function fetchUser(userId: string): Promise<User[]> {
-  try {
-    const userData = await prisma.$queryRaw<User[]>`
-        SELECT
-          u.*,
-          json_agg(DISTINCT f.*) AS fields,
-          json_agg(DISTINCT w.*) AS works,
-          json_agg(DISTINCT a.*) AS affiliations
-        FROM "Users" u
-        LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
-        LEFT JOIN "Fields" f ON ftu.field_id = f.id
-        LEFT JOIN "Works" w ON u.id = w.user_id
-        LEFT JOIN "_AffiliationsToUsers" atu ON u.id = atu.user_id
-        LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
-        WHERE u.id = ${userId}
-        GROUP BY u.id, f.id, w.id, a.id;`;
-    return userData;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch user.");
-  }
-}
-
 async function deleteReview(reviewId: number): Promise<number> {
   try {
     const res = await prisma.$executeRaw`
@@ -158,28 +131,10 @@ export async function GET(
       return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
     }
     // reviewsテーブルからreviewsを取得
-    const review = await fetchReview(reviewId);
-    if (!review.length) {
+    const reviewData = await fetchReview(reviewId);
+    if (!reviewData.length) {
       return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
     }
-    // Tagsテーブルから該当するタグをすべて取得
-    const tags = await fetchTagsByReviewId(reviewId);
-    // Usersテーブルからレビューの筆者を取得
-    const user = await fetchUser(review[0].user_id);
-    // Commentsテーブルからレビューの筆者を取得
-    const comments = await fetchCommentsByReviewId(review[0].id);
-    // Review型を構成
-    const reviewData: Review = {
-      id: reviewId,
-      content: review[0].content,
-      paper_title: review[0].paper_title,
-      paper_data: review[0].paper_data as Paper,
-      user_info: user[0],
-      comments: comments,
-      tags: tags,
-      created_at: review[0].created_at,
-      thumbnail_url: review[0].thumbnail_url,
-    };
     return NextResponse.json(reviewData, { status: 200 });
   } catch (error) {
     console.error(error);
