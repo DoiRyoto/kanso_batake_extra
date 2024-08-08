@@ -48,7 +48,7 @@ export async function fetchUserIdsByLabId(labId: string) {
 */
 
 export async function fetchUsersByAffiliationId(
-  affiliationId: number,
+  affiliationId: number
 ): Promise<User[]> {
   try {
     const usersData = await prisma.$queryRaw<User[]>`
@@ -92,9 +92,11 @@ export async function setUser(userData: userInterface) {
 
 export async function setUser(userData: User) {
   try {
-    await prisma.$executeRaw`
-      INSERT INTO "Users" (id, name, role)
-      VALUES (${userData.id}, ${userData.name}, ${userData.role});`;
+    const requestUrl = new URL(`${process.env.API_URL}/users/${userData.id}`);
+    await fetch(requestUrl, {
+      method: "POST",
+      body: JSON.stringify(userData),
+    });
   } catch (error) {
     console.log(error);
     throw new Error("Failed to set user.");

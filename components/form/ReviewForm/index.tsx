@@ -52,7 +52,7 @@ export const ReviewForm = ({ review, user, mode = "create" }: Props) => {
   const [step, setStep] = useState<number>(MIN_STEP);
   const [files, setFiles] = useState<File[]>([]);
   const currentLabel = multiStepFormNavItemList.find(
-    (item) => item.step === step
+    (item) => item.step === step,
   )?.label;
 
   const form = useForm<z.infer<typeof FormSchema>>({
