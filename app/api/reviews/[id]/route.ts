@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Paper, Review, Tag } from "@/type";
+import { Paper, Review, Tag, User } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 import { Reviews, Users, Tags, Comments, ReviewsToTags } from "@prisma/client";
 
@@ -114,11 +114,22 @@ async function fetchCommentsByReviewId(reviewId: number): Promise<Comments[]> {
   }
 }
 
-async function fetchUser(userId: string): Promise<Users[]> {
+async function fetchUser(userId: string): Promise<User[]> {
   try {
-    const userData = await prisma.$queryRaw<Users[]>`
-        SELECT * FROM "Users" WHERE id = ${userId};`;
-
+    const userData = await prisma.$queryRaw<User[]>`
+        SELECT
+          u.*,
+          json_agg(DISTINCT f.*) AS fields,
+          json_agg(DISTINCT w.*) AS works,
+          json_agg(DISTINCT a.*) AS affiliations
+        FROM "Users" u
+        LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
+        LEFT JOIN "Fields" f ON ftu.field_id = f.id
+        LEFT JOIN "Works" w ON u.id = w.user_id
+        LEFT JOIN "_AffiliationsToUsers" atu ON u.id = atu.user_id
+        LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
+        WHERE u.id = ${userId}
+        GROUP BY u.id, f.id, w.id, a.id;`;
     return userData;
   } catch (error) {
     console.log(error);

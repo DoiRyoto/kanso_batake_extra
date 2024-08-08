@@ -4,7 +4,7 @@ import remarkBreaks from "remark-breaks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
-import { Review as ReviewType, User } from "@/type";
+import { Review as ReviewType } from "@/type";
 import { Modal } from "./review/Modal";
 import clsx from "clsx";
 import PaperData from "./PaperData";

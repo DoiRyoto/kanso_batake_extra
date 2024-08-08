@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma/prisma-client";
-import { UserDetail } from "@/type";
+import { User } from "@/type";
 
-async function fetchUser(userId: string): Promise<UserDetail[]> {
+async function fetchUser(userId: string): Promise<User[]> {
   try {
-    const user = await prisma.$queryRaw<UserDetail[]>`
+    const user = await prisma.$queryRaw<User[]>`
         SELECT
         users.*,
         (SELECT json_agg(json_build_object(
