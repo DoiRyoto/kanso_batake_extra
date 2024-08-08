@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Paper, Review, Tag, User } from "@/type";
+import { Review, Tag } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
-import { Reviews, Users, Tags, Comments, ReviewsToTags } from "@prisma/client";
+import { ReviewsToTags } from "@prisma/client";
 
 async function fetchReview(reviewId: number): Promise<Review[]> {
   try {
