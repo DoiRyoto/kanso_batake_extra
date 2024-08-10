@@ -7,23 +7,26 @@ info:
 servers:
   - url: https://kanso-batake.vercel.app
     description: 本番環境
-  - url: http://localhost:3000
-    description: ローカル環境
 tags:
   - name: users
     description: ユーザーに関する操作
   - name: reviews
     description: レビューに関する操作
-  - name: tags
-    description: タグに関する操作
+  # - name: tags
+  #   description: タグに関する操作
   - name: comments
     description: コメントに関する操作
-  - name: affiliations
-    description: 所属に関する操作
-  - name: fields
-    description: 研究分野に関する操作
+  # - name: affiliations
+  #   description: 所属に関する操作
+  # - name: fields
+  #   description: 研究分野に関する操作
   - name: topics
     description: 興味のある分野に関する操作
+components:
+  securitySchemes:
+    $ref: "openapi/securitySchemes.yaml#/securitySchemes"
+security:
+  - basicAuth: []
 paths:
   /api/users:
     get:
@@ -76,7 +79,7 @@ paths:
       tags: [users]
       parameters:
         - name: id
-          in: query
+          in: path
           description: ユーザID
           required: true
           schema:
@@ -265,14 +268,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    created_at:
-                      type: string
+                  $ref: "./openapi/schemas.json#/Topic"
         "500":
           description: 研究分野の取得に失敗
           content:
@@ -287,11 +283,158 @@ paths:
   #   post:
   #   put:
   #   delete:
-  # /api/comments:
-  #   get:
-  #   post:
-  #   put:
-  #   delete:
+  /api/comments:
+    get:
+      summary: コメントを全件取得する
+      description: 特定のレビューに紐づくコメントをすべて取得する
+      tags: [comments]
+      parameters:
+        - name: reviewId
+          in: query
+          schema:
+            type: integer
+          example: 2
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "./openapi/schemas.json#/Comment"
+              example:
+                $ref: "./openapi/examples/Comment.yaml#/Comments"
+        "500":
+          description: コメントの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to get comment" }
+    post:
+      summary: コメントを投稿する
+      description: コメントを投稿する
+      tags: [comments]
+      requestBody:
+        description: 投稿するレビューの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./openapi/schemas.json#/Comment"
+            example:
+              $ref: "./openapi/examples/Comment.yaml#/CommentPost"
+      responses:
+        "200":
+          description: コメントの新規投稿に成功
+        "500":
+          description: コメントの新規投稿に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to post comment" }
+  /api/comments/{id}:
+    get:
+      summary: 特定のコメントを取得する
+      description: idで指定されたコメントの情報を取得する
+      tags: [comments]
+      parameters:
+        - name: id
+          in: path
+          description: 取得したいコメントのid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: コメントの取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "./openapi/schemas.json#/Comment"
+              example:
+                $ref: "./openapi/examples/Comment.yaml#/Comment"
+        "500":
+          description: コメントの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to fetch comment with ID = {id}
+    put:
+      summary: 特定のポストを更新する
+      description: idで指定されたコメントを新しいコメント情報で上書きする
+      tags: [comments]
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 更新したいコメントのid
+          schema:
+            type: integer
+          example: 0
+      requestBody:
+        description: 新しく上書きするコメントの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./openapi/schemas.json#/Comment"
+            example:
+              $ref: "./openapi/examples/Comment.yaml#/CommentUpdate"
+      responses:
+        "200":
+          description: コメントの更新に成功
+        "500":
+          description: コメントの更新に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to update Comment
+    delete:
+      summary: 特定のコメントを削除する
+      description: idで指定されたコメントをDBから削除する
+      tags: [comments]
+      parameters:
+        - name: id
+          description: 削除したいコメントのid
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの削除に成功
+        "500":
+          description: レビューの削除に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to delete comment with ID = {id}
   # /api/affiliations:
   #   get:
   #   post:

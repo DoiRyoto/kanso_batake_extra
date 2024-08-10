@@ -1,36 +1,38 @@
 {
   "Work": {
     "type": "object",
-    "properties": null,
-    "id": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "url": {
-      "type": "string"
-    },
-    "user_id": {
-      "type": "string"
-    },
-    "created_at": {
-      "type": "string",
-      "format": "date-time"
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "url": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
     },
     "required": ["id", "url", "user_id", "created_at"]
   },
   "Affiliation": {
     "type": "object",
-    "properties": null,
-    "id": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "name": {
-      "type": "string"
-    },
-    "created_at": {
-      "type": "string",
-      "format": "date-time"
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
     },
     "required": ["id", "name", "created_at"]
   },

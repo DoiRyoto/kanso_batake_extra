@@ -6,8 +6,18 @@ User:
     "created_at": "2024-08-01T01:01:01.070Z",
     "works":
       [
-        "http://sample-api.com/01234/43210",
-        "http://kanso-batake-sample.com/01234/43210",
+        {
+          "id": 0,
+          "url": "http://sample-api.com/01234/43210",
+          "user_id": "user_01234567",
+          "created_at": "2024-08-01T01:01:01.070Z",
+        },
+        {
+          "id": 1,
+          "url": "http://kanso-batake-sample.com/01234/43210",
+          "user_id": "user_01234567",
+          "created_at": "2024-08-01T01:01:01.070Z",
+        },
       ],
     "fields":
       [
@@ -29,14 +39,24 @@ User:
 Users:
   [
     {
-      "id": "user_00000000",
+      "id": "user_01234567",
       "name": "サンプル 太郎",
       "role": "学生",
       "created_at": "2024-08-01T01:01:01.070Z",
       "works":
         [
-          "http://sample-api.com/01234/43210",
-          "http://kanso-batake-sample.com/01234/43210",
+          {
+            "id": 0,
+            "url": "http://sample-api.com/01234/43210",
+            "user_id": "user_01234567",
+            "created_at": "2024-08-01T01:01:01.070Z",
+          },
+          {
+            "id": 1,
+            "url": "http://kanso-batake-sample.com/01234/43210",
+            "user_id": "user_01234567",
+            "created_at": "2024-08-01T01:01:01.070Z",
+          },
         ],
       "fields":
         [
@@ -62,8 +82,18 @@ Users:
       "created_at": "2024-08-01T01:01:01.070Z",
       "works":
         [
-          "http://sample-api2.com/01234/43210",
-          "http://kanso-batake-sample2.com/01234/43210",
+          {
+            "id": 2,
+            "url": "http://sample-api2.com/01234/43210",
+            "user_id": "user_00000001",
+            "created_at": "2024-08-01T01:01:01.070Z",
+          },
+          {
+            "id": 3,
+            "url": "http://kanso-batake-sample2.com/01234/43210",
+            "user_id": "user_00000001",
+            "created_at": "2024-08-01T01:01:01.070Z",
+          },
         ],
       "fields":
         [
@@ -95,11 +125,19 @@ Users:
   ]
 UserPost:
   {
-    "id": null,
+    "id": "",
     "name": "サンプル ポストの介",
     "role": "学生",
-    "created_at": null,
-    "works": ["http://kanso-batake-sample3.com/01234/43210"],
+    "created_at": "",
+    "works":
+      [
+        {
+          "id": "",
+          "url": "http://sample-api3.com/01234/43210",
+          "user_id": "",
+          "created_at": "",
+        },
+      ],
     "fields":
       [
         {

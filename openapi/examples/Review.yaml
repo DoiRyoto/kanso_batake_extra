@@ -12,14 +12,44 @@ Review:
       },
     "paper_title": "sample api",
     "thumbnail_url": "",
-    "user_id": "user_01234567",
     "created_at": "2024-08-04T06:31:07.971Z",
     "user_info":
       {
-        "id": "user_01234567",
+        "id": "user_00000000",
         "name": "サンプル 太郎",
         "role": "学生",
-        "created_at": "2024-08-01T01:01:01.779+00:00",
+        "created_at": "2024-08-01T01:01:01.070Z",
+        "works":
+          [
+            {
+              "id": 0,
+              "url": "http://sample-api.com/01234/43210",
+              "user_id": "user_01234567",
+              "created_at": "2024-08-01T01:01:01.070Z",
+            },
+            {
+              "id": 1,
+              "url": "http://kanso-batake-sample.com/01234/43210",
+              "user_id": "user_01234567",
+              "created_at": "2024-08-01T01:01:01.070Z",
+            },
+          ],
+        "fields":
+          [
+            {
+              "id": 0,
+              "name": "API解析",
+              "created_at": "2024-08-01T01:01:01.280976+00:00",
+            },
+          ],
+        "affiliations":
+          [
+            {
+              "id": 0,
+              "name": "サンプル研究室",
+              "created_at": "2024-08-01T01:01:01.280976+00:00",
+            },
+          ],
       },
     "tags":
       [
@@ -32,6 +62,16 @@ Review:
           "id": 1,
           "name": "SampleTag",
           "created_at": "2024-08-01T01:01:01.971Z",
+        },
+      ],
+    "comments":
+      [
+        {
+          "id": 4,
+          "content": "sample comment1",
+          "user_id": "user_00000001",
+          "review_id": 0,
+          "created_at": "2024-08-01T01:01:01.280976",
         },
       ],
   }
@@ -50,14 +90,44 @@ Reviews:
         },
       "paper_title": "sample api",
       "thumbnail_url": "",
-      "user_id": "user_01234567",
       "created_at": "2024-08-04T06:31:07.971Z",
       "user_info":
         {
-          "id": "user_01234567",
+          "id": "user_00000000",
           "name": "サンプル 太郎",
           "role": "学生",
-          "created_at": "2024-08-01T01:01:01.779+00:00",
+          "created_at": "2024-08-01T01:01:01.070Z",
+          "works":
+            [
+              {
+                "id": 0,
+                "url": "http://sample-api.com/01234/43210",
+                "user_id": "user_01234567",
+                "created_at": "2024-08-01T01:01:01.070Z",
+              },
+              {
+                "id": 1,
+                "url": "http://kanso-batake-sample.com/01234/43210",
+                "user_id": "user_01234567",
+                "created_at": "2024-08-01T01:01:01.070Z",
+              },
+            ],
+          "fields":
+            [
+              {
+                "id": 0,
+                "name": "API解析",
+                "created_at": "2024-08-01T01:01:01.280976+00:00",
+              },
+            ],
+          "affiliations":
+            [
+              {
+                "id": 0,
+                "name": "サンプル研究室",
+                "created_at": "2024-08-01T01:01:01.280976+00:00",
+              },
+            ],
         },
       "tags":
         [
@@ -86,14 +156,44 @@ Reviews:
         },
       "paper_title": "kansou batake analysis",
       "thumbnail_url": "",
-      "user_id": "user_01234567",
       "created_at": "2024-08-04T06:31:07.971Z",
       "user_info":
         {
           "id": "user_01234567",
           "name": "サンプル 太郎",
           "role": "学生",
-          "created_at": "2024-08-01T01:01:01.779+00:00",
+          "created_at": "2024-08-01T01:01:01.070Z",
+          "works":
+            [
+              {
+                "id": 0,
+                "url": "http://sample-api.com/01234/43210",
+                "user_id": "user_01234567",
+                "created_at": "2024-08-01T01:01:01.070Z",
+              },
+              {
+                "id": 1,
+                "url": "http://kanso-batake-sample.com/01234/43210",
+                "user_id": "user_01234567",
+                "created_at": "2024-08-01T01:01:01.070Z",
+              },
+            ],
+          "fields":
+            [
+              {
+                "id": 0,
+                "name": "API解析",
+                "created_at": "2024-08-01T01:01:01.280976+00:00",
+              },
+            ],
+          "affiliations":
+            [
+              {
+                "id": 0,
+                "name": "サンプル研究室",
+                "created_at": "2024-08-01T01:01:01.280976+00:00",
+              },
+            ],
         },
       "tags":
         [
@@ -124,14 +224,44 @@ ReviewPost:
       },
     "paper_title": "sample api",
     "thumbnail_url": "",
-    "user_id": "user_01234567",
     "created_at": null,
     "user_info":
       {
         "id": "user_01234567",
         "name": "サンプル 太郎",
         "role": "学生",
-        "created_at": "2024-08-01T01:01:01.779+00:00",
+        "created_at": "2024-08-01T01:01:01.070Z",
+        "works":
+          [
+            {
+              "id": 0,
+              "url": "http://sample-api.com/01234/43210",
+              "user_id": "user_01234567",
+              "created_at": "2024-08-01T01:01:01.070Z",
+            },
+            {
+              "id": 1,
+              "url": "http://kanso-batake-sample.com/01234/43210",
+              "user_id": "user_01234567",
+              "created_at": "2024-08-01T01:01:01.070Z",
+            },
+          ],
+        "fields":
+          [
+            {
+              "id": 0,
+              "name": "API解析",
+              "created_at": "2024-08-01T01:01:01.280976+00:00",
+            },
+          ],
+        "affiliations":
+          [
+            {
+              "id": 0,
+              "name": "サンプル研究室",
+              "created_at": "2024-08-01T01:01:01.280976+00:00",
+            },
+          ],
       },
     "tags":
       [
@@ -146,6 +276,7 @@ ReviewPost:
           "created_at": "2024-08-01T01:01:01.971Z",
         },
       ],
+    "comments": [],
   }
 ReviewUpdate:
   {
@@ -161,14 +292,44 @@ ReviewUpdate:
       },
     "paper_title": "sample api UPDATED",
     "thumbnail_url": "",
-    "user_id": "user_01234567",
     "created_at": "2024-08-04T06:31:07.971Z",
     "user_info":
       {
         "id": "user_01234567",
         "name": "サンプル 太郎",
         "role": "学生",
-        "created_at": "2024-08-01T01:01:01.779+00:00",
+        "created_at": "2024-08-01T01:01:01.070Z",
+        "works":
+          [
+            {
+              "id": 0,
+              "url": "http://sample-api.com/01234/43210",
+              "user_id": "user_01234567",
+              "created_at": "2024-08-01T01:01:01.070Z",
+            },
+            {
+              "id": 1,
+              "url": "http://kanso-batake-sample.com/01234/43210",
+              "user_id": "user_01234567",
+              "created_at": "2024-08-01T01:01:01.070Z",
+            },
+          ],
+        "fields":
+          [
+            {
+              "id": 0,
+              "name": "API解析",
+              "created_at": "2024-08-01T01:01:01.280976+00:00",
+            },
+          ],
+        "affiliations":
+          [
+            {
+              "id": 0,
+              "name": "サンプル研究室",
+              "created_at": "2024-08-01T01:01:01.280976+00:00",
+            },
+          ],
       },
     "tags":
       [
