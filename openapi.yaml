@@ -25,6 +25,25 @@ tags:
 components:
   securitySchemes:
     $ref: "openapi/securitySchemes.yaml#/securitySchemes"
+  schemas:
+    Review:
+      $ref: "./openapi/schemas.json#/Review"
+    User:
+      $ref: "./openapi/schemas.json#/User"
+    Work:
+      $ref: "./openapi/schemas.json#/Work"
+    Affiliation:
+      $ref: "./openapi/schemas.json#/Affiliation"
+    Comment:
+      $ref: "./openapi/schemas.json#/Comment"
+    Field:
+      $ref: "./openapi/schemas.json#/Field"
+    Paper:
+      $ref: "./openapi/schemas.json#/Paper"
+    Tag:
+      $ref: "./openapi/schemas.json#/Tag"
+    Topic:
+      $ref: "./openapi/schemas.json#/Topic"
 security:
   - basicAuth: []
 paths:
@@ -51,7 +70,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "./openapi/schemas.json#/User"
+                  $ref: "#/components/schemas/Affiliation"
               example:
                 $ref: "./openapi/examples/User.yaml#/Users"
     post:
@@ -91,7 +110,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./openapi/schemas.json#/User"
+                $ref: "#/components/schemas/User"
               example:
                 $ref: "./openapi/examples/User.yaml#/User"
         "500":
@@ -132,7 +151,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "./openapi/schemas.json#/Review"
+                  $ref: "#/components/schemas/Review"
               example:
                 $ref: "./openapi/examples/Review.yaml#/Reviews"
     post:
@@ -145,7 +164,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./openapi/schemas.json#/Review"
+              $ref: "#/components/schemas/Review"
             example:
               $ref: "./openapi/examples/Review.yaml#/ReviewPost"
       responses:
@@ -180,7 +199,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./openapi/schemas.json#/Review"
+                $ref: "#/components/schemas/Review"
               example:
                 $ref: "./openapi/examples/Review.yaml#/Review"
         "500":
@@ -212,7 +231,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./openapi/schemas.json#/Review"
+              $ref: "#/components/schemas/Review"
             example:
               $ref: "./openapi/examples/Review.yaml#/ReviewUpdate"
       responses:
@@ -268,7 +287,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "./openapi/schemas.json#/Topic"
+                  $ref: "#/components/schemas/Topic"
         "500":
           description: 研究分野の取得に失敗
           content:
@@ -302,7 +321,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "./openapi/schemas.json#/Comment"
+                  $ref: "#/components/schemas/Comment"
               example:
                 $ref: "./openapi/examples/Comment.yaml#/Comments"
         "500":
@@ -325,7 +344,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./openapi/schemas.json#/Comment"
+              $ref: "#/components/schemas/Comment"
             example:
               $ref: "./openapi/examples/Comment.yaml#/CommentPost"
       responses:
@@ -360,7 +379,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./openapi/schemas.json#/Comment"
+                $ref: "#/components/schemas/Comment"
               example:
                 $ref: "./openapi/examples/Comment.yaml#/Comment"
         "500":
@@ -392,7 +411,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./openapi/schemas.json#/Comment"
+              $ref: "#/components/schemas/Comment"
             example:
               $ref: "./openapi/examples/Comment.yaml#/CommentUpdate"
       responses:
