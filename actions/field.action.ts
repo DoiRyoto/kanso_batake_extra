@@ -5,11 +5,15 @@ import { prisma } from "@/lib/prisma/prisma-client";
 
 export async function fetchAllFields(): Promise<Field[]> {
   try {
-    const fieldsData = await prisma.$queryRaw<Field[]>`
-        SELECT * FROM "Fields"`;
+    const requestUrl = new URL(`${process.env.API_URL}/fields`);
+    const response = await fetch(requestUrl, {
+      method: "GET",
+    });
 
+    const fieldsData: Field[] = await response.json();
     return fieldsData;
   } catch (error) {
+    console.log(error);
     throw new Error("Failed to fetch fields.");
   }
 }
