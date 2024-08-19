@@ -70,7 +70,15 @@ const FormSchema = z.object({
   url: z.string().optional(),
 });
 
-export function OnboadingForm({ userId }: { userId: string }) {
+export function OnboadingForm({
+  userId,
+  fieldData,
+  affiliationData,
+}: {
+  userId: string;
+  fieldData: Field[];
+  affiliationData: Affiliation[];
+}) {
   const isLoading = useRef(false);
   const router = useRouter();
 
@@ -172,9 +180,9 @@ export function OnboadingForm({ userId }: { userId: string }) {
                       )}
                     >
                       {field.value
-                        ? affiliations.find(
-                            (affiliation) => affiliation.value === field.value,
-                          )?.label
+                        ? affiliationData.find(
+                            (affiliation) => affiliation.name === field.value,
+                          )?.name
                         : "所属を選択"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -186,23 +194,23 @@ export function OnboadingForm({ userId }: { userId: string }) {
                     <CommandEmpty>Not found.</CommandEmpty>
                     <CommandGroup>
                       <ScrollArea className="h-[50vh] w-full rounded-md border">
-                        {affiliations.map((affiliation) => (
+                        {affiliationData.map((affiliation) => (
                           <CommandItem
-                            value={affiliation.label}
-                            key={affiliation.value}
+                            value={affiliation.name}
+                            key={affiliation.name}
                             onSelect={() => {
-                              form.setValue("affiliation", affiliation.value);
+                              form.setValue("affiliation", affiliation.name);
                             }}
                           >
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                affiliation.value === field.value
+                                affiliation.name === field.value
                                   ? "opacity-100"
                                   : "opacity-0",
                               )}
                             />
-                            {affiliation.label}
+                            {affiliation.name}
                           </CommandItem>
                         ))}
                       </ScrollArea>
@@ -238,7 +246,7 @@ export function OnboadingForm({ userId }: { userId: string }) {
                       )}
                     >
                       {field.value
-                        ? fields.find((f) => f.value === field.value)?.label
+                        ? fieldData.find((f) => f.name === field.value)?.name
                         : "研究分野を選択"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -250,23 +258,23 @@ export function OnboadingForm({ userId }: { userId: string }) {
                     <CommandEmpty>Not found.</CommandEmpty>
                     <CommandGroup>
                       <ScrollArea className="h-[50vh] w-full rounded-md border">
-                        {fields.map((f) => (
+                        {fieldData.map((f) => (
                           <CommandItem
-                            value={f.label}
-                            key={f.value}
+                            value={f.name}
+                            key={f.name}
                             onSelect={() => {
-                              form.setValue("field", f.value);
+                              form.setValue("field", f.name);
                             }}
                           >
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                f.value === field.value
+                                f.name === field.value
                                   ? "opacity-100"
                                   : "opacity-0",
                               )}
                             />
-                            {f.label}
+                            {f.name}
                           </CommandItem>
                         ))}
                       </ScrollArea>
