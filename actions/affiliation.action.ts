@@ -5,9 +5,12 @@ import { prisma } from "@/lib/prisma/prisma-client";
 
 export async function fetchAllAffiliations(): Promise<Affiliation[]> {
   try {
-    const affiliationsData = await prisma.$queryRaw<Affiliation[]>`
-        SELECT * FROM "Affiliations"`;
+    const requestUrl = new URL(`${process.env.API_URL}/affiliations`);
+    const response = await fetch(requestUrl, {
+      method: "GET",
+    });
 
+    const affiliationsData: Affiliation[] = await response.json();
     return affiliationsData;
   } catch (error) {
     console.log(error);
