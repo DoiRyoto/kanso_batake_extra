@@ -24,12 +24,9 @@ import db from "@/lib/firebase/store";
 
 export async function fetchReview(reviewId: number): Promise<Review> {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/reviews/${reviewId}`,
-      {
-        method: "GET",
-      },
-    );
+    const response = await fetch(`${process.env.API_URL}/reviews/${reviewId}`, {
+      method: "GET",
+    });
     const reviewData: Review = await response.json();
     return reviewData;
   } catch (error) {
@@ -41,7 +38,7 @@ export async function fetchReview(reviewId: number): Promise<Review> {
 export async function setReview(reviewData: Review) {
   try {
     // userIdとreviewDataをポストする
-    const response = await fetch("http://localhost:3000/api/reviews", {
+    const response = await fetch(`${process.env.API_URL}/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -54,19 +51,22 @@ export async function setReview(reviewData: Review) {
   }
 }
 
-export async function updateReview(userId: string, reviewData: Review) {
+export async function updateReview(reviewData: Review) {
   try {
-    await prisma.$executeRaw`
-        UPDATE "Reviews" 
-        SET content = ${reviewData.content}, paper_data = ${reviewData.paper_data}, paper_title = ${reviewData.paper_title}, user_id = ${reviewData.user_id}, thumbnail_url = ${reviewData.thumbnail_url}
-        WHERE id = ${reviewData.id};`;
+    const requestUrl = new URL(
+      `${process.env.API_URL}/reviews/${reviewData.id}`,
+    );
+    await fetch(requestUrl, {
+      method: "PUT",
+      body: JSON.stringify({ reviewData: reviewData }),
+    });
   } catch (error) {
     console.log(error);
     throw new Error("Failed to set review.");
   }
 
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
+  revalidatePath(`/user/${reviewData.user_info.id}`);
+  redirect(`/user/${reviewData.user_info.id}`);
 }
 
 /*
@@ -85,41 +85,43 @@ export async function deleteReview(
 }
 */
 
-export async function deleteReview(reviewData: Review, userId: string) {
+export async function deleteReview(reviewData: Review) {
   try {
-    await prisma.$executeRaw<Review[]>`
-    DELETE FROM "Reviews"
-    WHERE id = ${reviewData.id};`;
-
-    //わからん。
-    /*
-  try {
-    await Promise.all([deleteImage(reviewData.id.toString()), prismaQuery]);
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to delete review.");
-  }*/
+    const requestUrl = new URL(
+      `${process.env.API_URL}/reviews/${reviewData.id}`,
+    );
+    const delReq = fetch(requestUrl, {
+      method: "DELETE",
+    });
+    await Promise.all([delReq]); // Todo: deleteImage(reviewData.id)を追加する
   } catch (error) {
     throw new Error("failed to delete review.");
   }
 
-  revalidatePath(`/user/${userId}`);
-  redirect(`/user/${userId}`);
+  revalidatePath(`/user/${reviewData.user_info.id}`);
+  redirect(`/user/${reviewData.user_info.id}`);
 }
 
 export async function fetchReviewsByFilter(
   searchTag?: string,
   userId?: string,
+  affiliationId?: string,
 ): Promise<Review[]> {
   try {
-    const uriTag = searchTag ? `searchTag=${searchTag}&` : ``;
-    const uriId = userId ? `userId=${userId}` : ``;
-    const response = await fetch(
-      `http://localhost:3000/api/reviews?` + uriTag + uriId,
-      {
-        method: "GET",
-      },
+    const params = {
+      searchTag: searchTag || "",
+      userId: userId || "",
+      affiliationId: affiliationId || "",
+    };
+
+    const urlSearchParam = new URLSearchParams(params).toString();
+    const requestUrl = new URL(
+      `${process.env.API_URL}/reviews?` + urlSearchParam,
     );
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+    });
     const reviewData: Review[] = await response.json();
     return reviewData;
   } catch (error) {

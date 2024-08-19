@@ -28,7 +28,7 @@ const ReviewAction = ({ reviewData, userId }: Props) => {
   if (!userId || !reviewData) return null;
 
   const deleteButtonClickHandler = async () => {
-    await deleteReview(reviewData, userId);
+    await deleteReview(reviewData);
   };
 
   return (

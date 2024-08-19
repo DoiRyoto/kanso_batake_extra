@@ -1,7 +1,6 @@
 "use server";
 
-import { commentInterface } from "@/constants";
-import db from "@/lib/firebase/store";
+import { Comment } from "@/type";
 import { prisma } from "@/lib/prisma/prisma-client";
 import { commentType } from "@/type";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
@@ -25,7 +24,7 @@ export async function fetchComment(id: string) {
 
 export async function fetchComment(id: string) {
   try {
-    const commentData = await prisma.$queryRaw<commentInterface[]>`
+    const commentData = await prisma.$queryRaw<Comment[]>`
         SELECT * FROM "Comments" WHERE id = ${id};`;
     return commentData;
   } catch (error) {
@@ -48,9 +47,9 @@ export async function setComment(commentData: commentType, path: string) {
 }
 */
 
-export async function setComment(commentData: commentInterface) {
+export async function setComment(commentData: Comment) {
   try {
-    await prisma.$executeRaw<commentInterface[]>`
+    await prisma.$executeRaw<Comment[]>`
         INSERT INTO "Comments" (content, review_id, user_id)
         VALUES (${commentData.content}, ${commentData.review_id}, ${commentData.user_id});`;
   } catch (error) {
@@ -77,7 +76,7 @@ export async function fetchCommentsByReviewId(id: string) {
 
 export async function fetchCommentsByReviewId(reviewId: number) {
   try {
-    const commentsData = await prisma.$queryRaw<commentInterface[]>`
+    const commentsData = await prisma.$queryRaw<Comment[]>`
         SELECT * FROM "Comments" WHERE review_id = ${reviewId} ORDER BY created_at DESC;`;
 
     return commentsData;

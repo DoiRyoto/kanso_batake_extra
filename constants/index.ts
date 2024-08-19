@@ -5,7 +5,12 @@ export const emptyReview: Review = {
   content: "",
   paper_title: "",
   paper_data: {},
-  user_id: "",
+  user_info: {
+    id: "-1",
+    name: "Preview",
+    role: "Test",
+    created_at: "",
+  },
   created_at: "",
   comments: [],
   tags: [],
