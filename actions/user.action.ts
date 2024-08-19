@@ -3,7 +3,14 @@
 import db from "@/lib/firebase/store";
 import { prisma } from "@/lib/prisma/prisma-client";
 import { User, userType } from "@/type";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  orderBy,
+} from "firebase/firestore";
 
 export async function fetchUser(userId: string): Promise<User> {
   try {
@@ -87,4 +94,14 @@ export async function fetchUserByFB(userId: string) {
     console.log(error);
     throw new Error("Failed to fetch user.");
   }
+}
+
+export async function fetchUsersByFB() {
+  const col = query(collection(db, "reviews"), orderBy("id", "desc"));
+  let result: userType[] = [];
+  const allUsersSnapshot = await getDocs(col);
+  allUsersSnapshot.forEach((doc) => {
+    result.push(doc.data() as userType);
+  });
+  return result;
 }
