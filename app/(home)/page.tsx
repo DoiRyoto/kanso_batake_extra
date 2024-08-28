@@ -1,6 +1,6 @@
-import Reviews from "@/components/top/Reviews";
 import { Suspense } from "react";
-import Search from "@/components/TagSearchBar";
+import TagSearchBar from "@/components/input/TagSearchBar";
+import TopPageReviews from "./_components/TopPageReviews";
 
 export default async function Home({
   searchParams,
@@ -12,10 +12,10 @@ export default async function Home({
   return (
     <div className="flex flex-col gap-10 mt-2">
       <div className="flex flex-row gap-20">
-        <Search placeholder="タグを入力" />
+        <TagSearchBar placeholder="タグを入力" />
       </div>
       <Suspense>
-        <Reviews tag={searchParams?.tag} />
+        <TopPageReviews tag={searchParams?.tag} />
       </Suspense>
     </div>
   );

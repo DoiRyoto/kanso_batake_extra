@@ -1,0 +1,18 @@
+import { fetchUser } from "@/actions/user.action";
+import { ReviewForm } from "../_components/MultiStepFormNavBar/ReviewForm";
+import { currentUser } from "@clerk/nextjs";
+import React from "react";
+
+const page = async () => {
+  const user = await currentUser();
+  if (!user) return null;
+  const userInfo = await fetchUser(user.id);
+
+  return (
+    <div className="w-full">
+      <ReviewForm user={userInfo} mode="create" />
+    </div>
+  );
+};
+
+export default page;
