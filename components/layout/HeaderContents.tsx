@@ -101,7 +101,7 @@ export function HeaderContents({ userData, affiliationData }: Props) {
               <Label>投稿する</Label>
               <SheetClose asChild>
                 <Link
-                  href={`/create`}
+                  href={`review/create`}
                   className="flex text-lg px-2 py-1 flex-row items-center gap-4 hover:underline"
                 >
                   <IoIosCreate /> レビューを作成

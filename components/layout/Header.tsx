@@ -12,7 +12,7 @@ const kaisei = Kaisei_Tokumin({ weight: "400", subsets: ["cyrillic"] });
 
 const Header = async () => {
   const _user = await currentUser();
-  const user = _user ? (await fetchUser(_user.id))[0] : undefined;
+  const user = _user ? await fetchUser(_user.id) : undefined;
   const affiliation = _user
     ? (await fetchAffiliationsByUserId(_user.id))[0]
     : undefined;
@@ -24,7 +24,7 @@ const Header = async () => {
           href="/"
           className={clsx(
             kaisei.className,
-            "text-2xl flex flex-row items-center justify-center",
+            "text-2xl flex flex-row items-center justify-center"
           )}
         >
           <Image src="/appicon.png" width={50} height={50} alt="logo" />
