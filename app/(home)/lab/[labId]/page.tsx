@@ -1,7 +1,7 @@
-import LabHeader from "@/components/lab/LabHeader";
-import MyLabReviews from "@/components/lab/MyLabReviews";
+import AffiliationHeader from "../_components/AffiliationHeader";
+import ReviewListByAffiliation from "../_components/ReviewListByAffiliation";
 import React from "react";
-import Search from "@/components/TagSearchBar";
+import TagSearchBar from "@/components/input/TagSearchBar";
 
 const page = async ({
   params: { labId },
@@ -12,9 +12,12 @@ const page = async ({
 }) => {
   return (
     <div className="flex flex-col gap-5">
-      <LabHeader affiliationId={Number(labId)} />
-      <Search placeholder="タグを入力" />
-      <MyLabReviews affiliationId={Number(labId)} tag={searchParams?.tag} />
+      <AffiliationHeader affiliationId={Number(labId)} />
+      <TagSearchBar placeholder="タグを入力" />
+      <ReviewListByAffiliation
+        affiliationId={Number(labId)}
+        tag={searchParams?.tag}
+      />
     </div>
   );
 };

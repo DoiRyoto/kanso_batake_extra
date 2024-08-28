@@ -1,8 +1,8 @@
 import React from "react";
-import LabLists from "@/components/lab/LabLists";
+import AffiliationCardList from "./_components/AffiliationCardList";
 
 const page = async () => {
-  return <LabLists />;
+  return <AffiliationCardList />;
 };
 
 export default page;

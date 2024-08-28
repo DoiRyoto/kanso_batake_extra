@@ -1,7 +1,7 @@
-import ReviewHeader from "@/components/user/ReviewerHeader";
-import ReviewsByUser from "@/components/user/ReviewsByUser";
-import React from "react";
-import Search from "@/components/TagSearchBar";
+import UserHeader from "../_components/UserHeader";
+import ReviewListByUser from "../_components/ReviewListByUser";
+import React, { Suspense } from "react";
+import Search from "@/components/input/TagSearchBar";
 
 const page = async ({
   params: { userId },
@@ -12,9 +12,13 @@ const page = async ({
 }) => {
   return (
     <div className="flex flex-col gap-5">
-      <ReviewHeader userId={userId} />
+      <Suspense>
+        <UserHeader userId={userId} />
+      </Suspense>
       <Search placeholder="タグを入力" />
-      <ReviewsByUser userId={userId} tag={searchParams?.tag} />
+      <Suspense>
+        <ReviewListByUser userId={userId} tag={searchParams?.tag} />
+      </Suspense>
     </div>
   );
 };

@@ -36,13 +36,13 @@ export async function setComment(commentData: Comment) {
 export async function fetchCommentsByReviewId(reviewId: number) {
   try {
     const requestUrl = new URL(
-      `${process.env.API_URL}/comments?reviewId=${reviewId}`,
+      `${process.env.API_URL}/comments?reviewId=${reviewId}`
     );
     const response = await fetch(requestUrl, {
       method: "GET",
     });
 
-    const commentData: Comment = await response.json();
+    const commentData: Comment[] = await response.json();
     return commentData;
   } catch (error) {
     console.log(error);

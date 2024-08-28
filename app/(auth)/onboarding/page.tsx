@@ -1,6 +1,6 @@
 import { fetchAllAffiliations } from "@/actions/affiliation.action";
 import { fetchAllFields } from "@/actions/field.action";
-import { OnboadingForm } from "@/components/form/OnboardingForm";
+import { OnboadingForm } from "./_components/OnboadingForm";
 import { currentUser } from "@clerk/nextjs";
 import React from "react";
 
