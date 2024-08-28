@@ -12,7 +12,7 @@ const page = async ({
 }) => {
   const user = await currentUser();
   if (!user) return null;
-  const userInfo = (await fetchUser(user.id))[0];
+  const userInfo = await fetchUser(user.id);
   const review = await fetchReview(Number(reviewId));
 
   if (userInfo.id !== review.user_info.id) redirect("/");
