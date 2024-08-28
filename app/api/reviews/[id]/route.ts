@@ -52,7 +52,7 @@ async function fetchReview(reviewId: number): Promise<Review[]> {
 
 async function putReview(
   reviewId: number,
-  reviewData: Review,
+  reviewData: Review
 ): Promise<number> {
   try {
     const res = await prisma.$executeRaw`
@@ -130,7 +130,7 @@ async function deleteReview(reviewId: number): Promise<number> {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
     // ReviewIdをnumberに変換
@@ -143,19 +143,19 @@ export async function GET(
     if (!reviewData.length) {
       return NextResponse.json({ error: "Invalid review ID" }, { status: 400 });
     }
-    return NextResponse.json(reviewData, { status: 200 });
+    return NextResponse.json(reviewData[0], { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: `Failed to fetch review with ID = ${params.id}` },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   const reviewId = parseInt(params.id);
   const requestBody = await request.json();
@@ -167,14 +167,14 @@ export async function PUT(
   } catch (error) {
     return NextResponse.json(
       { error: `Failed to post Review` },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
     // ReviewIdをnumberに変換
@@ -187,7 +187,7 @@ export async function DELETE(
   } catch (error) {
     return NextResponse.json(
       { error: `Failed to delete review with ID = ${params.id}` },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
