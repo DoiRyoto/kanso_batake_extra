@@ -16,7 +16,7 @@ type Props = {
 const Comment = async ({ commentData }: Props) => {
   if (!commentData) return null;
 
-  const user = (await fetchUser(commentData.user_id))[0];
+  const user = await fetchUser(commentData.user_id);
   return (
     <Card>
       <CardHeader>

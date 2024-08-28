@@ -39,7 +39,7 @@ async function fetchUser(userId: string): Promise<User[]> {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
     const id = params.id;
@@ -51,12 +51,12 @@ export async function GET(
     if (!userData.length) {
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
-    return NextResponse.json(userData, { status: 200 });
+    return NextResponse.json(userData[0], { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: `Failed to fetch user with ID = ${params.id}` },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
