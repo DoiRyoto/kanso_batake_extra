@@ -26,16 +26,20 @@ const PaperData = ({ paperData }: Props) => {
             <a
               href={`https://www.doi.org/${paperData.doi}`}
               target="_blank"
+              rel="noopener noreferrer"
               className="transform hover:scale-110 motion-reduce:transform-none"
+              aria-label="DOI link"
             >
-              <SiDoi size="2rem" />
+              <SiDoi size="2rem" aria-hidden="true" />
+              <span className="sr-only">DOI: {paperData.doi}</span>
             </a>
           )}
           {paperData.link && (
             <a
-              href={`${paperData.link}`}
-              target="_blank"
               className="transform hover:scale-110 motion-reduce:transform-none"
+              href={paperData.link}
+              target="_blank"
+              aria-label="論文リンク"
             >
               <IoIosPaper size="2rem" />
             </a>
