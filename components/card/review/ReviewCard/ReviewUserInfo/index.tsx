@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import icon from "@/public/icon.png";
+import icon from "../../../../../public/icon.png";
 import Link from "next/link";
 import { CardContent } from "../../../../ui/card";
 import { User } from "@/type";
