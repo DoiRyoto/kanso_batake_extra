@@ -12,14 +12,14 @@ tags:
     description: ユーザーに関する操作
   - name: reviews
     description: レビューに関する操作
-  # - name: tags
-  #   description: タグに関する操作
+  - name: tags
+    description: タグに関する操作
   - name: comments
     description: コメントに関する操作
-  # - name: affiliations
-  #   description: 所属に関する操作
-  # - name: fields
-  #   description: 研究分野に関する操作
+  - name: affiliations
+    description: 所属に関する操作
+  - name: fields
+    description: 研究分野に関する操作
   - name: topics
     description: 興味のある分野に関する操作
 components:
