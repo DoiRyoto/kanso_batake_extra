@@ -34,14 +34,22 @@ components:
       $ref: "./schemas.json#/Work"
     Affiliation:
       $ref: "./schemas.json#/Affiliation"
+    PostAffiliation:
+      $ref: "./schemas.json#/PostAffiliation"
     Comment:
       $ref: "./schemas.json#/Comment"
+    PostComment:
+      $ref: "./schemas.json#/PostComment"
     Field:
       $ref: "./schemas.json#/Field"
+    PostField:
+      $ref: "./schemas.json#/PostField"
     Paper:
       $ref: "./schemas.json#/Paper"
     Tag:
       $ref: "./schemas.json#/Tag"
+    PostTag:
+      $ref: "./schemas.json#/PostTag"
     Topic:
       $ref: "./schemas.json#/Topic"
 security:
@@ -152,6 +160,14 @@ paths:
       summary: ユーザー情報を更新する
       description: 特定のユーザーのユーザー情報を更新する。DBにユーザー情報を挿入する
       tags: [users]
+      parameters:
+        - name: id
+          description: ユーザID
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
       requestBody:
         description: "ユーザー情報"
         required: true
@@ -177,13 +193,10 @@ paths:
           schema:
             type: string
           example: sample
-        - name: userId
-          in: query
-          schema:
-            type: integer
-          example: 0
-        - name: affiliationId
-          in: query
+        - name: id
+          description: ユーザID
+          in: path
+          required: true
           schema:
             type: integer
           example: 0
@@ -402,7 +415,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Comment"
+              $ref: "#/components/schemas/PostComment"
             example:
               $ref: "./examples/Comment.yaml#/CommentPost"
       responses:
@@ -423,12 +436,6 @@ paths:
       summary: コメントを全件取得する
       description: 特定のレビューに紐づくコメントをすべて取得する
       tags: [comments]
-      parameters:
-        - name: reviewId
-          in: query
-          schema:
-            type: integer
-          example: 2
       responses:
         "200":
           description: レビューの取得に成功
@@ -450,32 +457,6 @@ paths:
                   error:
                     type: string
               example: { error: "Fail to get comment" }
-    # post:
-    #   summary: コメントを投稿する
-    #   description: コメントを投稿する
-    #   tags: [comments]
-    #   requestBody:
-    #     description: 投稿するレビューの情報
-    #     required: true
-    #     content:
-    #       application/json:
-    #         schema:
-    #           $ref: "#/components/schemas/Comment"
-    #         example:
-    #           $ref: "./examples/Comment.yaml#/CommentPost"
-    #   responses:
-    #     "200":
-    #       description: コメントの新規投稿に成功
-    #     "500":
-    #       description: コメントの新規投稿に失敗
-    #       content:
-    #         application/json:
-    #           schema:
-    #             type: object
-    #             properties:
-    #               error:
-    #                 type: string
-    #           example: { error: "Fail to post comment" }
   /api/comments/{id}:
     get:
       summary: 特定のコメントを取得する
@@ -527,7 +508,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Comment"
+              $ref: "#/components/schemas/PostComment"
             example:
               $ref: "./examples/Comment.yaml#/CommentUpdate"
       responses:
@@ -606,9 +587,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Affiliation"
-            # example:
-            #   $ref: "./examples/Affiliation.yaml#/Affiliation"
+              $ref: "#/components/schemas/PostAffiliation"
+            example:
+              $ref: "./examples/Affiliation.yaml#/AffiliationPost"
       responses:
         "200":
           description: 所属の新規登録に成功
@@ -642,8 +623,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Affiliation"
-              # example:
-              #   $ref: "./examples/Affiliation.yaml#/Affiliation"
+              example:
+                $ref: "./examples/Affiliation.yaml#/Affiliation"
         "500":
           description: レビューの取得に失敗
           content:
@@ -673,9 +654,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Affiliation"
-            # example:
-            #   $ref: "./examples/Affiliation.yaml#/Affiliation"
+              $ref: "#/components/schemas/PostAffiliation"
+            example:
+              $ref: "./examples/Affiliation.yaml#/AffiliationUpdate"
       responses:
         "200":
           description: 所属情報の更新に成功
@@ -723,17 +704,15 @@ paths:
       tags: [affiliations]
       parameters:
         - name: searchTag
+          description: 検索タグ
           in: query
           schema:
             type: string
           example: sample
-        - name: userId
-          in: query
-          schema:
-            type: integer
-          example: 0
-        - name: affiliationId
-          in: query
+        - name: id
+          in: path
+          description: 所属のID
+          required: true
           schema:
             type: integer
           example: 0
@@ -762,8 +741,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Field"
-              # example:
-              #   $ref: "./examples/Field.yaml#/Fields"
+              example:
+                $ref: "./examples/Field.yaml#/Fields"
         "500":
           description: 分野の取得に失敗
           content:
@@ -784,9 +763,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Field"
-            # example:
-            #   $ref: "./examples/Field.yaml#/Field"
+              $ref: "#/components/schemas/PostField"
+            example:
+              $ref: "./examples/Field.yaml#/FieldPost"
       responses:
         "200":
           description: 分野の新規登録に成功
@@ -820,8 +799,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Field"
-              # example:
-              #   $ref: "./examples/Field.yaml#/Field"
+              example:
+                $ref: "./examples/Field.yaml#/Field"
         "500":
           description: レビューの取得に失敗
           content:
@@ -851,9 +830,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Field"
-            # example:
-            #   $ref: "./examples/Field.yaml#/Field"
+              $ref: "#/components/schemas/PostField"
+            example:
+              $ref: "./examples/Field.yaml#/FieldPost"
       responses:
         "200":
           description: 分野情報の更新に成功
@@ -930,9 +909,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Tag"
-            # example:
-            #   $ref: "./examples/Tag.yaml#/Tag"
+              $ref: "#/components/schemas/PostTag"
+            example:
+              $ref: "./examples/Tag.yaml#/TagPost"
       responses:
         "200":
           description: タグの新規登録に成功
@@ -997,9 +976,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Tag"
-            # example:
-            #   $ref: "./examples/Tag.yaml#/Tag"
+              $ref: "#/components/schemas/PostTag"
+            example:
+              $ref: "./examples/Tag.yaml#/TagPost"
       responses:
         "200":
           description: タグ情報の更新に成功

@@ -1,0 +1,12 @@
+FieldPost: { "name": "exampleField" }
+Field:
+  { "id": 0, "name": "exampleField", "created_at": "2024-08-01T01:01:01.779" }
+Fields:
+  [
+    {
+      "id": 0,
+      "name": "exampleField",
+      "created_at": "2024-08-01T01:01:01.779",
+    },
+    { "id": 1, "name": "sample", "created_at": "2024-08-01T01:01:01.779" },
+  ]

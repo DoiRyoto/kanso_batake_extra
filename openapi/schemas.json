@@ -36,6 +36,23 @@
     },
     "required": ["id", "name", "created_at"]
   },
+  "PostAffiliation": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["name"]
+  },
   "Comment": {
     "type": "object",
     "properties": {
@@ -60,6 +77,30 @@
     },
     "required": ["id", "content", "user_id", "review_id", "created_at"]
   },
+  "PostComment": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "content": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "string"
+      },
+      "review_id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["content", "user_id", "review_id"]
+  },
   "Field": {
     "type": "object",
     "properties": {
@@ -76,6 +117,23 @@
       }
     },
     "required": ["id", "name", "created_at"]
+  },
+  "PostField": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["name"]
   },
   "Paper": {
     "type": "object",
@@ -176,6 +234,23 @@
       }
     },
     "required": ["id", "name", "created_at"]
+  },
+  "PostTag": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["name"]
   },
   "Topic": {
     "type": "object",

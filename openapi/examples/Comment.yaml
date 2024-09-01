@@ -1,10 +1,8 @@
 CommentPost:
   {
-    "id": 0,
     "content": "example comment to post!",
     "user_id": "user_0123456",
     "review_id": 124345,
-    "created_at": "2024-08-01T01:01:01.779",
   }
 Comments:
   [
@@ -25,11 +23,9 @@ Comments:
   ]
 CommentUpdate:
   {
-    "id": 0,
     "content": "example updated comment to post",
     "user_id": "user_0123456",
     "review_id": 12345,
-    "created_at": "2024-08-01T01:10:11.779",
   }
 Comment:
   {

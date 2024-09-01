@@ -1,0 +1,17 @@
+AffiliationPost: { "name": "sampleAffiliation" }
+AffiliationUpdate: { "name": "updateAffiliation" }
+Affiliation:
+  {
+    "id": 0,
+    "name": "sampleAffiliation",
+    "created_at": "2024-08-01T01:01:01.779",
+  }
+Affiliations:
+  [
+    {
+      "id": 0,
+      "name": "sampleAffiliation",
+      "created_at": "2024-08-01T01:01:01.779",
+    },
+    { "id": 1, "name": "testAff", "created_at": "2024-08-01T01:01:01.779" },
+  ]
