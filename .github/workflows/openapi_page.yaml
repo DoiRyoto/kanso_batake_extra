@@ -17,7 +17,7 @@ jobs:
       - name: Convert YML to HTML
         run: |
           npm install -g redoc-cli
-          redoc-cli bundle openapi\openapi_latest.yaml --o openapi\index.html
+          redoc-cli bundle openapi/openapi_latest.yaml --o openapi/index.html
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
