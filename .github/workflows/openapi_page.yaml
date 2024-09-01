@@ -1,0 +1,23 @@
+name: API Document Hosting
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Convert YML to HTML
+        run: |
+          npm install -g redoc-cli
+          redoc-cli bundle openapi\openapi_latest.yaml --o openapi\index.html
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
