@@ -28,8 +28,12 @@ components:
   schemas:
     Review:
       $ref: "./schemas.json#/Review"
+    PostReview:
+      $ref: "./schemas.json#/PostReview"
     User:
       $ref: "./schemas.json#/User"
+    PostUser:
+      $ref: "./schemas.json#/PostUser"
     Work:
       $ref: "./schemas.json#/Work"
     Affiliation:
@@ -81,6 +85,15 @@ paths:
                   $ref: "#/components/schemas/Affiliation"
               example:
                 $ref: "./examples/User.yaml#/Users"
+        "500":
+          description: ユーザ情報の取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
     post:
       summary: ユーザーを新規登録する
       description: ユーザーを新規登録する。DBにユーザー情報を挿入する
@@ -91,7 +104,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./schemas.json#/User"
+              $ref: "./schemas.json#/PostUser"
             example:
               $ref: "./examples/User.yaml#/UserPost"
       responses:
@@ -174,7 +187,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./schemas.json#/User"
+              $ref: "./schemas.json#/PostUser"
             example:
               $ref: "./examples/User.yaml#/UserPost"
       responses:
@@ -253,7 +266,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Review"
+              $ref: "#/components/schemas/PostReview"
             example:
               $ref: "./examples/Review.yaml#/ReviewPost"
       responses:
@@ -320,7 +333,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Review"
+              $ref: "#/components/schemas/PostReview"
             example:
               $ref: "./examples/Review.yaml#/ReviewUpdate"
       responses:

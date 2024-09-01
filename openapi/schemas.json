@@ -218,6 +218,55 @@
       "thumbnail_url"
     ]
   },
+  "PostReview": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "content": {
+        "type": "string"
+      },
+      "paper_title": {
+        "type": "string"
+      },
+      "paper_data": {
+        "$ref": "#/Paper"
+      },
+      "user_info": {
+        "$ref": "#/User"
+      },
+      "comments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Comment"
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Tag"
+        }
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail_url": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "content",
+      "paper_title",
+      "paper_data",
+      "user_info",
+      "comments",
+      "tags",
+      "thumbnail_url"
+    ]
+  },
   "Tag": {
     "type": "object",
     "properties": {
@@ -313,5 +362,42 @@
       "fields",
       "affiliations"
     ]
+  },
+  "PostUser": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "role": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "works": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Work"
+        }
+      },
+      "fields": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Field"
+        }
+      },
+      "affiliations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Affiliation"
+        }
+      }
+    },
+    "required": ["name", "role", "works", "fields", "affiliations"]
   }
 }

@@ -125,10 +125,8 @@ Users:
   ]
 UserPost:
   {
-    "id": "",
     "name": "サンプル ポストの介",
     "role": "学生",
-    "created_at": "",
     "works":
       [
         {

@@ -227,10 +227,8 @@ ReviewPost:
     "created_at": null,
     "user_info":
       {
-        "id": "user_01234567",
         "name": "サンプル 太郎",
         "role": "学生",
-        "created_at": "2024-08-01T01:01:01.070Z",
         "works":
           [
             {
