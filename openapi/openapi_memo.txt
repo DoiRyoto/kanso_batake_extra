@@ -1,0 +1,48 @@
+users
+    GET
+    POST
+    /[id]
+        GET
+        DELETE
+        PUT
+        /reviews
+            GET
+reviews
+    GET
+    POST
+    /[id]
+        GET
+        DELETE
+        PUT
+        /comments
+            GET
+            POST
+comments
+    GET
+    /[id]
+        GET
+        PUT
+        DELETE
+affiliations
+    GET
+    POST
+    [id]
+        GET
+        DELETE
+        PUT
+        /reviews
+            GET
+fields
+    GET
+    POST
+    [id]
+        GET
+        DELETE
+        PUT
+tags
+    GET
+    POST
+    [id]
+        GET
+        DELETE
+        PUT

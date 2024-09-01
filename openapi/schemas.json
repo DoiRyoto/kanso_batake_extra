@@ -1,0 +1,242 @@
+{
+  "Work": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "url": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["id", "url", "user_id", "created_at"]
+  },
+  "Affiliation": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["id", "name", "created_at"]
+  },
+  "Comment": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "content": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "string"
+      },
+      "review_id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["id", "content", "user_id", "review_id", "created_at"]
+  },
+  "Field": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["id", "name", "created_at"]
+  },
+  "Paper": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "venue": {
+        "type": "string"
+      },
+      "year": {
+        "type": "string"
+      },
+      "journal_name": {
+        "type": "string"
+      },
+      "journal_pages": {
+        "type": "string"
+      },
+      "journal_vol": {
+        "type": "string"
+      },
+      "authors": {
+        "type": "string"
+      },
+      "doi": {
+        "type": "string"
+      },
+      "link": {
+        "type": "string"
+      }
+    }
+  },
+  "Review": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "content": {
+        "type": "string"
+      },
+      "paper_title": {
+        "type": "string"
+      },
+      "paper_data": {
+        "$ref": "#/Paper"
+      },
+      "user_info": {
+        "$ref": "#/User"
+      },
+      "comments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Comment"
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Tag"
+        }
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail_url": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "content",
+      "paper_title",
+      "paper_data",
+      "user_info",
+      "comments",
+      "tags",
+      "created_at",
+      "thumbnail_url"
+    ]
+  },
+  "Tag": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["id", "name", "created_at"]
+  },
+  "Topic": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["id", "name", "created_at"]
+  },
+  "User": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "role": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "works": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Work"
+        }
+      },
+      "fields": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Field"
+        }
+      },
+      "affiliations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/Affiliation"
+        }
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "role",
+      "created_at",
+      "works",
+      "fields",
+      "affiliations"
+    ]
+  }
+}

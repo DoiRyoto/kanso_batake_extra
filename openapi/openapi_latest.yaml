@@ -1,0 +1,1063 @@
+openapi: "3.0.3"
+info:
+  title: 感想畑 API
+  version: "1.1"
+  description: |
+    感想畑のAPIを定義するためのドキュメントです。
+servers:
+  - url: https://kanso-batake.vercel.app
+    description: 本番環境
+tags:
+  - name: users
+    description: ユーザーに関する操作
+  - name: reviews
+    description: レビューに関する操作
+  - name: tags
+    description: タグに関する操作
+  - name: comments
+    description: コメントに関する操作
+  - name: affiliations
+    description: 所属に関する操作
+  - name: fields
+    description: 研究分野に関する操作
+  - name: topics
+    description: 興味のある分野に関する操作
+components:
+  securitySchemes:
+    $ref: "securitySchemes.yaml#/securitySchemes"
+  schemas:
+    Review:
+      $ref: "./schemas.json#/Review"
+    User:
+      $ref: "./schemas.json#/User"
+    Work:
+      $ref: "./schemas.json#/Work"
+    Affiliation:
+      $ref: "./schemas.json#/Affiliation"
+    Comment:
+      $ref: "./schemas.json#/Comment"
+    Field:
+      $ref: "./schemas.json#/Field"
+    Paper:
+      $ref: "./schemas.json#/Paper"
+    Tag:
+      $ref: "./schemas.json#/Tag"
+    Topic:
+      $ref: "./schemas.json#/Topic"
+security:
+  - basicAuth: []
+paths:
+  /api/users:
+    get:
+      summary: すべてのユーザーを取得する
+      description: |
+        すべてのユーザーを取得する。
+        affiliationIdが指定された場合、そのaffiliationに所属するユーザーをすべて取得する。
+      tags: [users]
+      parameters:
+        - name: affiliationId
+          in: query
+          description: 所属を表すaffiliationのid。
+          allowEmptyValue: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Affiliation"
+              example:
+                $ref: "./examples/User.yaml#/Users"
+    post:
+      summary: ユーザーを新規登録する
+      description: ユーザーを新規登録する。DBにユーザー情報を挿入する
+      tags: [users]
+      requestBody:
+        description: "ユーザー情報"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas.json#/User"
+            example:
+              $ref: "./examples/User.yaml#/UserPost"
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: ユーザーの投稿に失敗
+  /api/users/{id}:
+    get:
+      summary: 特定のユーザ情報の取得
+      description: idで指定されたユーザ情報を取得する
+      tags: [users]
+      parameters:
+        - name: id
+          in: path
+          description: ユーザID
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+              example:
+                $ref: "./examples/User.yaml#/User"
+        "500":
+          description: ユーザ情報の取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    delete:
+      summary: 特定のユーザーを削除する
+      description: idで指定されたユーザーをDBから削除する
+      tags: [users]
+      parameters:
+        - name: id
+          description: 削除したいユーザーのid
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの削除に成功
+        "500":
+          description: レビューの削除に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to delete comment with ID = {id}
+    put:
+      summary: ユーザー情報を更新する
+      description: 特定のユーザーのユーザー情報を更新する。DBにユーザー情報を挿入する
+      tags: [users]
+      requestBody:
+        description: "ユーザー情報"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas.json#/User"
+            example:
+              $ref: "./examples/User.yaml#/UserPost"
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: ユーザーの投稿に失敗
+  /api/users/{id}/reviews/:
+    get:
+      summary: ユーザーが投降したレビューを取得する
+      description: 特定のユーザーが投稿したレビューを取得する。またクエリパラメータの条件に合うレビューをすべて取得する
+      tags: [users]
+      parameters:
+        - name: searchTag
+          in: query
+          schema:
+            type: string
+          example: sample
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          example: 0
+        - name: affiliationId
+          in: query
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+              example:
+                $ref: "./examples/Review.yaml#/Reviews"
+  /api/reviews:
+    get:
+      summary: レビューを取得する
+      description: クエリパラメータの条件に合うレビューをすべて取得する
+      tags: [reviews]
+      parameters:
+        - name: searchTag
+          in: query
+          schema:
+            type: string
+          example: sample
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          example: 0
+        - name: affiliationId
+          in: query
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+              example:
+                $ref: "./examples/Review.yaml#/Reviews"
+    post:
+      summary: レビューを投稿する
+      description: レビューをDBに新規挿入する
+      tags: [reviews]
+      requestBody:
+        description: 新規挿入するレビューの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Review"
+            example:
+              $ref: "./examples/Review.yaml#/ReviewPost"
+      responses:
+        "200":
+          description: レビューの新規投稿に成功
+        "500":
+          description: レビューの新規投稿に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to post review" }
+  /api/reviews/{id}:
+    get:
+      summary: 特定のレビューを取得する
+      description: idで指定されたレビューの情報を取得する
+      tags: [reviews]
+      parameters:
+        - name: id
+          in: path
+          description: 取得したいレビューのid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+              example:
+                $ref: "./examples/Review.yaml#/Review"
+        "500":
+          description: レビューの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to fetch review with ID = {id}
+    put:
+      summary: 特定のレビューを更新する
+      description: idで指定されたレビューを新しいレビュー情報で上書きする
+      tags: [reviews]
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 更新したいレビューのid
+          schema:
+            type: integer
+          example: 0
+      requestBody:
+        description: 新しく上書きするレビューの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Review"
+            example:
+              $ref: "./examples/Review.yaml#/ReviewUpdate"
+      responses:
+        "200":
+          description: レビューの更新に成功
+        "500":
+          description: レビューの更新に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to post Review
+    delete:
+      summary: 特定のレビューを削除する
+      description: idで指定されたレビューをDBから削除する
+      tags: [reviews]
+      parameters:
+        - name: id
+          description: 削除したいレビューのid
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの削除に成功
+        "500":
+          description: レビューの削除に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to delete review with ID = {id}
+  /api/reviews/{id}/comments/:
+    get:
+      summary: コメントを全件取得する
+      description: 特定のレビューに投稿されたコメントをすべて取得する
+      tags: [reviews]
+      parameters:
+        - name: id
+          in: path
+          description: 取得したいレビューのid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+              example:
+                $ref: "./examples/Comment.yaml#/Comments"
+        "500":
+          description: コメントの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to get comment" }
+    post:
+      summary: コメントを投稿する
+      description: 特定のレビューに対してコメントを投稿する
+      tags: [reviews]
+      parameters:
+        - name: id
+          in: path
+          description: 投稿したいレビューのid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      requestBody:
+        description: 投稿するコメントの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+            example:
+              $ref: "./examples/Comment.yaml#/CommentPost"
+      responses:
+        "200":
+          description: コメントの新規投稿に成功
+        "500":
+          description: コメントの新規投稿に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to post comment" }
+  /api/comments:
+    get:
+      summary: コメントを全件取得する
+      description: 特定のレビューに紐づくコメントをすべて取得する
+      tags: [comments]
+      parameters:
+        - name: reviewId
+          in: query
+          schema:
+            type: integer
+          example: 2
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+              example:
+                $ref: "./examples/Comment.yaml#/Comments"
+        "500":
+          description: コメントの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to get comment" }
+    # post:
+    #   summary: コメントを投稿する
+    #   description: コメントを投稿する
+    #   tags: [comments]
+    #   requestBody:
+    #     description: 投稿するレビューの情報
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: "#/components/schemas/Comment"
+    #         example:
+    #           $ref: "./examples/Comment.yaml#/CommentPost"
+    #   responses:
+    #     "200":
+    #       description: コメントの新規投稿に成功
+    #     "500":
+    #       description: コメントの新規投稿に失敗
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               error:
+    #                 type: string
+    #           example: { error: "Fail to post comment" }
+  /api/comments/{id}:
+    get:
+      summary: 特定のコメントを取得する
+      description: idで指定されたコメントの情報を取得する
+      tags: [comments]
+      parameters:
+        - name: id
+          in: path
+          description: 取得したいコメントのid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: コメントの取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+              example:
+                $ref: "./examples/Comment.yaml#/Comment"
+        "500":
+          description: コメントの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to fetch comment with ID = {id}
+    put:
+      summary: 特定のポストを更新する
+      description: idで指定されたコメントを新しいコメント情報で上書きする
+      tags: [comments]
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 更新したいコメントのid
+          schema:
+            type: integer
+          example: 0
+      requestBody:
+        description: 新しく上書きするコメントの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+            example:
+              $ref: "./examples/Comment.yaml#/CommentUpdate"
+      responses:
+        "200":
+          description: コメントの更新に成功
+        "500":
+          description: コメントの更新に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to update Comment
+    delete:
+      summary: 特定のコメントを削除する
+      description: idで指定されたコメントをDBから削除する
+      tags: [comments]
+      parameters:
+        - name: id
+          description: 削除したいコメントのid
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの削除に成功
+        "500":
+          description: レビューの削除に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to delete comment with ID = {id}
+  /api/affiliations:
+    get:
+      summary: 所属をすべて取得する
+      description: 登録されている所属をすべて取得する
+      tags: [affiliations]
+      responses:
+        "200":
+          description: 所属の取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Affiliation"
+              # example:
+              #   $ref: "./examples/Affiliation.yaml#/Affiliations"
+        "500":
+          description: 所属の取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to get affilitions" }
+    post:
+      summary: 所属を新規登録する
+      description: 所属をDBに新規登録する
+      tags: [affiliations]
+      requestBody:
+        description: 新規登録する所属の情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Affiliation"
+            # example:
+            #   $ref: "./examples/Affiliation.yaml#/Affiliation"
+      responses:
+        "200":
+          description: 所属の新規登録に成功
+        "500":
+          description: 所属の新規登録に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to post affiliation" }
+  /api/affiliations/{id}:
+    get:
+      summary: 特定の所属を取得する
+      description: idで指定された所属の情報を取得する
+      tags: [affiliations]
+      parameters:
+        - name: id
+          in: path
+          description: 取得したい所属のid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Affiliation"
+              # example:
+              #   $ref: "./examples/Affiliation.yaml#/Affiliation"
+        "500":
+          description: レビューの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to fetch affiliation with ID = {id}
+    put:
+      summary: 特定の所属の情報を更新する
+      description: idで指定された所属情報を新しい所属情報で上書きする
+      tags: [affiliations]
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 更新したい所属のid
+          schema:
+            type: integer
+          example: 0
+      requestBody:
+        description: 新しく上書きする所属の情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Affiliation"
+            # example:
+            #   $ref: "./examples/Affiliation.yaml#/Affiliation"
+      responses:
+        "200":
+          description: 所属情報の更新に成功
+        "500":
+          description: 所属情報の更新に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to update affiliation with ID = {id}
+    delete:
+      summary: 特定の所属を削除する
+      description: idで指定された所属をDBから削除する
+      tags: [affiliations]
+      parameters:
+        - name: id
+          description: 削除したい所属情報のid
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: 所属情報の削除に成功
+        "500":
+          description: 所属情報の削除に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to delete affiliation with ID = {id}
+  /api/affiliations/{id}/reviews/:
+    get:
+      summary: レビューを取得する
+      description: 特定の所属に属するユーザーが投稿したレビューを取得する。またクエリパラメータの条件に合うレビューをすべて取得する
+      tags: [affiliations]
+      parameters:
+        - name: searchTag
+          in: query
+          schema:
+            type: string
+          example: sample
+        - name: userId
+          in: query
+          schema:
+            type: integer
+          example: 0
+        - name: affiliationId
+          in: query
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: レビューの取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+              example:
+                $ref: "./examples/Review.yaml#/Reviews"
+  /api/fields:
+    get:
+      summary: 分野をすべて取得する
+      description: 登録されている分野をすべて取得する
+      tags: [fields]
+      responses:
+        "200":
+          description: 分野の取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Field"
+              # example:
+              #   $ref: "./examples/Field.yaml#/Fields"
+        "500":
+          description: 分野の取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to get fields" }
+    post:
+      summary: 分野を新規登録する
+      description: 分野をDBに新規登録する
+      tags: [fields]
+      requestBody:
+        description: 新規登録する分野の情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Field"
+            # example:
+            #   $ref: "./examples/Field.yaml#/Field"
+      responses:
+        "200":
+          description: 分野の新規登録に成功
+        "500":
+          description: 分野の新規登録に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to post field" }
+  /api/fields/{id}:
+    get:
+      summary: 特定の分野を取得する
+      description: idで指定された分野の情報を取得する
+      tags: [fields]
+      parameters:
+        - name: id
+          in: path
+          description: 取得したい分野のid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: 分野の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Field"
+              # example:
+              #   $ref: "./examples/Field.yaml#/Field"
+        "500":
+          description: レビューの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to fetch Field with ID = {id}
+    put:
+      summary: 特定の分野の情報を更新する
+      description: idで指定された分野情報を新しい分野情報で上書きする
+      tags: [fields]
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 更新したい分野のid
+          schema:
+            type: integer
+          example: 0
+      requestBody:
+        description: 新しく上書きする分野の情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Field"
+            # example:
+            #   $ref: "./examples/Field.yaml#/Field"
+      responses:
+        "200":
+          description: 分野情報の更新に成功
+        "500":
+          description: 分野情報の更新に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to update Field with ID = {id}
+    delete:
+      summary: 特定の分野を削除する
+      description: idで指定された分野をDBから削除する
+      tags: [fields]
+      parameters:
+        - name: id
+          description: 削除したい分野情報のid
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: 分野情報の削除に成功
+        "500":
+          description: 分野情報の削除に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to delete Field with ID = {id}
+  /api/tags:
+    get:
+      summary: タグをすべて取得する
+      description: 登録されているタグをすべて取得する
+      tags: [tags]
+      responses:
+        "200":
+          description: タグの取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+              # example:
+              #   $ref: "./examples/Tag.yaml#/Tags"
+        "500":
+          description: タグの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to get tags" }
+    post:
+      summary: タグを新規登録する
+      description: タグをDBに新規登録する
+      tags: [tags]
+      requestBody:
+        description: 新規登録するタグの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tag"
+            # example:
+            #   $ref: "./examples/Tag.yaml#/Tag"
+      responses:
+        "200":
+          description: タグの新規登録に成功
+        "500":
+          description: タグの新規登録に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example: { error: "Fail to post tag" }
+  /api/tags/{id}:
+    get:
+      summary: 特定のタグを取得する
+      description: idで指定されたタグの情報を取得する
+      tags: [tags]
+      parameters:
+        - name: id
+          in: path
+          description: 取得したいタグのid
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: タグの取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+              # example:
+              #   $ref: "./examples/Tag.yaml#/Tag"
+        "500":
+          description: レビューの取得に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to fetch Tag with ID = {id}
+    put:
+      summary: 特定のタグの情報を更新する
+      description: idで指定されたタグ情報を新しいタグ情報で上書きする
+      tags: [tags]
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 更新したいタグのid
+          schema:
+            type: integer
+          example: 0
+      requestBody:
+        description: 新しく上書きするタグの情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tag"
+            # example:
+            #   $ref: "./examples/Tag.yaml#/Tag"
+      responses:
+        "200":
+          description: タグ情報の更新に成功
+        "500":
+          description: タグ情報の更新に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to update tag with ID = {id}
+    delete:
+      summary: 特定のタグを削除する
+      description: idで指定されたタグをDBから削除する
+      tags: [tags]
+      parameters:
+        - name: id
+          description: 削除したいタグ情報のid
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 0
+      responses:
+        "200":
+          description: タグ情報の削除に成功
+        "500":
+          description: タグ情報の削除に失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Failed to delete Tag with ID = {id}
+
+  # /api/topics:
+  #   get:
+  # summary: すべての研究タグを取得する
+  # description: DBに登録されているすべての研究分野を取得する
+  # tags: [topics]
+  # responses:
+  #   "200":
+  #     description: 研究分野の取得に成功
+  #     content:
+  #       application/json:
+  #         schema:
+  #           type: array
+  #           items:
+  #             $ref: "#/components/schemas/Topic"
+  #   "500":
+  #     description: 研究分野の取得に失敗
+  #     content:
+  #       application/json:
+  #         schema:
+  #           $ref: "./schemas.json#/Topic"
