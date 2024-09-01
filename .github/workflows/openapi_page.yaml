@@ -3,7 +3,7 @@ name: API Document
 on:
   push:
     branches:
-      - feature/openapi
+      - docs/api-spec
   workflow_dispatch:
 
 jobs:
