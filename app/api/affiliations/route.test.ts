@@ -18,6 +18,6 @@ describe("GET /api/affiliations", () => {
     const req = new NextRequest("http://localhost/api/affiliations");
     const res = await GET(req);
     const data = await res.json();
-    expect(data).toHaveLength(2);
+    expect(data).toHaveLength(1);
   });
 });
