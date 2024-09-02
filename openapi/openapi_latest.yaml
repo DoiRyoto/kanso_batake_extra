@@ -227,7 +227,7 @@ paths:
   /api/reviews:
     get:
       summary: レビューを取得する
-      description: クエリパラメータの条件に合うレビューをすべて取得する
+      description: クエリパラメータの条件に合うレビューをすべて取得する.取得されたコメントは投稿された時間の降順（新しい順）で整列されている。
       tags: [reviews]
       parameters:
         - name: searchTag
@@ -378,8 +378,8 @@ paths:
                 error: Failed to delete review with ID = {id}
   /api/reviews/{id}/comments/:
     get:
-      summary: コメントを全件取得する
-      description: 特定のレビューに投稿されたコメントをすべて取得する
+      summary: 特定のレビューのコメントを全件取得する
+      description: 特定のレビューに投稿されたコメントをすべて取得する。取得されたコメントは投稿された時間の降順（新しい順）で整列されている。
       tags: [reviews]
       parameters:
         - name: id
@@ -447,7 +447,7 @@ paths:
   /api/comments:
     get:
       summary: コメントを全件取得する
-      description: 特定のレビューに紐づくコメントをすべて取得する
+      description: 特定のレビューに紐づくコメントをすべて取得する.取得されたコメントは投稿された時間の降順（新しい順）で整列されている。
       tags: [comments]
       responses:
         "200":
