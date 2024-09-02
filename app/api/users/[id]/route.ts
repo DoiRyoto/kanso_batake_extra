@@ -37,9 +37,21 @@ async function fetchUser(userId: string): Promise<User[]> {
   }
 }
 
+async function deleteUser(userId: string): Promise<number> {
+  try {
+    const count = await prisma.$executeRaw`
+      DELETE FROM "Users" WHERE id = ${userId};
+    `;
+    return count;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to delete user.");
+  }
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
     const id = params.id;
@@ -56,7 +68,34 @@ export async function GET(
     console.error(error);
     return NextResponse.json(
       { error: `Failed to fetch user with ID = ${params.id}` },
-      { status: 500 }
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+): Promise<NextResponse> {
+  try {
+    const id = params.id;
+    if (!id) {
+      return NextResponse.json({ error: "No user ID" }, { status: 400 });
+    }
+
+    const count = await deleteUser(id);
+    if (count === 0) {
+      return NextResponse.json(
+        { error: `No such user with ID = ${params.id}` },
+        { status: 500 },
+      );
+    }
+    return NextResponse.json({ status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: `Failed to delete user with ID = ${params.id}` },
+      { status: 500 },
     );
   }
 }
