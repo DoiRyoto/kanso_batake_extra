@@ -15,7 +15,8 @@
     "prepare": "husky",
     "test": "dotenv -e .env.test jest",
     "db-seed": "npx prisma db seed",
-    "migrate:test": "dotenv -e .env.test -- npx prisma migrate dev --schema=prisma/schema.test.prisma"
+    "migrate:test": "dotenv -e .env.test -- npx prisma migrate dev --schema=prisma/schema.test.prisma",
+    "seed:test": "dotenv -e .env.test npx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.27.2",
