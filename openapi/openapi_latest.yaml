@@ -447,7 +447,7 @@ paths:
   /api/comments:
     get:
       summary: コメントを全件取得する
-      description: 特定のレビューに紐づくコメントをすべて取得する.取得されたコメントは投稿された時間の降順（新しい順）で整列されている。
+      description: すべてのコメントを取得する.取得されたコメントは投稿された時間の降順（新しい順）で整列されている。
       tags: [comments]
       responses:
         "200":
