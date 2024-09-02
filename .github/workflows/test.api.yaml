@@ -1,0 +1,46 @@
+name: Test API
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: abcd
+          MYSQL_DATABASE: testdb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # またはお使いのバージョン
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Wait for MySQL to be ready
+        run: |
+          while ! nc -z localhost 3306; do
+            echo "Waiting for MySQL to start..."
+            sleep 1
+          done
+
+      - name: Run database migrations
+        run: npm run migrate:test
+
+      - name: Run tests
+        run: npm test

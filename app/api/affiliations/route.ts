@@ -4,9 +4,7 @@ import { prisma } from "@/lib/prisma/prisma-client";
 
 async function fetchAllAffiliations(): Promise<Affiliation[]> {
   try {
-    const affiliations: Affiliation[] = await prisma.$queryRaw<Affiliation[]>`
-      SELECT * FROM "Affiliations" ORDER BY id ASC;
-    `;
+    const affiliations: Affiliation[] = await prisma.affiliations.findMany();
     return affiliations;
   } catch (error) {
     console.error(error);
