@@ -43,7 +43,7 @@ jobs:
         run: npm run migrate:test
 
       - name: Seed database
-        run: npx tsx prisma/seed.ts
+        run: npm run seed:test
 
       - name: Run tests
         run: npm test
