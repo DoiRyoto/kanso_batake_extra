@@ -42,5 +42,8 @@ jobs:
       - name: Run database migrations
         run: npm run migrate:test
 
+      - name: Seed database
+        run: npx tsx prisma/seed.ts
+
       - name: Run tests
         run: npm test
