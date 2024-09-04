@@ -3,11 +3,11 @@ import { Comments } from "@prisma/client";
 import { Comment } from "@/type";
 import { NextRequest, NextResponse } from "next/server";
 
-async function setComment(comment: Comment) {
+async function setComment(comment: Comment, reviewId: number) {
   try {
     await prisma.$executeRaw`
           INSERT INTO "Comments" (content, review_id, user_id)
-          VALUES (${comment.content}, ${comment.review_id}, ${comment.user_id})`;
+          VALUES (${comment.content}, ${reviewId}, ${comment.user_id})`;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to set comment.");
@@ -56,7 +56,11 @@ export async function POST(
 ): Promise<NextResponse> {
   const commentData = await request.json();
   try {
-    await setComment(commentData);
+    const reviewId = parseInt(params.id);
+    if (!reviewId) {
+      return NextResponse.json({ error: "No review ID" }, { status: 400 });
+    }
+    await setComment(commentData, reviewId);
     return NextResponse.json({ status: 200 });
   } catch (error) {
     return NextResponse.json(
