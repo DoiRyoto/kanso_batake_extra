@@ -340,10 +340,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const params = await request.json();
-  const data: Review = params.reviewData;
+  const reviewData = await request.json();
   try {
-    await setReview(data);
+    await setReview(reviewData);
     return NextResponse.json({ status: 200 });
   } catch (error) {
     return NextResponse.json(

@@ -41,7 +41,7 @@ export async function setReview(reviewData: Review) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ reviewData }),
+      body: JSON.stringify(reviewData),
     });
   } catch (error) {
     console.log(error);
