@@ -119,7 +119,7 @@
         "format": "date-time"
       }
     },
-    "required": ["content", "user_id", "review_id"]
+    "required": ["content", "user_id"]
   },
   "Field": {
     "type": "object",
@@ -255,7 +255,7 @@
         "$ref": "#/Paper"
       },
       "user_info": {
-        "$ref": "#/User"
+        "$ref": "#/PostReviewUser"
       },
       "comments": {
         "type": "array",
@@ -282,7 +282,6 @@
       "paper_title",
       "paper_data",
       "user_info",
-      "comments",
       "tags",
       "thumbnail_url"
     ]
@@ -419,5 +418,42 @@
       }
     },
     "required": ["id", "name", "role"]
+  },
+  "PostReviewUser": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "role": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "works": {
+        "type": "array",
+        "items": {
+          "$ref": "#/PostWork"
+        }
+      },
+      "fields": {
+        "type": "array",
+        "items": {
+          "$ref": "#/PostField"
+        }
+      },
+      "affiliations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/PostAffiliation"
+        }
+      }
+    },
+    "required": ["id"]
   }
 }
