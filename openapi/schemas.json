@@ -19,6 +19,26 @@
     },
     "required": ["id", "url", "user_id", "created_at"]
   },
+  "PostWork": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "url": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "required": ["url", "user_id"]
+  },
   "Affiliation": {
     "type": "object",
     "properties": {
@@ -382,22 +402,22 @@
       "works": {
         "type": "array",
         "items": {
-          "$ref": "#/Work"
+          "$ref": "#/PostWork"
         }
       },
       "fields": {
         "type": "array",
         "items": {
-          "$ref": "#/Field"
+          "$ref": "#/PostField"
         }
       },
       "affiliations": {
         "type": "array",
         "items": {
-          "$ref": "#/Affiliation"
+          "$ref": "#/PostAffiliation"
         }
       }
     },
-    "required": ["name", "role", "works", "fields", "affiliations"]
+    "required": ["id", "name", "role"]
   }
 }
