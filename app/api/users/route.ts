@@ -108,8 +108,8 @@ async function setAffiliation(
 ): Promise<Affiliation[]> {
   try {
     const newAffiliation = await prisma.$queryRaw<Affiliation[]>`
-            INSERT INTO "Affiliations" (id, name)
-            VALUES (${affiliation.id}, ${affiliation.name})
+            INSERT INTO "Affiliations" (name)
+            VALUES (${affiliation.name})
             ON CONFLICT (name) DO UPDATE
             SET name = EXCLUDED.name
             RETURNING *;
@@ -144,9 +144,10 @@ async function setUser(userData: User) {
       const setFieldReq = userData.fields.map(async (field) => {
         const newField = await setField(field);
         await prisma.$executeRaw`
-                    INSERT INTO "_FieldsToUsers" (user_id, field_id)
-                    VALUES (${userData.id}, ${newField[0].id});
-                `;
+          INSERT INTO "_FieldsToUsers" (user_id, field_id)
+          VALUES (${userData.id}, ${newField[0].id})
+          ON CONFLICT (user_id, field_id) DO NOTHING;
+        `;
       });
       await Promise.all(setFieldReq);
     }
@@ -157,9 +158,10 @@ async function setUser(userData: User) {
         async (affiliation) => {
           const newAffiliation = await setAffiliation(affiliation);
           await prisma.$executeRaw`
-                    INSERT INTO "_AffiliationsToUsers" (user_id, affiliation_id)
-                    VALUES (${userData.id}, ${newAffiliation[0].id});
-                `;
+              INSERT INTO "_AffiliationsToUsers" (user_id, affiliation_id)
+              VALUES (${userData.id}, ${newAffiliation[0].id})
+              ON CONFLICT (user_id, affiliation_id) DO NOTHING;
+          `;
         },
       );
       await Promise.all(setAffiliationReq);
