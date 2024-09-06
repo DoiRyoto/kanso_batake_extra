@@ -39,6 +39,9 @@ jobs:
             sleep 1
           done
 
+      - name: Generate test prisma client
+        run: npm run generate:test
+
       - name: Run database migrations
         run: npm run migrate:test
 
