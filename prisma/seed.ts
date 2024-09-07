@@ -15,21 +15,21 @@ async function main() {
     ],
   });
 
-  await prisma.works.createMany({
-    data: [
-      { id: 1, url: "http//google.com", user_id: "demo1" },
-      { id: 2, url: "http//apple.com", user_id: "demo2" },
-      { id: 3, url: "http//facebook.com", user_id: "demo4" },
-      { id: 4, url: "http//amazon.com", user_id: "demo4" },
-    ],
-  });
-
   await prisma.users.createMany({
     data: [
       { id: "demo1", name: "demo 1", role: "学生" },
       { id: "demo2", name: "demo 2", role: "学生" },
       { id: "demo3", name: "demo 3", role: "学生" },
       { id: "demo4", name: "demo 4", role: "教員" },
+    ],
+  });
+
+  await prisma.works.createMany({
+    data: [
+      { id: 1, url: "http//google.com", user_id: "demo1" },
+      { id: 2, url: "http//apple.com", user_id: "demo2" },
+      { id: 3, url: "http//facebook.com", user_id: "demo4" },
+      { id: 4, url: "http//amazon.com", user_id: "demo4" },
     ],
   });
 
