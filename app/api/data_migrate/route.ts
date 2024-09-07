@@ -26,8 +26,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       // init works
       let works: Work[] = [];
       if (userData.works && userData.works.length > 0) {
-        console.log("check works");
-        console.log(userData.works);
         works = userData.works.map((work) => {
           return {
             id: -1,
@@ -40,7 +38,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
       // init fields
       let fields: Field[] = [];
-      if (userData.field && userData.field.length != 0) {
+      if (userData.field?.length > 0) {
         fields = userData.field.map((field) => {
           return {
             id: -1,
@@ -52,7 +50,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
       // init affiliations
       let affiliations: Affiliation[] = [];
-      if (userData.affiliation && userData.affiliation?.length != 0) {
+      if (userData.affiliation?.length > 0) {
         affiliations = userData.affiliation.map((affiliation) => {
           return {
             id: -1,
@@ -71,7 +69,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         affiliations: affiliations,
         fields: fields,
       };
-
+      // console.log(newUserData);
       await setUser(newUserData);
     });
     return NextResponse.json({ status: 200 });

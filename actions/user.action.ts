@@ -48,7 +48,7 @@ export async function fetchUsersByAffiliationId(
 
 export async function setUser(userData: User) {
   try {
-    const requestUrl = new URL(`${process.env.API_URL}/users/${userData.id}`);
+    const requestUrl = new URL(`${process.env.API_URL}/users`);
     await fetch(requestUrl, {
       method: "POST",
       body: JSON.stringify(userData),
@@ -97,7 +97,7 @@ export async function fetchUserByFB(userId: string) {
 }
 
 export async function fetchUsersByFB() {
-  const col = query(collection(db, "reviews"), orderBy("id", "desc"));
+  const col = query(collection(db, "users"), orderBy("id", "desc"));
   let result: userType[] = [];
   const allUsersSnapshot = await getDocs(col);
   allUsersSnapshot.forEach((doc) => {

@@ -108,8 +108,8 @@ async function setAffiliation(
 ): Promise<Affiliation[]> {
   try {
     const newAffiliation = await prisma.$queryRaw<Affiliation[]>`
-            INSERT INTO "Affiliations" (id, name)
-            VALUES (${affiliation.id}, ${affiliation.name})
+            INSERT INTO "Affiliations" (name)
+            VALUES (${affiliation.name})
             ON CONFLICT (name) DO UPDATE
             SET name = EXCLUDED.name
             RETURNING *;
