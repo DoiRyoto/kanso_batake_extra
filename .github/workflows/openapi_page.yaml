@@ -1,0 +1,25 @@
+name: API Document
+
+on:
+  push:
+    branches:
+      - docs/api-spec
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Convert YML to HTML
+        run: |
+          npm install -g @redocly/cli
+          npx @redocly/cli build-docs openapi/openapi_latest.yaml -o docs/index.html
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs

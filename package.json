@@ -14,7 +14,8 @@
     "fix:eslint": "eslint ./ --ext .ts,.tsx --fix",
     "prepare": "husky",
     "test": "jest",
-    "db-seed": "npx prisma db seed"
+    "db-seed": "npx prisma db seed",
+    "mockapi": "docker run --rm -it -p 3001:4010 -v %cd%:/tmp -P stoplight/prism:4 mock -h 0.0.0.0 -d --cors /tmp/openapi/openapi_latest.yaml"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.27.2",
