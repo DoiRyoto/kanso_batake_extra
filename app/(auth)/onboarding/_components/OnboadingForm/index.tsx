@@ -117,12 +117,12 @@ export function OnboadingForm({
     };
 
     let affiliationId = await fetchAffiliationIdByAffiliationName(
-      data.affiliation
+      data.affiliation,
     );
     if (affiliationId === 0) {
       setAffiliation(affiliationData);
       affiliationId = await fetchAffiliationIdByAffiliationName(
-        data.affiliation
+        data.affiliation,
       );
     }
     let fieldId = await fetchFieldIdByFieldName(data.field);
@@ -131,9 +131,6 @@ export function OnboadingForm({
       fieldId = await fetchFieldIdByFieldName(data.field);
     }
     await setUser(userData);
-    await setAffiliationToUser(affiliationId, userId);
-    await setFieldToUser(fieldId, userId);
-    await setWork(workData);
 
     router.push("/");
   }
@@ -176,12 +173,12 @@ export function OnboadingForm({
                       role="combobox"
                       className={cn(
                         "w-full justify-between",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value
                         ? affiliationData.find(
-                            (affiliation) => affiliation.name === field.value
+                            (affiliation) => affiliation.name === field.value,
                           )?.name
                         : "所属を選択"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -207,7 +204,7 @@ export function OnboadingForm({
                                 "mr-2 h-4 w-4",
                                 affiliation.name === field.value
                                   ? "opacity-100"
-                                  : "opacity-0"
+                                  : "opacity-0",
                               )}
                             />
                             {affiliation.name}
@@ -242,7 +239,7 @@ export function OnboadingForm({
                       role="combobox"
                       className={cn(
                         "w-full justify-between",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value
@@ -271,7 +268,7 @@ export function OnboadingForm({
                                 "mr-2 h-4 w-4",
                                 f.name === field.value
                                   ? "opacity-100"
-                                  : "opacity-0"
+                                  : "opacity-0",
                               )}
                             />
                             {f.name}
