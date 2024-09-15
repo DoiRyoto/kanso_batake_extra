@@ -38,7 +38,7 @@ export async function fetchUsersByAffiliationId(
 
 export async function setUser(userData: User) {
   try {
-    const requestUrl = new URL(`${process.env.API_URL}/users/${userData.id}`);
+    const requestUrl = new URL(`${process.env.API_URL}/users`);
     await fetch(requestUrl, {
       method: "POST",
       body: JSON.stringify(userData),
