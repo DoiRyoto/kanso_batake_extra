@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,13 +16,13 @@ model Affiliations {
 }
 
 model Comments {
-  id         Int      @id @default(autoincrement())
-  content    String
-  review_id  Int
-  user_id    String
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  review     Reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade) 
-  user       Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id                Int                 @id @default(autoincrement())
+  content           String
+  review_id         Int
+  user_id           String
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  review            Reviews             @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  user              Users               @relation(fields: [user_id], references: [id], onDelete: Cascade)
   ReviewsToComments ReviewsToComments[]
 }
 
@@ -41,23 +35,24 @@ model Fields {
 
 model Topics {
   id            Int             @id @default(autoincrement())
-  name          String          @unique
+  name          String
   created_at    DateTime        @default(now()) @db.Timestamptz(6)
   TopicsToUsers TopicsToUsers[]
 }
 
 model Reviews {
-  id            Int             @id @default(autoincrement())
-  content       String?
-  paper_data    Json
-  paper_title   String
-  thumbnail_url String?
-  user_id       String
-  created_at    DateTime        @default(now()) @db.Timestamptz(6)
-  comments      Comments[]
-  user          Users           @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  ReviewsToTags ReviewsToTags[]
+  id                Int                 @id @default(autoincrement())
+  content           String?
+  paper_data        Json
+  paper_title       String
+  thumbnail_url     String?
+  user_id           String
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  comments          Comments[]
+  Likes             Likes[]             @ignore
+  user              Users               @relation(fields: [user_id], references: [id])
   ReviewsToComments ReviewsToComments[]
+  ReviewsToTags     ReviewsToTags[]
 }
 
 model Tags {
@@ -73,6 +68,7 @@ model Users {
   role                String?
   created_at          DateTime              @default(now()) @db.Timestamptz(6)
   comments            Comments[]
+  Likes               Likes[]               @ignore
   reviews             Reviews[]
   works               Works[]
   AffiliationsToUsers AffiliationsToUsers[]
@@ -85,9 +81,7 @@ model Works {
   url        String?
   user_id    String
   created_at DateTime @default(now()) @db.Timestamptz(6)
-  user       Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@unique([url, user_id])
+  user       Users    @relation(fields: [user_id], references: [id])
 }
 
 model AffiliationsToUsers {
@@ -135,13 +129,24 @@ model ReviewsToTags {
 }
 
 model ReviewsToComments {
-  review_id Int
+  review_id  Int
   comment_id Int
-  Reviews   Reviews @relation(fields: [review_id], references: [id], onDelete: Cascade, map: "_ReviewsToComments_A_fkey")
-  Comments      Comments    @relation(fields: [comment_id], references: [id], onDelete: Cascade, map: "_ReviewsToComments_B_fkey")
+  Reviews    Reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade, map: "_ReviewsToComments_A_fkey")
+  Comments   Comments @relation(fields: [comment_id], references: [id], onDelete: Cascade, map: "_ReviewsToComments_B_fkey")
 
   @@unique([review_id, comment_id], map: "_ReviewsToComments_AB_unique")
   @@index([comment_id], map: "_ReviewsToComments_B_index")
   @@map("_ReviewsToComments")
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Likes {
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  user_id    String
+  review_id  Int
+  Reviews    Reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  Users      Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@ignore
+}
