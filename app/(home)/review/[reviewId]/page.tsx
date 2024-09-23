@@ -16,7 +16,12 @@ const page = async ({
   const reviewData = await fetchReview(Number(reviewId));
   return (
     <div className="flex flex-col gap-5">
-      <ReviewCard reviewData={reviewData} clamp={false} userId={_user.id} />
+      <ReviewCard
+        reviewData={reviewData}
+        clamp={false}
+        userId={_user.id}
+        editable
+      />
       <CommentForm userId={_user.id} reviewId={Number(reviewId)} />
       <CommentList reviewId={Number(reviewId)} />
     </div>

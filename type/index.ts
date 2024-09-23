@@ -51,6 +51,7 @@ export type Review = {
   tags: Tag[];
   created_at: string | Date;
   thumbnail_url: string | null;
+  liked_user_ids: string[];
 };
 
 // Tags Table: id, name, user_id, created_at

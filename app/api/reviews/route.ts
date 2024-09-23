@@ -40,7 +40,11 @@ async function fetchReviews(
               'id', t.id,
               'name', t.name,
               'created_at', t.created_at
-            )) AS tags
+            )) AS tags,
+            CASE 
+              WHEN COUNT(DISTINCT l.user_id) > 0 THEN json_agg(DISTINCT l.user_id) 
+              ELSE '[]'::json 
+            END AS liked_user_ids
         FROM "Reviews" r
         LEFT JOIN "Users" u ON r.user_id = u.id
         LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -50,6 +54,7 @@ async function fetchReviews(
         LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
         LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
         LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+        LEFT JOIN "Likes" l ON r.id = l.review_id
         GROUP BY r.id, u.id, f.id, w.id, a.id
         ORDER BY r.created_at DESC;`;
     } else if (!tag && userId && !affiliationId) {
@@ -69,7 +74,11 @@ async function fetchReviews(
               'id', t.id,
               'name', t.name,
               'created_at', t.created_at
-            )) AS tags
+            )) AS tags,
+            CASE 
+              WHEN COUNT(DISTINCT l.user_id) > 0 THEN json_agg(DISTINCT l.user_id) 
+              ELSE '[]'::json 
+            END AS liked_user_ids
         FROM "Reviews" r
         LEFT JOIN "Users" u ON r.user_id = u.id
         LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -79,6 +88,7 @@ async function fetchReviews(
         LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
         LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
         LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+        LEFT JOIN "Likes" l ON r.id = l.review_id
         WHERE r.user_id = ${userId}
         GROUP BY r.id, u.id
         ORDER BY r.created_at DESC;`;
@@ -99,7 +109,11 @@ async function fetchReviews(
               'id', t.id,
               'name', t.name,
               'created_at', t.created_at
-            )) AS tags
+            )) AS tags,
+            CASE 
+              WHEN COUNT(DISTINCT l.user_id) > 0 THEN json_agg(DISTINCT l.user_id) 
+              ELSE '[]'::json 
+            END AS liked_user_ids
         FROM "Reviews" r
         LEFT JOIN "Users" u ON r.user_id = u.id
         LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -109,6 +123,7 @@ async function fetchReviews(
         LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
         LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
         LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+        LEFT JOIN "Likes" l ON r.id = l.review_id
         WHERE r.id IN (
           SELECT rtt.review_id
           FROM "_ReviewsToTags" rtt
@@ -133,7 +148,11 @@ async function fetchReviews(
               'id', t.id,
               'name', t.name,
               'created_at', t.created_at
-            )) AS tags
+            )) AS tags,
+            CASE 
+              WHEN COUNT(DISTINCT l.user_id) > 0 THEN json_agg(DISTINCT l.user_id) 
+              ELSE '[]'::json 
+            END AS liked_user_ids
         FROM "Reviews" r
         LEFT JOIN "Users" u ON r.user_id = u.id
         LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -143,6 +162,7 @@ async function fetchReviews(
         LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
         LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
         LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+        LEFT JOIN "Likes" l ON r.id = l.review_id
         WHERE atu.affiliation_id = ${affiliationId}
           AND r.id IN (
             SELECT rtt.review_id
@@ -168,7 +188,11 @@ async function fetchReviews(
                 'id', t.id,
                 'name', t.name,
                 'created_at', t.created_at
-              )) AS tags
+              )) AS tags,
+              CASE 
+                WHEN COUNT(DISTINCT l.user_id) > 0 THEN json_agg(DISTINCT l.user_id) 
+                ELSE '[]'::json 
+              END AS liked_user_ids
           FROM "Reviews" r
           LEFT JOIN "Users" u ON r.user_id = u.id
           LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -178,6 +202,7 @@ async function fetchReviews(
           LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
           LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
           LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+          LEFT JOIN "Likes" l ON r.id = l.review_id
         WHERE r.user_id = ${userId}
           AND r.id IN (
             SELECT rtt.review_id
@@ -204,6 +229,10 @@ async function fetchReviews(
               'name', t.name,
               'created_at', t.created_at
             )) AS tags
+            CASE 
+              WHEN COUNT(DISTINCT l.user_id) > 0 THEN json_agg(DISTINCT l.user_id) 
+              ELSE '[]'::json 
+            END AS liked_user_ids
         FROM "Reviews" r
         LEFT JOIN "Users" u ON r.user_id = u.id
         LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -213,6 +242,7 @@ async function fetchReviews(
         LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
         LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
         LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+        LEFT JOIN "Likes" l ON r.id = l.review_id
         WHERE atu.affiliation_id = ${affiliationId}
         GROUP BY r.id, u.id
         ORDER BY r.created_at DESC;`;
@@ -234,6 +264,10 @@ async function fetchReviews(
               'name', t.name,
               'created_at', t.created_at
             )) AS tags
+            CASE 
+              WHEN COUNT(DISTINCT l.user_id) > 0 THEN json_agg(DISTINCT l.user_id) 
+              ELSE '[]'::json 
+            END AS liked_user_ids
         FROM "Reviews" r
         LEFT JOIN "Users" u ON r.user_id = u.id
         LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -243,6 +277,7 @@ async function fetchReviews(
         LEFT JOIN "Affiliations" a ON atu.affiliation_id = a.id
         LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
         LEFT JOIN "Tags" t ON rtt.tag_id = t.id
+        LEFT JOIN "Likes" l ON r.id = l.review_id
         GROUP BY r.id, u.id
         ORDER BY r.created_at DESC;`;
     }

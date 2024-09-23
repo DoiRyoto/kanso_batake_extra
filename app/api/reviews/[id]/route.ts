@@ -28,7 +28,11 @@ async function fetchReview(reviewId: number): Promise<Review[]> {
           'user_id', c.user_id,
           'review_id', c.review_id,
           'created_at', c.created_at
-        )) AS comments
+        )) AS comments,
+        CASE 
+          WHEN COUNT(DISTINCT l.user_id) > 0 THEN json_agg(DISTINCT l.user_id) 
+          ELSE '[]'::json 
+        END AS liked_user_ids
       FROM "Reviews" r
       LEFT JOIN "Users" u ON r.user_id = u.id
       LEFT JOIN "_FieldsToUsers" ftu ON u.id = ftu.user_id
@@ -39,6 +43,7 @@ async function fetchReview(reviewId: number): Promise<Review[]> {
       LEFT JOIN "_ReviewsToTags" rtt ON r.id = rtt.review_id
       LEFT JOIN "Tags" t ON rtt.tag_id = t.id
       LEFT JOIN "Comments" c ON r.id = c.review_id
+      LEFT JOIN "Likes" l ON r.id = l.review_id
       WHERE r.id = ${reviewId}
       GROUP BY r.id, u.id, f.id, w.id, a.id
       ORDER BY r.created_at DESC;`;
@@ -52,7 +57,7 @@ async function fetchReview(reviewId: number): Promise<Review[]> {
 
 async function putReview(
   reviewId: number,
-  reviewData: Review
+  reviewData: Review,
 ): Promise<number> {
   try {
     const res = await prisma.$executeRaw`
@@ -130,7 +135,7 @@ async function deleteReview(reviewId: number): Promise<number> {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
     // ReviewIdをnumberに変換
@@ -148,14 +153,14 @@ export async function GET(
     console.error(error);
     return NextResponse.json(
       { error: `Failed to fetch review with ID = ${params.id}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   const reviewId = parseInt(params.id);
   const requestBody = await request.json();
@@ -167,14 +172,14 @@ export async function PUT(
   } catch (error) {
     return NextResponse.json(
       { error: `Failed to post Review` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ): Promise<NextResponse> {
   try {
     // ReviewIdをnumberに変換
@@ -187,7 +192,7 @@ export async function DELETE(
   } catch (error) {
     return NextResponse.json(
       { error: `Failed to delete review with ID = ${params.id}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
